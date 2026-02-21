@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment History - CampoPawa{% endblock %}
+
+{% block content %}
+<div class="flex h-screen">
+    {% include 'partials/sidebar.html' %}
+    
+    <div class="flex-1 overflow-auto bg-deep">
+        <div class="p-8">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-white">Payment History</h1>
+                    <p class="text-gray-400">Track all your subscription payments</p>
+                </div>
+                <a href="{% url 'billing:upgrade' %}" class="bg-gold text-deep font-bold px-6 py-3 rounded hover:bg-yellow-400 transition">
+                    Upgrade Plan
+                </a>
+            </div>
+
+            <!-- Current Subscription -->
+            {% with user.subscription as sub %}
+                <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-6 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <p class="text-gray-400 text-sm mb-2">Current Plan</p>
+                            <p class="text-2xl font-bold text-gold">{{ user.plan|title }}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-400 text-sm mb-2">Status</p>
+                            {% if sub.is_active %}
+                                <p class="text-2xl font-bold text-teal">✓ Active</p>
+                            {% else %}
+                                <p class="text-2xl font-bold text-red-400">✗ Inactive</p>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <p class="text-gray-400 text-sm mb-2">Expires</p>
+                            {% if sub.expires_at %}
+                                <p class="text-2xl font-bold text-sea">{{ sub.days_remaining }} days</p>
+                                <p class="text-gray-400 text-xs mt-1">{{ sub.expires_at|date:"M d, Y" }}</p>
+                            {% else %}
+                                <p class="text-2xl font-bold text-gray-300">—</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endwith %}
+
+            <!-- Payments Table -->
+            {% if payments %}
+                <div class="bg-navy border border-gold border-opacity-20 rounded-lg overflow-hidden">
+                    <div class="border-b border-gold border-opacity-20 p-6">
+                        <h2 class="text-gold font-bold text-lg">All Payments</h2>
+                    </div>
+                    
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-navy bg-opacity-50 border-b border-gold border-opacity-20">
+                                <th class="px-6 py-3 text-left text-gold font-bold">Date</th>
+                                <th class="px-6 py-3 text-left text-gold font-bold">Plan</th>
+                                <th class="px-6 py-3 text-right text-gold font-bold">Amount</th>
+                                <th class="px-6 py-3 text-center text-gold font-bold">Status</th>
+                                <th class="px-6 py-3 text-left text-gold font-bold">Reference</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for payment in payments %}
+                                <tr class="border-b border-gold border-opacity-10 hover:bg-navy hover:bg-opacity-50 transition">
+                                    <td class="px-6 py-4 text-white">{{ payment.created_at|date:"M d, Y H:i" }}</td>
+                                    <td class="px-6 py-4 text-gray-300">{{ payment.get_plan_paid_for_display }}</td>
+                                    <td class="px-6 py-4 text-right font-bold">
+                                        <span class="text-teal">KES {{ payment.amount }}</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        <span class="px-3 py-1 rounded text-xs font-bold 
+                                        {% if payment.status == 'confirmed' %}bg-teal text-deep
+                                        {% elif payment.status == 'pending' %}bg-amber-600 text-white
+                                        {% else %}bg-red-600 text-white
+                                        {% endif %}">
+                                            {{ payment.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-400 text-sm">
+                                        {{ payment.mpesa_ref|default:"—" }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-12 bg-navy border border-gold border-opacity-20 rounded-lg">
+                    <p class="text-gray-400 text-lg mb-4">No payments yet.</p>
+                    <a href="{% url 'billing:upgrade' %}" class="text-gold hover:text-yellow-300 font-bold">Upgrade to start your subscription →</a>
+                </div>
+            {% endif %}
+
+            <!-- Invoice Download Info -->
+            <div class="mt-8 bg-navy border border-gold border-opacity-20 rounded-lg p-6">
+                <p class="text-gray-400 text-sm">
+                    💡 <strong>Tip:</strong> Invoices are automatically sent to your email after each payment. Check your inbox or spam folder if you don't see them.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

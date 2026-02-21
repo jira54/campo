@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ customer.name }} - CampoPawa{% endblock %}
+
+{% block content %}
+<div class="flex h-screen">
+    {% include 'partials/sidebar.html' with page='customers' %}
+    
+    <div class="flex-1 overflow-auto bg-deep">
+        <div class="p-8 max-w-3xl">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <a href="{% url 'customers:list' %}" class="text-gray-400 hover:text-gold text-sm mb-2 inline-block">← Back to Customers</a>
+                    <h1 class="text-3xl font-bold text-white">{{ customer.name }}</h1>
+                    <p class="text-gray-400">{{ customer.phone }}</p>
+                </div>
+                <div class="text-right">
+                    <span class="inline-block px-4 py-2 rounded text-sm font-bold 
+                    {% if customer.status == 'loyal' %}bg-teal text-deep
+                    {% elif customer.status == 'regular' %}bg-sea text-deep
+                    {% elif customer.status == 'new' %}bg-green-600 text-white
+                    {% else %}bg-red-600 text-white
+                    {% endif %}">
+                        {{ customer.get_status_display|default:customer.status }} Customer
+                    </span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Stats -->
+                <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-6">
+                    <p class="text-gray-400 text-sm mb-2">Total Visits</p>
+                    <p class="text-3xl font-bold text-gold">{{ customer.total_visits }}</p>
+                </div>
+                <div class="bg-navy border border-sea border-opacity-20 rounded-lg p-6">
+                    <p class="text-gray-400 text-sm mb-2">Total Spent</p>
+                    <p class="text-3xl font-bold text-sea">KES {{ customer.total_spent|floatformat:0 }}</p>
+                </div>
+                <div class="bg-navy border border-teal border-opacity-20 rounded-lg p-6">
+                    <p class="text-gray-400 text-sm mb-2">Avg Purchase</p>
+                    <p class="text-3xl font-bold text-teal">KES {% if customer.total_visits %}{{ customer.avg_purchase|floatformat:0 }}{% else %}—{% endif %}</p>
+                </div>
+            </div>
+
+            <!-- Notes -->
+            {% if customer.notes %}
+                <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-6 mb-8">
+                    <h3 class="text-gold font-bold mb-2">📝 Notes</h3>
+                    <p class="text-gray-300">{{ customer.notes }}</p>
+                </div>
+            {% endif %}
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Purchases Table -->
+                <div class="lg:col-span-2 bg-navy border border-gold border-opacity-20 rounded-lg overflow-hidden">
+                    <div class="bg-navy border-b border-gold border-opacity-20 px-6 py-3">
+                        <h3 class="text-gold font-bold">Purchase History</h3>
+                    </div>
+
+                    {% if purchases %}
+                        <table class="w-full">
+                            <thead class="bg-navy bg-opacity-50 border-b border-gold border-opacity-20">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-gold font-bold text-sm">Service</th>
+                                    <th class="px-6 py-3 text-right text-gold font-bold text-sm">Amount</th>
+                                    <th class="px-6 py-3 text-left text-gold font-bold text-sm">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for purchase in purchases %}
+                                    <tr class="border-b border-gold border-opacity-10 hover:bg-navy hover:bg-opacity-50 transition">
+                                        <td class="px-6 py-4 text-white">{{ purchase.service|default:"—" }}</td>
+                                        <td class="px-6 py-4 text-right text-teal font-bold">KES {{ purchase.amount|floatformat:0 }}</td>
+                                        <td class="px-6 py-4 text-gray-400 text-sm">{{ purchase.purchased_at|date:"M d, H:i" }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="px-6 py-8 text-gray-400 text-center">No purchases yet</p>
+                    {% endif %}
+                </div>
+
+                <!-- Log Purchase Form -->
+                <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-6">
+                    <h3 class="text-gold font-bold mb-4">📊 Log Purchase</h3>
+                    
+                    <form method="post" class="space-y-4">
+                        {% csrf_token %}
+                        
+                        <div>
+                            <label class="block text-gray-300 font-semibold mb-1 text-sm">Service</label>
+                            <input 
+                                type="text" 
+                                name="service" 
+                                placeholder="e.g., Lunch, Dessert"
+                                class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-3 py-2 rounded text-sm focus:outline-none focus:border-gold"
+                            >
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-300 font-semibold mb-1 text-sm">Amount (KES)</label>
+                            <input 
+                                type="number" 
+                                name="amount" 
+                                placeholder="250"
+                                step="0.01"
+                                min="0"
+                                required
+                                class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-3 py-2 rounded text-sm focus:outline-none focus:border-gold"
+                            >
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-300 font-semibold mb-1 text-sm">Notes</label>
+                            <textarea 
+                                name="notes" 
+                                placeholder="Optional notes..."
+                                rows="2"
+                                class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-3 py-2 rounded text-sm focus:outline-none focus:border-gold resize-none"
+                            ></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full bg-gold text-deep font-bold px-4 py-2 rounded text-sm hover:bg-yellow-400 transition">
+                            ✓ Log Purchase
+                        </button>
+                    </form>
+
+                    <hr class="border-gold border-opacity-20 my-6">
+
+                    <a href="{% url 'customers:delete' customer.id %}" onclick="return confirm('Delete this customer?')" class="block w-full text-center bg-red-900 bg-opacity-40 text-red-400 font-bold px-4 py-2 rounded hover:bg-opacity-60 transition text-sm">
+                        🗑️ Delete Customer
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

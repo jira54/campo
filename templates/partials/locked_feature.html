@@ -1,0 +1,8 @@
+<div class="bg-amber-900 bg-opacity-30 border-l-4 border-gold rounded-lg p-6 text-center">
+    <p class="text-gold text-2xl mb-2">🔐</p>
+    <h3 class="text-white font-bold mb-2">{{ title|default:'Premium Feature' }}</h3>
+    <p class="text-gray-300 text-sm mb-4">{{ message|default:'This feature is available on Premium plans only. Less than two mandazis a day!' }}</p>
+    <a href="{% url 'billing:upgrade' %}" class="inline-block bg-gold text-deep font-bold px-6 py-2 rounded hover:bg-yellow-400 transition">
+        Upgrade to Premium
+    </a>
+</div>

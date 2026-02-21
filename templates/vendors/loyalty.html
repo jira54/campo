@@ -1,0 +1,33 @@
+{% extends 'vendors/base.html' %}
+{% block content %}
+  <h2 class="text-2xl font-semibold mb-4">Loyalty rewards</h2>
+  <form method="post" class="mb-4">
+    {% csrf_token %}
+    <div class="text-sm text-gray-600 mb-2">Create a reward. Example: Free Tea after 5 visits.</div>
+    {{ form.as_p }}
+    <button class="px-3 py-2 bg-green-500 text-white rounded w-full sm:w-auto">Create reward</button>
+  </form>
+  <div class="space-y-4">
+    {% for item in progress %}
+      <div class="p-3 cp-card">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center">
+          <div class="font-medium">{{ item.customer.name }} — {{ item.progress }}/{{ item.reward.required_visits }} visits — {{ item.reward.reward_name }}</div>
+            <div class="text-sm text-gray-600 mt-2 sm:mt-0">
+              {% if item.eligible %}
+                <span class="text-green-600">Ready to claim</span>
+                <span class="sr-only">Eligible</span>
+              {% else %}
+                <span>Collecting visits</span>
+                <span class="sr-only">In progress</span>
+              {% endif %}
+            </div>
+        </div>
+        <div class="w-full bg-gray-200 h-3 rounded mt-3">
+          <div class="bg-gradient-to-r from-sky-500 to-emerald-400 h-3 rounded" style="width: {{ item.percent }}%"></div>
+        </div>
+      </div>
+    {% empty %}
+      <div>No loyalty activity yet</div>
+    {% endfor %}
+  </div>
+{% endblock %}

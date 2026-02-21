@@ -1,0 +1,87 @@
+{% extends 'vendors/base.html' %}
+{% block content %}
+  <h2 class="text-2xl font-semibold mb-6">Record visits & manage customers</h2>
+
+  <!-- Quick Record Section -->
+  <div class="cp-card p-6 mb-6">
+    <h3 class="text-lg font-semibold mb-2">Add visit — takes 10 seconds</h3>
+    <p class="text-sm text-gray-600 mb-4">Enter phone and optionally name. If it's a returning customer, we'll add a visit automatically.</p>
+    
+    <form method="post" autocomplete="off" class="space-y-3">
+      {% csrf_token %}
+      
+      <div>
+        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Customer name (optional)</label>
+        <input type="text" id="name" name="name" placeholder="e.g. Mama Joyce" class="w-full p-3 rounded border">
+      </div>
+      
+      <div>
+        <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone (required)</label>
+        <input list="phones" id="phone" name="phone" inputmode="numeric" placeholder="e.g. 0711000000" class="w-full p-3 text-lg rounded border" autofocus>
+        <datalist id="phones">
+          {% for c in customers %}
+            <option value="{{ c.phone_number }}">{{ c.name }}</option>
+          {% endfor %}
+        </datalist>
+      </div>
+      
+      <div class="pt-2">
+        <button type="submit" class="w-full py-4 cp-cta text-white text-xl rounded">Record visit — tap once</button>
+      </div>
+    </form>
+    
+    <div id="quick-hint" class="mt-3 text-sm text-gray-600 bg-gray-50 p-2 rounded">
+      Tip: Start typing a phone. Suggestions appear. Just tap the big button.
+    </div>
+  </div>
+
+  <!-- Customer List Section -->
+  <div>
+    <h3 class="text-lg font-semibold mb-3">Your customers</h3>
+    
+    <form method="get" class="mb-4">
+      <input type="search" name="q" value="{{ q|default_if_none:'' }}" placeholder="Search by name or phone" class="w-full p-2 border rounded">
+    </form>
+
+    <div class="cp-card overflow-hidden">
+      <table class="w-full text-left text-sm">
+        <thead class="bg-gray-50"><tr><th class="p-3">Name</th><th class="p-3">Phone</th><th class="p-3">Visits</th><th class="p-3">Last seen</th></tr></thead>
+        <tbody>
+          {% for c in customers %}
+            <tr class="border-t"><td class="p-3">{{ c.name }}</td><td class="p-3">{{ c.phone_number }}</td><td class="p-3 font-semibold">{{ c.visit_count }}</td><td class="p-3 text-xs text-gray-600">{{ c.last_visit }}</td></tr>
+          {% empty %}
+            <tr><td class="p-3 col-span-4" colspan="4">No customers yet — record a visit above to get started</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Quick client-side helper: show matched customer name and visit count as user types
+    (function(){
+      const raw = {{ customers_json|default:'[]'|safe }};
+      const customers = Array.isArray(raw) ? raw : [];
+      const phoneInput = document.getElementById('phone');
+      const nameInput = document.getElementById('name');
+      const hint = document.getElementById('quick-hint');
+      if(!phoneInput) return;
+      
+      phoneInput.addEventListener('input', function(){
+        const v = phoneInput.value.replace(/\D/g,'');
+        if(!v){ 
+          hint.textContent = 'Tip: Start typing a phone. Suggestions appear. Just tap the big button.'; 
+          return; 
+        }
+        const found = customers.find(c => c.phone_number && c.phone_number.includes(v));
+        if(found){
+          hint.innerHTML = `<strong>${found.name}</strong> — ${found.visit_count} visits. Tap to add another.`;
+          if(!nameInput.value) nameInput.value = found.name;
+        } else {
+          hint.textContent = 'New number — first visit. Give them a name above (optional).';
+          nameInput.value = '';
+        }
+      });
+    })();
+  </script>
+{% endblock %}

@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>CampoPawa — Promos & Loyalty</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        background: #fafaf8;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      }
+      .coffee-grey-text { color: #292524; }
+      .coffee-grey-heading { color: #1c1917; }
+      .coffee-accent { background: #fef3c7; color: #92400e; }
+      .bottom-nav-spacing { padding-bottom: 120px; }
+    </style>
+  </head>
+  <body class="coffee-grey-text">
+    <!-- TOP HEADER -->
+    <header class="sticky top-0 bg-white border-b border-stone-200 px-4 py-3 z-10">
+      <div class="max-w-4xl mx-auto">
+        <h1 class="coffee-grey-heading font-bold text-2xl">🎁 Promos & Loyalty</h1>
+        <p class="text-xs text-stone-500 mt-1">Create rewards to keep customers coming back</p>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="max-w-4xl mx-auto px-4 py-6 bottom-nav-spacing">
+      
+      <!-- CREATE NEW REWARD -->
+      <section class="bg-white rounded-xl shadow-sm p-6 mb-6">
+        <h2 class="coffee-grey-heading font-bold text-lg mb-2">➕ Create New Reward</h2>
+        <p class="text-sm text-stone-500 mb-4">Set up a loyalty program to reward repeat customers</p>
+        
+        <form method="post" class="space-y-4">
+          {% csrf_token %}
+          
+          <!-- Reward Name -->
+          <div>
+            <label class="block text-xs text-stone-500 font-semibold mb-2 uppercase">Reward Name *</label>
+            <input 
+              type="text" 
+              name="reward_name" 
+              placeholder="e.g., Free Coffee, Discount, Free Haircut"
+              class="w-full p-4 text-lg border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-800"
+            >
+          </div>
+
+          <!-- Required Visits -->
+          <div>
+            <label class="block text-xs text-stone-500 font-semibold mb-2 uppercase">Visits Required *</label>
+            <input 
+              type="number" 
+              name="required_visits"
+              value="5"
+              min="2"
+              max="50"
+              placeholder="e.g., 5"
+              class="w-full p-4 text-lg border border-stone-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-800"
+            >
+            <p class="text-xs text-stone-500 mt-2">Customer gets this reward after X visits</p>
+          </div>
+
+          <!-- Submit Button -->
+          <button 
+            type="submit" 
+            class="w-full bg-stone-800 text-white font-bold text-lg py-4 rounded-lg hover:bg-stone-900 transition"
+          >
+            ✓ Create Reward
+          </button>
+        </form>
+      </section>
+
+      <!-- ACTIVE REWARDS -->
+      <section>
+        <h3 class="coffee-grey-heading font-bold text-lg mb-4">Your Active Rewards</h3>
+        
+        {% if rewards %}
+          <div class="space-y-3">
+            {% for reward in rewards %}
+              <div class="bg-white rounded-xl shadow-sm p-5">
+                <div class="flex items-start justify-between">
+                  <div class="flex-1">
+                    <h4 class="coffee-grey-heading font-bold text-lg">{{ reward.reward_name }}</h4>
+                    <p class="text-sm text-stone-500 mt-1">
+                      Reward after <span class="font-bold text-stone-700">{{ reward.required_visits }} visits</span>
+                    </p>
+                  </div>
+                  <span class="text-3xl">🎁</span>
+                </div>
+                
+                <!-- Progress Info -->
+                <div class="mt-4 pt-4 border-t border-stone-200">
+                  <p class="text-xs text-stone-500 font-semibold uppercase mb-2">Customers close to reward</p>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div class="bg-emerald-50 rounded-lg p-3">
+                      <p class="text-2xl font-bold text-emerald-700">5</p>
+                      <p class="text-xs text-emerald-600">About to claim</p>
+                    </div>
+                    <div class="bg-amber-50 rounded-lg p-3">
+                      <p class="text-2xl font-bold text-amber-700">12</p>
+                      <p class="text-xs text-amber-600">Halfway through</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-4 flex gap-2">
+                  <form method="post" action="#" class="flex-1">
+                    <button type="submit" class="w-full px-4 py-2 bg-stone-100 text-stone-800 font-semibold rounded-lg hover:bg-stone-200 text-sm">
+                      📝 Edit
+                    </button>
+                  </form>
+                  <form method="post" action="#" class="flex-1">
+                    <button type="submit" class="w-full px-4 py-2 bg-red-50 text-red-700 font-semibold rounded-lg hover:bg-red-100 text-sm">
+                      🗑️ Delete
+                    </button>
+                  </form>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="bg-stone-50 rounded-xl p-8 text-center">
+            <p class="text-2xl mb-2">📋</p>
+            <p class="text-stone-600 font-semibold">No rewards yet</p>
+            <p class="text-sm text-stone-500 mt-1">Create your first loyalty reward above</p>
+          </div>
+        {% endif %}
+      </section>
+
+      <!-- TIPS SECTION -->
+      <section class="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl shadow-sm p-6 mt-8">
+        <h3 class="coffee-grey-heading font-bold text-lg mb-4">💡 Pro Tips for Better Loyalty</h3>
+        <ul class="space-y-3 text-sm">
+          <li class="flex gap-3">
+            <span>✓</span>
+            <span><strong>Keep it simple:</strong> 5 visits for a free item works great</span>
+          </li>
+          <li class="flex gap-3">
+            <span>✓</span>
+            <span><strong>Make it valuable:</strong> Reward should be worth 2-3x the regular cost</span>
+          </li>
+          <li class="flex gap-3">
+            <span>✓</span>
+            <span><strong>Celebrate wins:</strong> Tell customers when they're close to earning a reward</span>
+          </li>
+          <li class="flex gap-3">
+            <span>✓</span>
+            <span><strong>Update regularly:</strong> Refresh rewards every month to keep it interesting</span>
+          </li>
+        </ul>
+      </section>
+    </main>
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 z-20">
+      <div class="max-w-4xl mx-auto flex items-center justify-around">
+        <a href="{% url 'vendors:dashboard' %}" class="flex-1 flex flex-col items-center justify-center py-4 text-center hover:bg-stone-50 transition border-t-4 border-transparent text-stone-500 font-semibold text-xs">
+          <span class="text-2xl mb-1">🏠</span>
+          <span>Home</span>
+        </a>
+        <a href="{% url 'vendors:customers' %}" class="flex-1 flex flex-col items-center justify-center py-4 text-center hover:bg-stone-50 transition border-t-4 border-transparent text-stone-500 font-semibold text-xs">
+          <span class="text-2xl mb-1">👥</span>
+          <span>Customers</span>
+        </a>
+        <a href="{% url 'vendors:loyalty' %}" class="flex-1 flex flex-col items-center justify-center py-4 text-center hover:bg-stone-50 transition border-t-4 border-stone-800 coffee-grey-heading font-semibold text-xs">
+          <span class="text-2xl mb-1">🎁</span>
+          <span>Promos</span>
+        </a>
+        <form method="post" action="{% url 'vendors:logout' %}" class="flex-1">
+          <button type="submit" class="w-full flex flex-col items-center justify-center py-4 hover:bg-stone-50 transition border-t-4 border-transparent text-stone-500 font-semibold text-xs">
+            <span class="text-2xl mb-1">🚪</span>
+            <span>Logout</span>
+          </button>
+        </form>
+      </div>
+    </nav>
+  </body>
+</html>

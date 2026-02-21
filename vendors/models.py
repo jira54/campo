@@ -1,0 +1,111 @@
+from django.db import models
+from django.conf import settings
+from django.utils import timezone
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+
+
+BUSINESS_TYPES = [
+    ('food',     'Food Vendor'),
+    ('printing', 'Printing / Cyber'),
+    ('thrift',   'Thrift / Clothing'),
+    ('rental',   'Rental Services'),
+    ('cakes',    'Cakes & Confectionery'),
+    ('general',  'General / Other'),
+]
+
+
+class VendorManager(BaseUserManager):
+    def create_user(self, email, business_name, owner_name, phone_number, password=None, **extra_fields):
+        if not email:
+            raise ValueError('Vendors must have an email address')
+        email = self.normalize_email(email)
+        vendor = self.model(
+            email=email,
+            business_name=business_name,
+            owner_name=owner_name,
+            phone_number=phone_number,
+            **extra_fields
+        )
+        vendor.set_password(password)
+        vendor.save(using=self._db)
+        return vendor
+
+    def create_superuser(self, email, business_name, owner_name, phone_number, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        return self.create_user(email, business_name, owner_name, phone_number, password, **extra_fields)
+
+
+class Vendor(AbstractBaseUser, PermissionsMixin):
+    business_name     = models.CharField(max_length=255)
+    business_type    = models.CharField(max_length=30, choices=BUSINESS_TYPES, default='general')
+    owner_name        = models.CharField(max_length=255)
+    phone_number      = models.CharField(max_length=50)
+    phone             = models.CharField(max_length=20, default='')
+    university        = models.CharField(max_length=120, default='')
+    email             = models.EmailField(unique=True)
+    is_active         = models.BooleanField(default=True)
+    is_staff          = models.BooleanField(default=False)
+    created_at        = models.DateTimeField(auto_now_add=True)
+
+    objects = VendorManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['business_name', 'owner_name', 'phone_number']
+
+    def __str__(self):
+        return self.business_name
+
+    # --- Plan helpers (reads from related Subscription) ---
+    @property
+    def plan(self):
+        sub = getattr(self, 'subscription', None)
+        if sub and sub.is_active():
+            return sub.plan
+        return 'free'
+
+    @property
+    def is_premium(self):
+        return self.plan in ('premium', 'bundle')
+
+    @property
+    def customer_limit(self):
+        """Free tier: max 20 customers. Premium: unlimited."""
+        return None if self.is_premium else 20
+
+    def get_business_type_display(self):
+        """Get the display name for business type"""
+        return dict(BUSINESS_TYPES).get(self.business_type, 'General')
+
+
+class Customer(models.Model):
+    vendor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    phone_number = models.CharField(max_length=50)
+    visit_count = models.IntegerField(default=1)
+    last_visit = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.phone_number})"
+
+
+class Sale(models.Model):
+    vendor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateField(default=timezone.now)
+    notes = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"{self.vendor}: {self.amount} on {self.date}"
+
+
+class LoyaltyReward(models.Model):
+    vendor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    reward_name = models.CharField(max_length=255)
+    required_visits = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.reward_name} ({self.required_visits})"

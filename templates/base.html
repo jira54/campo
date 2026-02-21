@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CampoPawa{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'deep': '#07111E',
+                        'navy': '#0C2340',
+                        'teal': '#0D9488',
+                        'sea': '#14B8A6',
+                        'gold': '#F59E0B',
+                    }
+                }
+            }
+        }
+    </script>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-deep text-gray-100">
+    {% if messages %}
+        <div class="fixed top-0 left-0 right-0 z-50">
+            {% for message in messages %}
+                <div class="m-4 p-4 rounded-lg {% if message.tags %}{{ message.tags }}{% else %}bg-teal text-white{% endif %}">
+                    {{ message }}
+                    <button onclick="this.parentElement.parentElement.removeChild(this.parentElement)" class="float-right ml-2">×</button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

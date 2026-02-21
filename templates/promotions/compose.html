@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+
+{% block title %}Compose Promotion - CampoPawa{% endblock %}
+
+{% block content %}
+<div class="flex h-screen">
+    {% include 'partials/sidebar.html' with page='promotions' %}
+    
+    <div class="flex-1 overflow-auto bg-deep">
+        <div class="p-8 max-w-3xl">
+            <!-- Header -->
+            <div class="mb-8">
+                <a href="{% url 'promotions:list' %}" class="text-gray-400 hover:text-gold text-sm mb-2 inline-block">← Back to Promotions</a>
+                <h1 class="text-3xl font-bold text-white">Compose Promotion</h1>
+                <p class="text-gray-400">Send SMS or WhatsApp to your customers</p>
+            </div>
+
+            <form method="post" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {% csrf_token %}
+
+                <!-- Main Form -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Title -->
+                    <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-6">
+                        <label class="block text-gold font-bold mb-2">Campaign Title *</label>
+                        <input 
+                            type="text" 
+                            name="title" 
+                            placeholder="e.g., 'Weekend Special Offer'"
+                            class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold"
+                            required
+                        >
+                        <p class="text-gray-400 text-xs mt-2">Keep it short and catchy</p>
+                    </div>
+
+                    <!-- Message -->
+                    <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-6">
+                        <label class="block text-gold font-bold mb-2">Message *</label>
+                        <textarea 
+                            name="message" 
+                            placeholder="Craft your message here. Keep SMS under 160 characters for affordability."
+                            rows="4"
+                            maxlength="500"
+                            class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold resize-none"
+                            required
+                        ></textarea>
+                        <p class="text-gray-400 text-xs mt-2" id="char-count">0/500 characters</p>
+                    </div>
+
+                    <!-- Channel & Segment -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-6">
+                            <label class="block text-gold font-bold mb-2">Channel *</label>
+                            <select name="channel" class="w-full bg-deep border border-gold border-opacity-30 text-white px-4 py-2 rounded focus:outline-none focus:border-gold">
+                                <option value="sms">📱 SMS Only</option>
+                                <option value="whatsapp">💬 WhatsApp Only</option>
+                                <option value="both" selected>📱💬 Both SMS & WhatsApp</option>
+                            </select>
+                        </div>
+
+                        <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-6">
+                            <label class="block text-gold font-bold mb-2">Target Segment *</label>
+                            <select name="segment" id="segment-select" class="w-full bg-deep border border-gold border-opacity-30 text-white px-4 py-2 rounded focus:outline-none focus:border-gold">
+                                <option value="all">👥 All Customers ({{ segment_counts.all }})</option>
+                                <option value="loyal">⭐ Loyal Only ({{ segment_counts.loyal }})</option>
+                                <option value="regular">📊 Regular ({{ segment_counts.regular }})</option>
+                                <option value="new">🆕 New Customers ({{ segment_counts.new }})</option>
+                                <option value="atrisk">⚠️ At-Risk ({{ segment_counts.atrisk }})</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Schedule (Optional) -->
+                    <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-6">
+                        <label class="block text-gold font-bold mb-2">Schedule (Leave empty to send now)</label>
+                        <input 
+                            type="datetime-local" 
+                            name="scheduled_at" 
+                            class="w-full bg-deep border border-gold border-opacity-30 text-white px-4 py-2 rounded focus:outline-none focus:border-gold"
+                        >
+                        <p class="text-gray-400 text-xs mt-2">Optional. Leave blank to send immediately.</p>
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="flex gap-4 pt-4">
+                        <button type="submit" class="flex-1 bg-gold text-deep font-bold px-6 py-3 rounded hover:bg-yellow-400 transition">
+                            ✓ Send Promotion
+                        </button>
+                        <a href="{% url 'promotions:list' %}" class="flex-1 bg-navy border border-gold text-gold font-bold px-6 py-3 rounded text-center hover:bg-navy hover:border-yellow-300 transition">
+                            Cancel
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Preview Panel -->
+                <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-6 h-fit sticky top-8">
+                    <h3 class="text-gold font-bold mb-4">📊 Preview</h3>
+
+                    <!-- Message Preview -->
+                    <div class="bg-deep border border-gray-600 rounded-lg p-4 mb-4">
+                        <p class="text-gray-500 text-xs mb-2">Campaign Title</p>
+                        <p class="text-white font-semibold mb-2" id="preview-title">Your title here</p>
+                        
+                        <p class="text-gray-500 text-xs mb-2">Message</p>
+                        <p class="text-gray-300 text-sm mb-4 whitespace-pre-wrap" id="preview-message">Your message will appear here. SMS preview...</p>
+                    </div>
+
+                    <!-- Recipients Counter -->
+                    <div class="bg-deep border border-teal border-opacity-30 rounded-lg p-4 mb-4">
+                        <p class="text-gray-400 text-xs mb-1">Recipients</p>
+                        <p class="text-3xl font-bold text-teal" id="recipient-count">
+                            {% for key, count in segment_counts.items %}
+                                {% if key == 'all' %}{{ count }}{% endif %}
+                            {% endfor %}
+                        </p>
+                        <p class="text-gray-400 text-xs mt-2" id="segment-label">All Customers</p>
+                    </div>
+
+                    <!-- Cost Estimate -->
+                    <div class="bg-deep border border-sea border-opacity-30 rounded-lg p-4">
+                        <p class="text-gray-400 text-xs mb-1">Est. Cost</p>
+                        <p class="text-2xl font-bold text-sea" id="cost-estimate">KES 0</p>
+                        <p class="text-gray-400 text-xs mt-2">~KES 1 per SMS</p>
+                    </div>
+
+                    <hr class="border-gold border-opacity-20 my-4">
+
+                    <p class="text-gray-400 text-xs">
+                        ✓ Green confirmed means segment selected
+                        • Update message to see preview update
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Update preview as user types
+    document.querySelector('textarea[name="message"]').addEventListener('input', function() {
+        document.getElementById('preview-message').textContent = this.value || 'Your message will appear here...';
+        document.getElementById('char-count').textContent = this.value.length + '/500 characters';
+        
+        // Update cost estimate
+        const cost = Math.ceil((this.value.length / 160)) * parseInt(document.getElementById('recipient-count').textContent || 0);
+        document.getElementById('cost-estimate').textContent = 'KES ' + cost;
+    });
+
+    document.querySelector('input[name="title"]').addEventListener('input', function() {
+        document.getElementById('preview-title').textContent = this.value || 'Your title here';
+    });
+
+    // Update recipient count when segment changes
+    document.getElementById('segment-select').addEventListener('change', function() {
+        const segments = {
+            'all': '{{ segment_counts.all }}, All Customers',
+            'loyal': '{{ segment_counts.loyal }}, Loyal Only',
+            'regular': '{{ segment_counts.regular }}, Regular',
+            'new': '{{ segment_counts.new }}, New Customers',
+            'atrisk': '{{ segment_counts.atrisk }}, At-Risk'
+        };
+        const [count, label] = segments[this.value].split(', ');
+        document.getElementById('recipient-count').textContent = count;
+        document.getElementById('segment-label').textContent = label;
+        
+        // Recalculate cost
+        const msgLength = document.querySelector('textarea[name="message"]').value.length;
+        const cost = Math.ceil((msgLength / 160)) * parseInt(count);
+        document.getElementById('cost-estimate').textContent = 'KES ' + (cost || 0);
+    });
+</script>
+{% endblock %}

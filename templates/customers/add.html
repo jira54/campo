@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Customer - CampoPawa{% endblock %}
+
+{% block content %}
+<div class="flex h-screen">
+    {% include 'partials/sidebar.html' with page='customers' %}
+    
+    <div class="flex-1 overflow-auto bg-deep">
+        <div class="p-8 max-w-2xl">
+            <!-- Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-white mb-2">Add New Customer</h1>
+                <p class="text-gray-400">Register a new customer and track their purchases</p>
+            </div>
+
+            <!-- Form -->
+            <form method="post" class="bg-navy border border-gold border-opacity-20 rounded-lg p-6 space-y-6">
+                {% csrf_token %}
+
+                <!-- Customer Name -->
+                <div>
+                    <label for="{{ form.name.id_for_label }}" class="block text-gold font-bold mb-2">Customer Name *</label>
+                    <input 
+                        type="text" 
+                        name="name" 
+                        placeholder="e.g., John Doe"
+                        class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold"
+                        required
+                    >
+                    {% if form.name.errors %}<p class="text-red-400 text-sm mt-1">{{ form.name.errors.0 }}</p>{% endif %}
+                </div>
+
+                <!-- Phone Number -->
+                <div>
+                    <label for="{{ form.phone.id_for_label }}" class="block text-gold font-bold mb-2">Phone Number *</label>
+                    <input 
+                        type="tel" 
+                        name="phone" 
+                        placeholder="e.g., +254712345678 or 0712345678"
+                        class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold"
+                        required
+                    >
+                    {% if form.phone.errors %}<p class="text-red-400 text-sm mt-1">{{ form.phone.errors.0 }}</p>{% endif %}
+                </div>
+
+                <!-- Notes -->
+                <div>
+                    <label for="{{ form.notes.id_for_label }}" class="block text-gold font-bold mb-2">Notes (optional)</label>
+                    <textarea 
+                        name="notes" 
+                        placeholder="e.g., Prefers WhatsApp communication, allergic to..."
+                        rows="3"
+                        class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold"
+                    ></textarea>
+                </div>
+
+                <hr class="border-gold border-opacity-20">
+
+                <!-- Initial Purchase (Optional) -->
+                <div>
+                    <h3 class="text-gold font-bold mb-4">📊 Log First Purchase (optional)</h3>
+                    
+                    <div class="space-y-4">
+                        <!-- Service -->
+                        <div>
+                            <label for="{{ purchase_form.service.id_for_label }}" class="block text-gray-300 font-semibold mb-2">Service</label>
+                            <input 
+                                type="text" 
+                                name="service" 
+                                placeholder="e.g., Lunch, Coffee, Premium Package"
+                                class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold"
+                            >
+                        </div>
+
+                        <!-- Amount -->
+                        <div>
+                            <label for="{{ purchase_form.amount.id_for_label }}" class="block text-gray-300 font-semibold mb-2">Amount (KES)</label>
+                            <input 
+                                type="number" 
+                                name="amount" 
+                                placeholder="e.g., 250"
+                                step="0.01"
+                                min="0"
+                                class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold"
+                            >
+                        </div>
+
+                        <!-- Notes -->
+                        <div>
+                            <label for="{{ purchase_form.notes.id_for_label }}" class="block text-gray-300 font-semibold mb-2">Purchase Notes</label>
+                            <textarea 
+                                name="notes" 
+                                placeholder="e.g., Paid in cash, delivery note..."
+                                rows="2"
+                                class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold"
+                            ></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="border-gold border-opacity-20">
+
+                <!-- Form Errors -->
+                {% if form.non_field_errors %}
+                    <div class="bg-red-900 bg-opacity-40 border-l-4 border-red-500 p-4 rounded">
+                        <p class="text-red-400">Error: {{ form.non_field_errors.0 }}</p>
+                    </div>
+                {% endif %}
+
+                <!-- Buttons -->
+                <div class="flex gap-4 pt-4">
+                    <button type="submit" class="flex-1 bg-gold text-deep font-bold px-6 py-3 rounded hover:bg-yellow-400 transition">
+                        ✓ Add Customer
+                    </button>
+                    <a href="{% url 'customers:list' %}" class="flex-1 bg-navy border border-gold text-gold font-bold px-6 py-3 rounded text-center hover:bg-navy hover:border-yellow-300 transition">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

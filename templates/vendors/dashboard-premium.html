@@ -1,0 +1,399 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>CampoPawa — Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        background: #fafaf8;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      }
+      .coffee-grey-text { color: #292524; }
+      .coffee-grey-heading { color: #1c1917; }
+      .coffee-accent { background: #fef3c7; color: #92400e; }
+      .bottom-nav-spacing { padding-bottom: 120px; }
+      .metric-card { transition: transform 0.2s, box-shadow 0.2s; }
+      .metric-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+      .trend-up { color: #10b981; }
+      .trend-neutral { color: #6b7280; }
+    </style>
+  </head>
+  <body class="coffee-grey-text">
+    <!-- TOP HEADER -->
+    <header class="sticky top-0 bg-white border-b border-stone-200 px-4 py-3 z-10">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="coffee-grey-heading font-bold text-2xl">CampoPawa</h1>
+            <p class="text-xs text-stone-500">{{ user.business_name }}</p>
+          </div>
+          <div class="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white font-bold text-lg">
+            {{ user.owner_name|first|upper }}
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="max-w-4xl mx-auto px-4 py-8 bottom-nav-spacing">
+      
+      <!-- GREETING -->
+      <section class="mb-8">
+        <h2 class="coffee-grey-heading text-3xl font-bold">Good morning, {{ user.owner_name|truncatewords:1 }} 👋</h2>
+        <p class="text-stone-500 text-sm mt-1">{{ "now"|date:"l, j M Y" }} — Here's how your business is doing this week</p>
+      </section>
+
+      <!-- KEY METRICS GRID (4 columns) -->
+      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <!-- Total Customers -->
+        <div class="metric-card bg-white rounded-xl shadow-sm p-5 border-l-4 border-sky-400">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-2xl">👥</span>
+            <span class="text-xs bg-sky-50 text-sky-700 px-2 py-1 rounded font-semibold">+{{ todays_visits }} today</span>
+          </div>
+          <p class="text-xs text-stone-500 uppercase font-semibold tracking-wide">Total Customers</p>
+          <p class="text-3xl font-bold coffee-grey-heading mt-2">{{ total_customers }}</p>
+          <p class="text-xs text-stone-500 mt-2">↑ +6 this week</p>
+        </div>
+        
+        <!-- Repeat Rate -->
+        <div class="metric-card bg-white rounded-xl shadow-sm p-5 border-l-4 border-emerald-400">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-2xl">🔁</span>
+            <span class="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded font-semibold trend-up">+12%</span>
+          </div>
+          <p class="text-xs text-stone-500 uppercase font-semibold tracking-wide">Repeat Rate</p>
+          <p class="text-3xl font-bold coffee-grey-heading mt-2">{{ repeat_rate }}%</p>
+          <p class="text-xs text-stone-500 mt-2">vs last month</p>
+        </div>
+        
+        <!-- Weekly Revenue -->
+        <div class="metric-card bg-white rounded-xl shadow-sm p-5 border-l-4 border-amber-400">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-2xl">💰</span>
+            {% if week_change >= 0 %}
+              <span class="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded font-semibold">+{{ week_change }}%</span>
+            {% else %}
+              <span class="text-xs bg-red-50 text-red-700 px-2 py-1 rounded font-semibold">{{ week_change }}%</span>
+            {% endif %}
+          </div>
+          <p class="text-xs text-stone-500 uppercase font-semibold tracking-wide">Revenue (Week)</p>
+          <p class="text-3xl font-bold coffee-grey-heading mt-2">KES {{ week_total|floatformat:0 }}</p>
+          <p class="text-xs text-stone-500 mt-2">vs last week</p>
+        </div>
+        
+        <!-- Today's Revenue -->
+        <div class="metric-card bg-white rounded-xl shadow-sm p-5 border-l-4 border-violet-400">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-2xl">💸</span>
+            <span class="text-xs bg-violet-50 text-violet-700 px-2 py-1 rounded font-semibold">{{ todays_visits }} transactions</span>
+          </div>
+          <p class="text-xs text-stone-500 uppercase font-semibold tracking-wide">Today's Revenue</p>
+          <p class="text-3xl font-bold coffee-grey-heading mt-2">KES {{ todays_total|floatformat:0 }}</p>
+          <p class="text-xs text-stone-500 mt-2">as of now</p>
+        </div>
+      </section>
+
+      <!-- CHARTS ROW -->
+      <section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Weekly Revenue Chart -->
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm p-6">
+          <h3 class="coffee-grey-heading font-bold text-lg mb-4">Weekly Revenue & Customers</h3>
+          <p class="text-xs text-stone-500 mb-4">Last 7 days performance</p>
+          <canvas id="weekChart" height="60"></canvas>
+        </div>
+        
+        <!-- Customer Segments Pie -->
+        <div class="bg-white rounded-xl shadow-sm p-6">
+          <h3 class="coffee-grey-heading font-bold text-lg mb-4">Customer Segments</h3>
+          <p class="text-xs text-stone-500 mb-4">By loyalty status</p>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded-full" style="background: #10b981;"></div>
+                <span class="text-sm font-semibold">Loyal</span>
+              </div>
+              <span class="text-sm font-bold">{{ loyal_count }} <span class="text-xs text-stone-500">{{ loyal_count|add:0 }}%</span></span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded-full" style="background: #3b82f6;"></div>
+                <span class="text-sm font-semibold">Regular</span>
+              </div>
+              <span class="text-sm font-bold">{{ regular_count }} <span class="text-xs text-stone-500">{{ regular_count|add:0 }}%</span></span>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded-full" style="background: #f59e0b;"></div>
+                <span class="text-sm font-semibold">New</span>
+              </div>
+              <span class="text-sm font-bold">{{ new_count }} <span class="text-xs text-stone-500">{{ new_count|add:0 }}%</span></span>
+            </div>
+            <div class="flex items-center justify-between pt-2 border-t">
+              <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded-full" style="background: #ef4444;"></div>
+                <span class="text-sm font-semibold">At-Risk</span>
+              </div>
+              <span class="text-sm font-bold">{{ at_risk_count }} <span class="text-xs text-stone-500">{{ at_risk_count|add:0 }}%</span></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RECENT CUSTOMERS TABLE -->
+      <section class="bg-white rounded-xl shadow-sm p-6 mb-8">
+        <h3 class="coffee-grey-heading font-bold text-lg mb-4">Recent Customers</h3>
+        <p class="text-xs text-stone-500 mb-4">Latest interactions</p>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-stone-200">
+                <th class="text-left py-3 px-4 text-xs font-semibold text-stone-500 uppercase">Customer</th>
+                <th class="text-right py-3 px-4 text-xs font-semibold text-stone-500 uppercase">Visits</th>
+                <th class="text-right py-3 px-4 text-xs font-semibold text-stone-500 uppercase">Last seen</th>
+                <th class="text-right py-3 px-4 text-xs font-semibold text-stone-500 uppercase">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for c in recent_customers %}
+                <tr class="border-b border-stone-100 hover:bg-stone-50">
+                  <td class="py-3 px-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-full bg-gradient-to-br from-amber-200 to-amber-400 flex items-center justify-center font-bold text-xs coffee-grey-heading">
+                        {{ c.name|first|upper }}
+                      </div>
+                      <div>
+                        <p class="font-semibold coffee-grey-heading">{{ c.name }}</p>
+                        <p class="text-xs text-stone-500">{{ c.phone_number }}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="text-right py-3 px-4">
+                    <span class="font-bold">{{ c.visit_count }}</span>
+                  </td>
+                  <td class="text-right py-3 px-4 text-stone-500">
+                    {% if c.visit_count >= 5 %}
+                      <span class="text-xs">Today</span>
+                    {% elif c.visit_count >= 2 %}
+                      <span class="text-xs">2 days ago</span>
+                    {% else %}
+                      <span class="text-xs">5 days ago</span>
+                    {% endif %}
+                  </td>
+                  <td class="text-right py-3 px-4">
+                    {% if c.visit_count >= 5 %}
+                      <span class="text-xs px-2 py-1 bg-emerald-50 text-emerald-700 rounded font-semibold">Loyal</span>
+                    {% elif c.visit_count >= 2 %}
+                      <span class="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded font-semibold">Regular</span>
+                    {% else %}
+                      <span class="text-xs px-2 py-1 bg-amber-50 text-amber-700 rounded font-semibold">New</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% empty %}
+                <tr>
+                  <td class="py-4 px-4 text-center text-stone-500 text-sm" colspan="4">No customers yet</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- QUICK ACTIONS -->
+      <section class="bg-white rounded-xl shadow-sm p-6 mb-8">
+        <h3 class="coffee-grey-heading font-bold text-lg mb-4">Quick Actions</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <a href="{% url 'vendors:customers' %}" class="flex items-center gap-3 p-4 border border-stone-200 rounded-lg hover:bg-stone-50 transition">
+            <span class="text-2xl">➕</span>
+            <div>
+              <p class="font-semibold text-sm coffee-grey-heading">Log New Customer</p>
+              <p class="text-xs text-stone-500">Add a buyer to your base</p>
+            </div>
+          </a>
+          <a href="{% url 'vendors:sales' %}" class="flex items-center gap-3 p-4 border border-stone-200 rounded-lg hover:bg-stone-50 transition">
+            <span class="text-2xl">💸</span>
+            <div>
+              <p class="font-semibold text-sm coffee-grey-heading">Record Sale</p>
+              <p class="text-xs text-stone-500">Log a transaction</p>
+            </div>
+          </a>
+          <a href="{% url 'vendors:loyalty' %}" class="flex items-center gap-3 p-4 border border-stone-200 rounded-lg hover:bg-stone-50 transition">
+            <span class="text-2xl">🎁</span>
+            <div>
+              <p class="font-semibold text-sm coffee-grey-heading">Manage Loyalty</p>
+              <p class="text-xs text-stone-500">View rewards</p>
+            </div>
+          </a>
+          {% if at_risk_count > 0 %}
+            <a href="{% url 'vendors:customers' %}" class="flex items-center gap-3 p-4 border-2 border-red-300 bg-red-50 rounded-lg hover:bg-red-100 transition">
+              <span class="text-2xl">⚠️</span>
+              <div>
+                <p class="font-semibold text-sm text-red-700">Win Back At-Risk</p>
+                <p class="text-xs text-red-600">({{ at_risk_count }})</p>
+              </div>
+            </a>
+          {% endif %}
+        </div>
+      </section>
+
+      <!-- Recent activity -->
+      <section class="mb-8">
+        <h3 class="coffee-grey-heading font-bold text-lg mb-4">Recent Activity</h3>
+        <div class="space-y-2">
+          {% for visit in recent_visits %}
+            <div class="bg-white rounded-lg shadow-sm p-4 flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-200 to-amber-400 flex-shrink-0 flex items-center justify-center text-sm font-semibold coffee-grey-heading">
+                {{ visit.name|first|upper }}
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="font-semibold text-sm coffee-grey-heading">{{ visit.name }}</p>
+                <p class="text-xs text-stone-500">{{ visit.service }}</p>
+              </div>
+              <div class="text-right flex-shrink-0">
+                <p class="text-xs text-stone-500">{{ visit.time_ago }}</p>
+                <p class="font-semibold text-sm coffee-grey-heading">KES {{ visit.amount }}</p>
+              </div>
+            </div>
+          {% empty %}
+            <div class="bg-white rounded-lg shadow-sm p-4 text-center text-stone-500 text-sm">
+              No activity yet today
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+    </main>
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 z-20">
+      <div class="max-w-4xl mx-auto flex items-center justify-around">
+        <a href="{% url 'vendors:dashboard' %}" class="flex-1 flex flex-col items-center justify-center py-4 text-center hover:bg-stone-50 transition border-t-4 border-stone-800 coffee-grey-heading font-semibold text-xs">
+          <span class="text-2xl mb-1">🏠</span>
+          <span>Home</span>
+        </a>
+        <a href="{% url 'vendors:customers' %}" class="flex-1 flex flex-col items-center justify-center py-4 text-center hover:bg-stone-50 transition border-t-4 border-transparent text-stone-500 font-semibold text-xs">
+          <span class="text-2xl mb-1">👥</span>
+          <span>Customers</span>
+        </a>
+        <a href="{% url 'vendors:loyalty' %}" class="flex-1 flex flex-col items-center justify-center py-4 text-center hover:bg-stone-50 transition border-t-4 border-transparent text-stone-500 font-semibold text-xs">
+          <span class="text-2xl mb-1">🎁</span>
+          <span>Promos</span>
+        </a>
+        <form method="post" action="{% url 'vendors:logout' %}" class="flex-1">
+          <button type="submit" class="w-full flex flex-col items-center justify-center py-4 hover:bg-stone-50 transition border-t-4 border-transparent text-stone-500 font-semibold text-xs">
+            <span class="text-2xl mb-1">🚪</span>
+            <span>Logout</span>
+          </button>
+        </form>
+      </div>
+    </nav>
+
+    <!-- CHART.JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      const labels = JSON.parse('{{ week_days_json|escapejs }}');
+      const data = JSON.parse('{{ week_totals_json|escapejs }}');
+      const ctx = document.getElementById('weekChart');
+      if (ctx) {
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Revenue (KES)',
+              data: data,
+              backgroundColor: 'rgba(56, 189, 248, 0.8)',
+              borderColor: 'rgba(56, 189, 248, 1)',
+              borderRadius: 6,
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              y: { beginAtZero: true, grid: { drawBorder: false } },
+              x: { grid: { display: false } }
+            }
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
+
+    <!-- FIXED BOTTOM NAVIGATION -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 z-20">
+      <div class="max-w-lg mx-auto grid grid-cols-4 gap-0">
+        <!-- Home (Active) -->
+        <a href="{% url 'vendors:dashboard' %}" class="flex flex-col items-center justify-center py-4 text-stone-800 border-t-2 border-stone-800">
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+          </svg>
+          <span class="text-xs font-semibold mt-1">Home</span>
+        </a>
+        <!-- Customers -->
+        <a href="{% url 'vendors:customers' %}" class="flex flex-col items-center justify-center py-4 text-stone-400 hover:text-stone-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 12H9m4 5h4m-8 0H8M3 14v4a1 1 0 001 1h16a1 1 0 001-1v-4"/>
+          </svg>
+          <span class="text-xs font-semibold mt-1">Customers</span>
+        </a>
+        <!-- Promos -->
+        <a href="{% url 'vendors:loyalty' %}" class="flex flex-col items-center justify-center py-4 text-stone-400 hover:text-stone-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span class="text-xs font-semibold mt-1">Promos</span>
+        </a>
+        <!-- Settings -->
+        <a href="{% url 'vendors:logout' %}" class="flex flex-col items-center justify-center py-4 text-stone-400 hover:text-stone-600" onclick="if(!confirm('Logout?')) return false;">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+          </svg>
+          <span class="text-xs font-semibold mt-1">Logout</span>
+        </a>
+      </div>
+    </nav>
+
+    <script>
+      // Client-side logic for phone recognition and reward badge
+      const phoneInput = document.getElementById('phone_input');
+      const nameInput = document.getElementById('name_input');
+      const checkIcon = document.getElementById('check-icon');
+      const rewardBadge = document.getElementById('reward-badge');
+      
+      // Customer data from Django
+      const customers = {{ customers_json|default:'[]'|safe }};
+
+      phoneInput.addEventListener('input', function() {
+        const v = phoneInput.value.replace(/\D/g, '');
+        const found = customers.find(c => c.phone_number && c.phone_number.includes(v));
+        
+        if (found) {
+          nameInput.value = found.name;
+          nameInput.classList.add('text-stone-700');
+          checkIcon.classList.remove('hidden');
+          
+          // Show reward badge if close to reward (visit 4 of 5)
+          if (found.visit_count >= 4) {
+            rewardBadge.textContent = `Visit ${found.visit_count + 1} of 5! Reward close 🎁`;
+            rewardBadge.classList.remove('hidden');
+          } else {
+            rewardBadge.classList.add('hidden');
+          }
+        } else {
+          nameInput.value = '';
+          nameInput.classList.remove('text-stone-700');
+          checkIcon.classList.add('hidden');
+          rewardBadge.classList.add('hidden');
+        }
+      });
+    </script>
+  </body>
+</html>

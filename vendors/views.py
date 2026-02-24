@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.contrib import messages
 from django.db.models import Sum, Count
 from django.utils import timezone
 from datetime import timedelta
+from django.urls import reverse_lazy
 
 from .forms import RegisterForm, VendorProfileForm
 from customers.models import Customer, Purchase
@@ -110,3 +112,14 @@ def profile_view(request):
             messages.success(request, "Profile updated.")
             return redirect('/dashboard/')
     return render(request, 'vendors/profile.html', {'form': form})
+
+
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'vendors/password_reset.html'
+    email_template_name = 'vendors/password_reset_email.html'
+    success_url = reverse_lazy('password_reset_done')
+
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = 'vendors/password_reset_confirm.html'
+    success_url = reverse_lazy('password_reset_complete')

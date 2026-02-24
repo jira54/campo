@@ -15,7 +15,7 @@
                     <p class="text-gray-400">Manage and track your customer base</p>
                 </div>
                 {% if not at_limit %}
-                    <a href="{% url 'customers:add' %}" class="bg-gold text-deep font-bold px-6 py-3 rounded hover:bg-yellow-400 transition">
+                    <a href="{% url 'customers:customer_add' %}" class="bg-gold text-deep font-bold px-6 py-3 rounded hover:bg-yellow-400 transition">
                         ➕ Add Customer
                     </a>
                 {% else %}
@@ -91,8 +91,8 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-center space-x-2">
-                                        <a href="{% url 'customers:detail' customer.id %}" class="text-teal hover:text-cyan-300">View</a>
-                                        <a href="{% url 'customers:delete' customer.id %}" class="text-red-400 hover:text-red-300">Delete</a>
+                                        <a href="{% url 'customers:customer_detail' customer.id %}" class="text-teal hover:text-cyan-300">View</a>
+                                        <a href="{% url 'customers:customer_delete' customer.id %}" class="text-red-400 hover:text-red-300">Delete</a>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -105,7 +105,7 @@
                     {% if query %}
                         <a href="?segment={{ segment }}" class="text-gold hover:text-yellow-300">Clear search</a>
                     {% else %}
-                        <a href="{% url 'customers:add' %}" class="text-gold hover:text-yellow-300">Add your first customer →</a>
+                        <a href="{% url 'customers:customer_add' %}" class="text-gold hover:text-yellow-300">Add your first customer →</a>
                     {% endif %}
                 </div>
             {% endif %}

@@ -9,8 +9,8 @@
         <div class="flex items-center justify-between max-w-7xl mx-auto">
             <h1 class="text-2xl font-bold text-gold">CampoPawa</h1>
             <div class="space-x-4">
-                <a href="{% url 'vendors:login' %}" class="text-gray-300 hover:text-gold">Login</a>
-                <a href="{% url 'vendors:register' %}" class="bg-gold text-deep font-bold px-6 py-2 rounded hover:bg-yellow-400">Sign Up</a>
+                <a href="{% url 'login' %}" class="text-gray-300 hover:text-gold">Login</a>
+                <a href="{% url 'register' %}" class="bg-gold text-deep font-bold px-6 py-2 rounded hover:bg-yellow-400">Sign Up</a>
             </div>
         </div>
     </nav>
@@ -60,7 +60,7 @@
                 </div>
 
                 <!-- CTA Button -->
-                <a href="{% url 'vendors:register' %}" class="inline-block bg-gold text-deep font-bold px-8 py-4 rounded hover:bg-yellow-400 transition text-lg">
+                <a href="{% url 'register' %}" class="inline-block bg-gold text-deep font-bold px-8 py-4 rounded hover:bg-yellow-400 transition text-lg">
                     Start Your Free Trial
                 </a>
                 <p class="text-gray-400 text-sm mt-4">No credit card needed. Free plan includes 20 customers.</p>
@@ -116,7 +116,7 @@
     <div class="max-w-4xl mx-auto px-8 py-20 text-center">
         <h3 class="text-3xl font-bold text-white mb-4">Ready to Grow Your Business?</h3>
         <p class="text-xl text-gray-400 mb-8">Join hundreds of campus vendors using CampoPawa to boost sales.</p>
-        <a href="{% url 'vendors:register' %}" class="inline-block bg-gold text-deep font-bold px-8 py-4 rounded hover:bg-yellow-400 transition text-lg">
+        <a href="{% url 'register' %}" class="inline-block bg-gold text-deep font-bold px-8 py-4 rounded hover:bg-yellow-400 transition text-lg">
             Sign Up Now
         </a>
     </div>

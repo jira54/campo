@@ -1,5 +1,4 @@
 <div class="w-64 bg-navy border-r border-gold border-opacity-20 h-screen p-4 flex flex-col">
-    <!-- Logo/Vendor Info -->
     <div class="mb-8 pb-4 border-b border-gold border-opacity-20">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-gold text-deep font-bold flex items-center justify-center">
@@ -12,14 +11,13 @@
         </div>
     </div>
 
-    <!-- Navigation -->
     <nav class="flex-1 space-y-1">
         <a href="{% url 'vendors:dashboard' %}" class="flex items-center gap-3 px-4 py-2 rounded {% if page == 'overview' %}bg-gold text-deep{% else %}text-gray-300 hover:bg-navy{% endif %}">
             <span class="text-lg">📊</span>
             <span>Overview</span>
         </a>
-        
-        <a href="{% url 'customers:list' %}" class="flex items-center gap-3 px-4 py-2 rounded {% if page == 'customers' %}bg-gold text-deep{% else %}text-gray-300 hover:bg-navy{% endif %}">
+
+        <a href="{% url 'customers:customer_list' %}" class="flex items-center gap-3 px-4 py-2 rounded {% if page == 'customers' %}bg-gold text-deep{% else %}text-gray-300 hover:bg-navy{% endif %}">
             <span class="text-lg">👥</span>
             <span>Customers</span>
             {% if user.customers.count > 0 %}
@@ -27,34 +25,37 @@
             {% endif %}
         </a>
 
-        <a href="{% url 'promotions:list' %}" class="flex items-center gap-3 px-4 py-2 rounded {% if page == 'promotions' %}bg-gold text-deep{% else %}text-gray-300 hover:bg-navy{% endif %}">
+        <a href="{% url 'promotions:promotion_list' %}" class="flex items-center gap-3 px-4 py-2 rounded {% if page == 'promotions' %}bg-gold text-deep{% else %}text-gray-300 hover:bg-navy{% endif %}">
             <span class="text-lg">📢</span>
             <span>Promotions</span>
-            {% if not user.is_premium %}<span class="text-xs bg-gold text-deep px-2 rounded">PRO</span>{% endif %}
+            {% if not user.is_premium %}
+                <span class="text-xs bg-gold text-deep px-2 rounded">PRO</span>
+            {% endif %}
         </a>
 
-        <a href="{% url 'analytics:dashboard' %}" class="flex items-center gap-3 px-4 py-2 rounded {% if page == 'analytics' %}bg-gold text-deep{% else %}text-gray-300 hover:bg-navy{% endif %}">
+        <a href="{% url 'analytics:analytics' %}" class="flex items-center gap-3 px-4 py-2 rounded {% if page == 'analytics' %}bg-gold text-deep{% else %}text-gray-300 hover:bg-navy{% endif %}">
             <span class="text-lg">📈</span>
             <span>Analytics</span>
         </a>
     </nav>
 
-    <!-- Premium Badge -->
     {% if user.is_premium %}
         <div class="mb-4 p-3 bg-gold bg-opacity-20 border border-gold rounded-lg">
             <p class="text-gold text-xs font-semibold">✨ Premium Active</p>
-            <p class="text-gray-300 text-xs">{% if user.subscription.expires_at %}Expires: {{ user.subscription.expires_at|date:"M d" }}{% endif %}</p>
+            <p class="text-gray-300 text-xs">
+                {% if user.subscription.expires_at %}Expires: {{ user.subscription.expires_at|date:"M d" }}{% endif %}
+            </p>
         </div>
     {% else %}
         <div class="mb-4 p-3 bg-teal bg-opacity-20 border border-teal rounded-lg">
             <p class="text-teal text-xs font-semibold">🎯 Limited Plan</p>
             <p class="text-gray-300 text-xs">{{ user.customers.count }}/20 customers</p>
+            <a href="{% url 'billing:upgrade' %}" class="text-gold text-xs font-semibold mt-1 inline-block hover:underline">Upgrade →</a>
         </div>
     {% endif %}
 
-    <!-- Footer Links -->
     <div class="border-t border-gold border-opacity-20 pt-4 space-y-2">
-        <a href="{% url 'vendors:profile' %}" class="block px-4 py-2 text-gray-300 hover:text-gold text-sm">⚙️ Settings</a>
-        <a href="{% url 'vendors:logout' %}" class="block px-4 py-2 text-gray-300 hover:text-red-400 text-sm">🚪 Logout</a>
+        <a href="{% url 'vendors:profile' %}" class="block px-4 py-2 text-gray-300 hover:text-gold text-sm">⚙️ Account Settings</a>
+        <a href="{% url 'logout' %}" class="block px-4 py-2 text-gray-300 hover:text-red-400 text-sm">🚪 Logout</a>
     </div>
 </div>

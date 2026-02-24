@@ -5,11 +5,21 @@
 {% block content %}
 <div class="min-h-screen bg-deep p-8">
     <div class="max-w-6xl mx-auto">
+
         <!-- Header -->
-        <div class="text-center mb-12">
-            <a href="{% url 'vendors:dashboard' %}" class="text-gray-400 hover:text-gold text-sm mb-4 inline-block">← Back to Dashboard</a>
-            <h1 class="text-4xl font-bold text-white mb-2">Choose Your Plan</h1>
-            <p class="text-gray-400 text-lg">Less than two mandazis a day! ☕</p>
+        <div class="mb-12">
+            <div class="flex justify-start mb-6">
+                <a href="{% url 'vendors:dashboard' %}" 
+                   class="inline-flex items-center gap-2 px-4 py-2 bg-navy border border-gold border-opacity-40 
+                          text-gold text-sm font-semibold rounded-lg 
+                          hover:bg-gold hover:text-deep transition-all duration-200">
+                    ← Back to Dashboard
+                </a>
+            </div>
+            <div class="text-center">
+                <h1 class="text-4xl font-bold text-white mb-2">Choose Your Plan</h1>
+                <p class="text-gray-400 text-lg">Less than two mandazis a day! ☕</p>
+            </div>
         </div>
 
         <!-- Current Plan Info -->
@@ -24,6 +34,7 @@
 
         <!-- Plans Grid -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+
             <!-- Free Plan -->
             <div class="bg-navy border {% if current_plan == 'free' %}border-gold border-opacity-100{% else %}border-gold border-opacity-20{% endif %} rounded-lg overflow-hidden hover:border-opacity-40 transition">
                 <div class="bg-navy bg-opacity-50 border-b border-gold border-opacity-20 p-6">
@@ -31,7 +42,6 @@
                     <p class="text-gold text-4xl font-bold">KES 0</p>
                     <p class="text-gray-400 text-sm mt-2">Forever free</p>
                 </div>
-
                 <div class="p-6 space-y-3">
                     <div class="flex items-center gap-3 text-gray-300">
                         <span class="text-green-400">✓</span> 20 customers limit
@@ -51,20 +61,20 @@
                     <div class="flex items-center gap-3 text-gray-400">
                         <span class="text-gray-600">✗</span> Analytics
                     </div>
-
                     {% if current_plan == 'free' %}
                         <button disabled class="w-full mt-6 bg-gray-600 text-gray-300 font-bold px-6 py-3 rounded cursor-not-allowed">
                             Currently Active
                         </button>
                     {% else %}
-                        <a href="{% url 'vendors:dashboard' %}" class="block text-center mt-6 bg-navy border border-gold text-gold font-bold px-6 py-3 rounded hover:bg-navy hover:border-yellow-300 transition">
+                        <a href="{% url 'vendors:dashboard' %}" 
+                           class="block text-center mt-6 bg-navy border border-gold text-gold font-bold px-6 py-3 rounded hover:bg-gold hover:text-deep transition-all duration-200">
                             Switch Back
                         </a>
                     {% endif %}
                 </div>
             </div>
 
-            <!-- Premium Plan (RECOMMENDED) -->
+            <!-- Premium Plan -->
             <div class="relative">
                 <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gold text-deep px-4 py-1 rounded-full font-bold text-sm">
                     ⭐ MOST POPULAR
@@ -75,7 +85,6 @@
                         <p class="text-4xl font-bold">KES 400</p>
                         <p class="text-sm mt-2">per month</p>
                     </div>
-
                     <div class="p-6 space-y-3">
                         <div class="flex items-center gap-3 text-white">
                             <span class="text-teal">✓</span> <strong>Unlimited customers</strong>
@@ -92,13 +101,13 @@
                         <div class="flex items-center gap-3 text-gray-300">
                             <span class="text-teal">✓</span> Email support
                         </div>
-
                         {% if current_plan == 'premium' %}
                             <button disabled class="w-full mt-6 bg-gold text-deep font-bold px-6 py-3 rounded cursor-not-allowed">
                                 Currently Active
                             </button>
                         {% else %}
-                            <button type="button" onclick="showPaymentModal('premium')" class="w-full mt-6 bg-gold text-deep font-bold px-6 py-3 rounded hover:bg-yellow-400 transition">
+                            <button type="button" onclick="showPaymentModal('premium')" 
+                                    class="w-full mt-6 bg-gold text-deep font-bold px-6 py-3 rounded hover:bg-yellow-400 transition">
                                 Choose Premium
                             </button>
                         {% endif %}
@@ -113,7 +122,6 @@
                     <p class="text-gold text-4xl font-bold">KES 1,600</p>
                     <p class="text-gray-400 text-sm mt-2">per month (up to 5 vendors)</p>
                 </div>
-
                 <div class="p-6 space-y-3">
                     <div class="flex items-center gap-3 text-white">
                         <span class="text-sea">✓</span> <strong>Up to 5 vendors</strong>
@@ -130,13 +138,13 @@
                     <div class="flex items-center gap-3 text-gray-300">
                         <span class="text-sea">✓</span> Priority support
                     </div>
-
                     {% if current_plan == 'bundle' %}
                         <button disabled class="w-full mt-6 bg-gray-600 text-gray-300 font-bold px-6 py-3 rounded cursor-not-allowed">
                             Currently Active
                         </button>
                     {% else %}
-                        <button type="button" onclick="showPaymentModal('bundle')" class="w-full mt-6 bg-gold text-deep font-bold px-6 py-3 rounded hover:bg-yellow-400 transition">
+                        <button type="button" onclick="showPaymentModal('bundle')" 
+                                class="w-full mt-6 bg-gold text-deep font-bold px-6 py-3 rounded hover:bg-yellow-400 transition">
                             Choose Bundle
                         </button>
                     {% endif %}
@@ -204,12 +212,9 @@
     <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-8 max-w-md w-full mx-4">
         <h2 class="text-white font-bold text-2xl mb-2">Complete Payment</h2>
         <p class="text-gray-400 mb-6">Enter your M-Pesa registered phone number</p>
-
-        <form id="payment-form" method="post" action="{% url 'billing:initiate_payment' %}">
+        <form id="payment-form" method="post" action="{% url 'billing:pay' %}">
             {% csrf_token %}
             <input type="hidden" name="plan" id="selected_plan" value="">
-
-            <!-- Phone Input -->
             <div class="mb-6">
                 <label class="block text-gold font-bold mb-2">Phone Number</label>
                 <input 
@@ -222,8 +227,6 @@
                 >
                 <p class="text-gray-400 text-xs mt-2">Must be M-Pesa enabled account</p>
             </div>
-
-            <!-- Plan Summary -->
             <div class="bg-deep border border-gold border-opacity-30 rounded-lg p-4 mb-6">
                 <div class="flex justify-between items-center mb-2">
                     <span class="text-gray-300">Plan</span>
@@ -234,17 +237,16 @@
                     <span class="text-gold font-bold text-lg" id="plan-amount">KES 400</span>
                 </div>
             </div>
-
-            <!-- Buttons -->
             <div class="flex gap-4">
-                <button type="submit" class="flex-1 bg-gold text-deep font-bold px-6 py-3 rounded hover:bg-yellow-400 transition">
+                <button type="submit" 
+                        class="flex-1 bg-gold text-deep font-bold px-6 py-3 rounded hover:bg-yellow-400 transition">
                     Pay with M-Pesa
                 </button>
-                <button type="button" onclick="closePaymentModal()" class="flex-1 bg-navy border border-gold text-gold font-bold px-6 py-3 rounded hover:bg-navy hover:border-yellow-300 transition">
+                <button type="button" onclick="closePaymentModal()" 
+                        class="flex-1 bg-navy border border-gold text-gold font-bold px-6 py-3 rounded hover:bg-gold hover:text-deep transition-all duration-200">
                     Cancel
                 </button>
             </div>
-
             <p class="text-gray-400 text-xs text-center mt-4">You'll receive an M-Pesa prompt on your phone</p>
         </form>
     </div>
@@ -269,20 +271,16 @@
 
     document.getElementById('payment-form').addEventListener('submit', async function(e) {
         e.preventDefault();
-        
         const formData = new FormData(this);
-        const response = await fetch('{% url "billing:initiate_payment" %}', {
+        const response = await fetch('{% url "billing:pay" %}', {
             method: 'POST',
             body: formData,
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         });
-
         const data = await response.json();
         if (data.ok) {
             alert('✓ ' + data.message);
             closePaymentModal();
-            // Optional: Redirect after successful payment
-            // setTimeout(() => window.location.href = '{% url "billing:success" %}', 3000);
         } else {
             alert('❌ Error: ' + data.error);
         }

@@ -23,19 +23,25 @@
     {% block extra_head %}{% endblock %}
 </head>
 <body class="bg-deep text-gray-100">
+
     {% if messages %}
-        <div class="fixed top-0 left-0 right-0 z-50">
+        <div class="fixed top-4 right-4 z-50 space-y-2 max-w-sm">
             {% for message in messages %}
-                <div class="m-4 p-4 rounded-lg {% if message.tags %}{{ message.tags }}{% else %}bg-teal text-white{% endif %}">
-                    {{ message }}
-                    <button onclick="this.parentElement.parentElement.removeChild(this.parentElement)" class="float-right ml-2">×</button>
+                <div class="px-4 py-3 rounded-xl text-sm font-medium shadow-xl border flex items-start gap-3
+                    {% if 'error' in message.tags %}bg-red-950 border-red-500/40 text-red-200
+                    {% elif 'warning' in message.tags %}bg-yellow-950 border-yellow-500/40 text-yellow-200
+                    {% else %}bg-navy border-gold/40 text-white{% endif %}">
+                    <span class="flex-1">{{ message }}</span>
+                    <button onclick="this.parentElement.remove()" 
+                            class="opacity-50 hover:opacity-100 text-lg leading-none mt-0.5">×</button>
                 </div>
             {% endfor %}
         </div>
     {% endif %}
 
     {% block content %}{% endblock %}
-
     {% block extra_scripts %}{% endblock %}
+    {% block extra_js %}{% endblock %}
+
 </body>
 </html>

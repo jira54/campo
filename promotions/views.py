@@ -9,19 +9,17 @@ from .forms import PromotionForm
 
 
 @login_required
-@premium_required   # FREE USERS CANNOT ACCESS PROMOTIONS
+@premium_required
 def promotion_list(request):
     promos = Promotion.objects.filter(vendor=request.user)
     return render(request, 'promotions/list.html', {'promos': promos})
 
 
 @login_required
-@premium_required   # FREE USERS CANNOT COMPOSE
+@premium_required
 def promotion_compose(request):
-    vendor = request.user
-    form   = PromotionForm()
-
-    # Count recipients for preview
+    vendor    = request.user
+    form      = PromotionForm()
     customers = Customer.objects.filter(vendor=vendor)
     segment_counts = {
         'all':     customers.count(),
@@ -34,25 +32,19 @@ def promotion_compose(request):
     if request.method == 'POST':
         form = PromotionForm(request.POST)
         if form.is_valid():
-            promo        = form.save(commit=False)
-            promo.vendor = vendor
-
-            # Determine recipients
-            seg       = promo.segment
-            seg_count = segment_counts.get(seg, 0)
+            promo            = form.save(commit=False)
+            promo.vendor     = vendor
+            seg_count        = segment_counts.get(promo.segment, 0)
             promo.recipients = seg_count
-
             if promo.scheduled_at:
                 promo.status = 'scheduled'
             else:
-                # Send immediately (stub — wire up AT SMS here)
                 promo.status  = 'sent'
                 promo.sent_at = timezone.now()
                 _send_sms(promo, vendor)
-
             promo.save()
             messages.success(request, f"Promotion '{promo.title}' sent to {seg_count} customers!")
-            return redirect('promotion_list')
+            return redirect('promotions:promotion_list')   # ← fixed
 
     return render(request, 'promotions/compose.html', {
         'form':           form,
@@ -61,28 +53,22 @@ def promotion_compose(request):
 
 
 def _send_sms(promo, vendor):
-    """
-    Stub for Africa's Talking SMS.
-    Wire up real API here when AT keys are configured.
-    """
     import os
     if not os.getenv('AT_API_KEY'):
-        return   # Skip in development
-
+        return
     try:
         import africastalking
         africastalking.initialize(
             username=os.getenv('AT_USERNAME', 'sandbox'),
             api_key=os.getenv('AT_API_KEY', '')
         )
-        sms = africastalking.SMS
-        # Fetch phone numbers for segment
+        sms       = africastalking.SMS
         customers = Customer.objects.filter(vendor=vendor)
         if promo.segment != 'all':
             customers = [c for c in customers if c.status == promo.segment]
-        phones = [c.phone for c in customers if c.phone]
+        phones  = [c.phone for c in customers if c.phone]
+        message = promo.message.replace('{name}', 'there')
         if phones:
-            message = promo.message.replace('{name}', 'there')
             sms.send(message, phones, sender_id=os.getenv('AT_SENDER_ID', 'CampoPawa'))
     except Exception as e:
         print(f"SMS send failed: {e}")

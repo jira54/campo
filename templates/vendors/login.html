@@ -6,7 +6,7 @@
 <div class="min-h-screen bg-deep flex items-center justify-center p-8">
     <div class="w-full max-w-md">
         <!-- Back to Landing -->
-        <a href="{% url 'vendors:landing' %}" class="text-gray-400 hover:text-gold text-sm mb-8 inline-block">← Back to CampoPawa</a>
+        <a href="{% url 'landing' %}" class="text-gray-400 hover:text-gold text-sm mb-8 inline-block">← Back to CampoPawa</a>
 
         <!-- Form Card -->
         <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-8">
@@ -39,13 +39,17 @@
                 <!-- Password -->
                 <div>
                     <label class="block text-gold font-bold mb-2">Password</label>
-                    <input 
-                        type="password" 
-                        name="password" 
-                        placeholder="••••••••"
-                        required
-                        class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold"
-                    >
+                    <div class="relative">
+                        <input 
+                            id="id_password" 
+                            type="password" 
+                            name="password" 
+                            placeholder="••••••••"
+                            required
+                            class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold"
+                        >
+                        <button type="button" id="togglePassword" class="absolute right-2 top-2 text-gray-300" aria-label="Toggle password visibility">Show</button>
+                    </div>
                 </div>
 
                 <!-- Submit -->
@@ -60,9 +64,26 @@
             <!-- Sign Up Link -->
             <p class="text-gray-400 text-center">
                 Don't have an account? 
-                <a href="{% url 'vendors:register' %}" class="text-gold hover:text-yellow-300 font-bold">Sign up here</a>
+                <a href="{% url 'register' %}" class="text-gold hover:text-yellow-300 font-bold">Sign up here</a>
             </p>
         </div>
     </div>
 </div>
+        <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            const pwd = document.getElementById('id_password');
+            const btn = document.getElementById('togglePassword');
+            if (pwd && btn) {
+                btn.addEventListener('click', function(){
+                    if (pwd.type === 'password') {
+                        pwd.type = 'text';
+                        btn.textContent = 'Hide';
+                    } else {
+                        pwd.type = 'password';
+                        btn.textContent = 'Show';
+                    }
+                });
+            }
+        });
+        </script>
 {% endblock %}

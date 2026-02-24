@@ -42,10 +42,11 @@ def analytics_dashboard(request):
         context['avg_spend'] = round(avg_spend)
 
         # Top customers
+        # Use spent_total to avoid conflict with @property total_spent
         context['top_customers'] = customers.annotate(
-            total_spent=Sum('purchases__amount'),
+            spent_total=Sum('purchases__amount'),
             visit_count=Count('purchases')
-        ).order_by('-total_spent')[:5]
+        ).order_by('-spent_total')[:5]
 
         # Weekly revenue (last 7 days, grouped by day)
         context['weekly_data'] = _weekly_revenue(vendor, now)

@@ -11,6 +11,7 @@ BUSINESS_TYPES = [
     ('rental',   'Rental Services'),
     ('cakes',    'Cakes & Confectionery'),
     ('general',  'General / Other'),
+    ('other',    'Other (specify)')
 ]
 
 
@@ -43,6 +44,7 @@ class Vendor(AbstractBaseUser, PermissionsMixin):
     phone_number      = models.CharField(max_length=50)
     phone             = models.CharField(max_length=20, default='')
     university        = models.CharField(max_length=120, default='')
+    business_type_custom = models.CharField(max_length=120, blank=True, default='')
     email             = models.EmailField(unique=True)
     is_active         = models.BooleanField(default=True)
     is_staff          = models.BooleanField(default=False)

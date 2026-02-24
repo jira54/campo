@@ -191,3 +191,17 @@ LOGOUT_REDIRECT_URL = '/login/'
 
 # CSRF trusted origins for Render
 CSRF_TRUSTED_ORIGINS = ['https://campo-09gm.onrender.com']
+
+# Auto-migrate on startup (Render free tier workaround)
+import sys
+if 'runserver' not in sys.argv and 'migrate' not in sys.argv:
+    try:
+        from django.db import connection
+        from django.db.migrations.executor import MigrationExecutor
+        executor = MigrationExecutor(connection)
+        plan = executor.migration_plan(executor.loader.graph.leaf_nodes())
+        if plan:
+            from django.core import management
+            management.call_command('migrate', '--noinput', verbosity=0)
+    except Exception:
+        pass

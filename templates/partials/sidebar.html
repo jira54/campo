@@ -1,5 +1,26 @@
-<div class="w-full md:w-64 bg-navy border-b md:border-r md:border-b-0 border-gold border-opacity-20 h-auto md:h-screen p-4 flex flex-col md:sticky top-0 z-10">
-    <div class="mb-8 pb-4 border-b border-gold border-opacity-20">
+<!-- Mobile Top Bar -->
+<div class="md:hidden fixed top-0 left-0 right-0 z-50 bg-navy border-b border-gold border-opacity-20 px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-gold text-deep font-bold flex items-center justify-center text-sm">
+            {{ user.business_name|first|upper }}
+        </div>
+        <span class="text-white font-semibold text-sm">CampoPawa</span>
+    </div>
+    <button id="menu-toggle" class="text-gold text-2xl leading-none">☰</button>
+</div>
+
+<!-- Spacer for fixed top bar on mobile -->
+<div class="md:hidden h-14"></div>
+
+<!-- Sidebar -->
+<div id="sidebar" class="w-64 bg-navy border-r border-gold border-opacity-20 h-screen p-4 flex flex-col
+    fixed top-0 left-0 z-50 -translate-x-full md:translate-x-0 md:static md:shrink-0 transition-transform duration-300 overflow-y-auto">
+
+    <!-- Close button (mobile) -->
+    <button id="menu-close" class="md:hidden self-end text-gray-400 hover:text-white text-xl mb-2">✕</button>
+
+    <!-- Business info -->
+    <div class="mb-6 pb-4 border-b border-gold border-opacity-20">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-gold text-deep font-bold flex items-center justify-center">
                 {{ user.business_name|first|upper }}
@@ -11,6 +32,7 @@
         </div>
     </div>
 
+    <!-- Nav -->
     <nav class="flex-1 space-y-1">
         <a href="{% url 'vendors:dashboard' %}" class="flex items-center gap-3 px-4 py-2 rounded {% if page == 'overview' %}bg-gold text-deep{% else %}text-gray-300 hover:bg-navy{% endif %}">
             <span class="text-lg">📊</span>
@@ -55,7 +77,36 @@
     {% endif %}
 
     <div class="border-t border-gold border-opacity-20 pt-4 space-y-2">
-        <a href="{% url 'vendors:profile' %}" class="block px-4 py-2 text-gray-300 hover:text-gold text-sm">⚙️ Account Settings</a>
+        <a href="{% url 'vendors:profile' %}" class="block px-4 py-2 text-gray-300 hover:text-gold text-sm">⚙️ Settings</a>
         <a href="{% url 'logout' %}" class="block px-4 py-2 text-gray-300 hover:text-red-400 text-sm">🚪 Logout</a>
     </div>
 </div>
+
+<!-- Overlay -->
+<div id="sidebar-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"></div>
+
+<!-- Sidebar JS -->
+<script>
+    const toggle = document.getElementById('menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    const closeBtn = document.getElementById('menu-close');
+
+    function openMenu() {
+        sidebar.classList.remove('-translate-x-full');
+        overlay.classList.remove('hidden');
+    }
+    function closeMenu() {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+    }
+
+    toggle.addEventListener('click', openMenu);
+    closeBtn.addEventListener('click', closeMenu);
+    overlay.addEventListener('click', closeMenu);
+
+    // Close on nav click (mobile)
+    sidebar.querySelectorAll('nav a').forEach(link => {
+        link.addEventListener('click', closeMenu);
+    });
+</script>

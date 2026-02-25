@@ -5,6 +5,15 @@ from django.http import HttpResponse
 import traceback
 from vendors import views as vendor_views
 
+def test_db(request):
+    try:
+        from vendors.models import Vendor
+        count = Vendor.objects.count()
+        return HttpResponse(f"DB works. Vendor count: {count}")
+    except Exception as e:
+        import traceback
+        return HttpResponse(f"<pre>ERROR:\n{traceback.format_exc()}</pre>")
+
 def debug_register(request):
     try:
         from vendors.views import register_view
@@ -13,6 +22,7 @@ def debug_register(request):
         return HttpResponse(f"<pre>{traceback.format_exc()}</pre>", status=200)
 
 urlpatterns = [
+    path('test/', test_db),
     path('admin/',      admin.site.urls),
     path('',            vendor_views.root_redirect, name='root_redirect'),
     path('landing/',    vendor_views.landing,      name='landing'),

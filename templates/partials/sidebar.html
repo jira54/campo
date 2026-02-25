@@ -1,23 +1,12 @@
 <!-- Mobile Top Bar -->
-<div class="md:hidden fixed top-0 left-0 right-0 z-50 bg-navy border-b border-gold border-opacity-20 px-4 py-3 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-full bg-gold text-deep font-bold flex items-center justify-center text-sm">
-            {{ user.business_name|first|upper }}
-        </div>
-        <span class="text-white font-semibold text-sm">CampoPawa</span>
-    </div>
-    <button id="menu-toggle" class="text-gold text-2xl leading-none">☰</button>
-</div>
-
-<!-- Sidebar -->
-<div id="sidebar" class="w-64 bg-navy border-r border-gold border-opacity-20 h-screen p-4 flex flex-col
-    fixed top-0 left-0 z-50 -translate-x-full md:translate-x-0 md:shrink-0 md:sticky md:top-0 transition-transform duration-300">
-
-    <!-- Close button (mobile) -->
-    <button id="menu-close" class="md:hidden self-end text-gray-400 hover:text-gray-200 hover:scale-110 text-xl mb-2 transition-all duration-200">✕</button>
-
-    <!-- Business info -->
-    <div class="mb-6 pb-4 border-b border-gold border-opacity-20 flex-shrink-0">
+<div class="md:hidden fixed top-0 left-0 right-0 z-50 bg-navy border-b border-gold border-opacity-20 px-4 py-3">
+    <div class="flex items-center justify-between">
+        <!-- Left: Three Vertical Lines -->
+        <div class="flex items-center gap-2">
+            <div class="w-1 h-8 bg-gradient-to-r from-gold via-amber-400 to-gold rounded-full"></div>
+            <div class="w-1 h-8 bg-gradient-to-r from-gold via-amber-400 to-gold rounded-full"></div>
+            <div class="w-1 h-8 bg-gradient-to-r from-gold via-amber-400 to-gold rounded-full"></div>
+            <button id="menu-toggle" class="text-gold text-2xl leading-none">☰</button>
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-gold text-deep font-bold flex items-center justify-center">
                 {{ user.business_name|first|upper }}

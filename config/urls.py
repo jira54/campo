@@ -28,7 +28,11 @@ def debug_register(request):
     except Exception as e:
         return HttpResponse(f"<pre>{traceback.format_exc()}</pre>", status=200)
 
+def version_check(request):
+    return HttpResponse(f"Deployed version: aaad9dd - Login redirect should be 'vendors:dashboard'")
+
 urlpatterns = [
+    path('version/', version_check),
     path('test/', test_db),
     path('admin/',      admin.site.urls),
     path('',            vendor_views.root_redirect, name='root_redirect'),

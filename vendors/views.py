@@ -19,6 +19,10 @@ def landing(request):
         return redirect('vendors:dashboard')
     return render(request, 'vendors/landing.html')
 
+def root_redirect(request):
+    if request.user.is_authenticated:
+        return redirect('vendors:dashboard')
+    return redirect('vendors:landing')
 
 def login_view(request):
     if request.user.is_authenticated:

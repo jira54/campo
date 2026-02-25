@@ -5,7 +5,8 @@ from vendors import views as vendor_views
 
 urlpatterns = [
     path('admin/',      admin.site.urls),
-    path('',            vendor_views.landing,      name='landing'),
+    path('',            vendor_views.root_redirect, name='root_redirect'),
+    path('landing/',    vendor_views.landing,      name='landing'),
     path('login/',      vendor_views.login_view,    name='login'),
     path('logout/',     vendor_views.logout_view,   name='logout'),
     path('register/',   vendor_views.register_view, name='register'),

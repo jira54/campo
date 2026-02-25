@@ -14,6 +14,13 @@ def test_db(request):
         import traceback
         return HttpResponse(f"<pre>ERROR:\n{traceback.format_exc()}</pre>")
 
+def debug_login(request):
+    try:
+        from vendors.views import login_view
+        return login_view(request)
+    except Exception as e:
+        return HttpResponse(f"<pre>{traceback.format_exc()}</pre>", status=200)
+
 def debug_register(request):
     try:
         from vendors.views import register_view
@@ -26,6 +33,7 @@ urlpatterns = [
     path('admin/',      admin.site.urls),
     path('',            vendor_views.root_redirect, name='root_redirect'),
     path('landing/',    vendor_views.landing,      name='landing'),
+    path('debug-login/', debug_login),
     path('login/',      vendor_views.login_view,    name='login'),
     path('logout/',     vendor_views.logout_view,   name='logout'),
     path('register/',   vendor_views.register_view, name='register'),

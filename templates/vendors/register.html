@@ -5,7 +5,7 @@
 {% block content %}
 <div class="min-h-screen bg-deep flex items-start justify-center pt-12 px-4 sm:pt-16 sm:px-6 lg:pt-20 lg:px-8">
     <div class="w-full max-w-md">
-        <a href="{% url 'landing' %}" class="text-gray-400 hover:text-gold hover:scale-105 text-sm mb-6 inline-block transition-all duration-200">← Back to CampoPawa</a>
+        <a href="{% url 'landing' %}" class="text-gray-400 hover:text-gold hover:scale-105 text-sm mb-6 inline-block transition-all duration-200">&larr; Back to CampoPawa</a>
 
         <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-6 sm:p-8">
             <h1 class="text-2xl sm:text-3xl font-bold text-white mb-2">Create Account</h1>
@@ -43,7 +43,7 @@
                         type="text" 
                         name="business_name" 
                         value="{{ form.business_name.value|default_if_none:'' }}"
-                        placeholder="e.g., John's Kitchen"
+                        placeholder="e.g., John&apos;s Kitchen"
                         required
                         class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold"
                     >

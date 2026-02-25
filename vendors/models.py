@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from datetime import timedelta
 
 
 BUSINESS_TYPES = [
@@ -111,3 +112,35 @@ class LoyaltyReward(models.Model):
 
     def __str__(self):
         return f"{self.reward_name} ({self.required_visits})"
+
+
+class LoginStreak(models.Model):
+    vendor = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='streak'
+    )
+    current_streak = models.IntegerField(default=0)
+    longest_streak = models.IntegerField(default=0)
+    last_login_date = models.DateField(null=True, blank=True)
+
+    def update(self):
+        today = timezone.now().date()
+        yesterday = today - timedelta(days=1)
+
+        if self.last_login_date == today:
+            return  # Already updated today
+
+        if self.last_login_date == yesterday:
+            self.current_streak += 1
+        else:
+            self.current_streak = 1  # Reset streak
+
+        if self.current_streak > self.longest_streak:
+            self.longest_streak = self.current_streak
+
+        self.last_login_date = today
+        self.save()
+
+    def __str__(self):
+        return f"{self.vendor.business_name} — {self.current_streak} day streak"

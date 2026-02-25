@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block title %}New Credit — CampoPawa{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen">
+    {% include 'partials/sidebar.html' %}
+
+    <div class="flex-1 overflow-auto bg-deep">
+        <div class="p-4 md:p-8">
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold text-white mb-1">💳 New Credit Record</h1>
+                <p class="text-gray-400 text-sm">Record money given on credit</p>
+            </div>
+
+            <div class="max-w-lg">
+                <form method="post" class="bg-navy border border-gold border-opacity-20 rounded-2xl p-6 space-y-4">
+                    {% csrf_token %}
+
+                    <!-- Link to existing customer (optional) -->
+                    <div>
+                        <label class="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2 block">
+                            Link to Existing Customer (optional)
+                        </label>
+                        <select name="customer_id" id="customer-select"
+                            class="w-full bg-deep border border-gold border-opacity-20 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold">
+                            <option value="">— Walk-in / New debtor —</option>
+                            {% for customer in customers %}
+                                <option value="{{ customer.pk }}" data-name="{{ customer.name }}" data-phone="{{ customer.phone }}">
+                                    {{ customer.name }} — {{ customer.phone }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Debtor Name -->
+                    <div>
+                        <label class="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2 block">Full Name *</label>
+                        <input type="text" name="debtor_name" id="debtor-name" required
+                            placeholder="e.g. Brian Otieno"
+                            class="w-full bg-deep border border-gold border-opacity-20 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition"/>
+                    </div>
+
+                    <!-- Phone -->
+                    <div>
+                        <label class="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2 block">Phone Number</label>
+                        <input type="tel" name="debtor_phone" id="debtor-phone"
+                            placeholder="e.g. 0712345678"
+                            class="w-full bg-deep border border-gold border-opacity-20 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition"/>
+                    </div>
+
+                    <!-- Amount -->
+                    <div>
+                        <label class="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2 block">Amount Given (KES) *</label>
+                        <input type="number" name="amount_given" required min="1" step="0.01"
+                            placeholder="e.g. 350"
+                            class="w-full bg-deep border border-gold border-opacity-20 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition"/>
+                    </div>
+
+                    <!-- Description -->
+                    <div>
+                        <label class="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2 block">What For?</label>
+                        <input type="text" name="description"
+                            placeholder="e.g. Lunch x3, Printing services, Snacks"
+                            class="w-full bg-deep border border-gold border-opacity-20 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition"/>
+                    </div>
+
+                    <!-- Due Date -->
+                    <div>
+                        <label class="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2 block">Due Date (optional)</label>
+                        <input type="date" name="due_date"
+                            class="w-full bg-deep border border-gold border-opacity-20 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition"/>
+                    </div>
+
+                    <!-- Credit Limit -->
+                    <div>
+                        <label class="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2 block">Credit Limit (KES, optional)</label>
+                        <input type="number" name="credit_limit" min="1" step="0.01"
+                            placeholder="Maximum credit allowed for this person"
+                            class="w-full bg-deep border border-gold border-opacity-20 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-gold transition"/>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-gold text-deep font-bold py-4 rounded-xl text-base hover:bg-yellow-400 transition">
+                        💳 Record Credit
+                    </button>
+
+                    <a href="{% url 'credit:credit_list' %}"
+                       class="block text-center text-gray-500 hover:text-gray-300 text-sm transition">
+                        ← Back to Credits
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+// Auto-fill name and phone when existing customer selected
+document.getElementById('customer-select').addEventListener('change', function() {
+    const selected = this.options[this.selectedIndex];
+    const name = selected.getAttribute('data-name') || '';
+    const phone = selected.getAttribute('data-phone') || '';
+    document.getElementById('debtor-name').value = name;
+    document.getElementById('debtor-phone').value = phone;
+});
+</script>
+{% endblock %}
+{% endblock %}

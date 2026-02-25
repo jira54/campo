@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% block title %}{{ record.debtor_name }} — Credit{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen">
+    {% include 'partials/sidebar.html' %}
+
+    <div class="flex-1 overflow-auto bg-deep">
+        <div class="p-4 md:p-8">
+
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+                <div class="flex items-center gap-3">
+                    <a href="{% url 'credit:credit_list' %}" class="text-gray-400 hover:text-white transition">←</a>
+                    <div>
+                        <h1 class="text-xl font-bold text-white">{{ record.debtor_name }}</h1>
+                        <p class="text-gray-400 text-sm">{{ record.debtor_phone }}</p>
+                    </div>
+                </div>
+                <span class="text-xs px-3 py-1 rounded-full font-semibold
+                    {% if record.status == 'paid' %}bg-teal bg-opacity-20 text-teal
+                    {% elif record.status == 'overdue' %}bg-red-900 text-red-300
+                    {% elif record.status == 'partial' %}bg-blue-900 text-blue-300
+                    {% else %}bg-amber-900 text-amber-300{% endif %}">
+                    {{ record.get_status_display }}
+                </span>
+            </div>
+
+            <!-- Credit Summary -->
+            <div class="grid grid-cols-3 gap-3 mb-6">
+                <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-4 text-center">
+                    <p class="text-gray-400 text-xs mb-1">Given</p>
+                    <p class="text-gold font-bold text-lg">KES {{ record.amount_given|floatformat:0 }}</p>
+                </div>
+                <div class="bg-navy border border-teal border-opacity-20 rounded-lg p-4 text-center">
+                    <p class="text-gray-400 text-xs mb-1">Paid</p>
+                    <p class="text-teal font-bold text-lg">KES {{ record.amount_paid|floatformat:0 }}</p>
+                </div>
+                <div class="bg-navy border border-red-500 border-opacity-20 rounded-lg p-4 text-center">
+                    <p class="text-gray-400 text-xs mb-1">Remaining</p>
+                    <p class="text-red-400 font-bold text-lg">KES {{ record.amount_remaining|floatformat:0 }}</p>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            {% if record.amount_given > 0 %}
+            <div class="mb-6">
+                <div class="flex justify-between text-xs text-gray-400 mb-1">
+                    <span>Payment Progress</span>
+                    <span>{{ record.amount_paid|floatformat:0 }} / {{ record.amount_given|floatformat:0 }}</span>
+                </div>
+                <div class="w-full bg-navy rounded-full h-3 border border-gold border-opacity-10">
+                    <div class="bg-teal h-3 rounded-full transition-all"
+                         style="width: {{ payment_percent }}%">
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if record.description %}
+            <div class="mb-4 bg-navy border border-gold border-opacity-10 rounded-lg p-3">
+                <p class="text-gray-400 text-xs mb-1">For:</p>
+                <p class="text-white text-sm">{{ record.description }}</p>
+            </div>
+            {% endif %}
+
+            {% if record.due_date %}
+            <div class="mb-6">
+                <p class="text-gray-400 text-xs">
+                    📅 Due: {{ record.due_date|date:"d M Y" }}
+                    {% if record.is_overdue %}<span class="text-red-400 ml-1 font-semibold">— OVERDUE</span>{% endif %}
+                </p>
+            </div>
+            {% endif %}
+
+            <!-- Actions -->
+            {% if record.status != 'paid' %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+
+                <!-- Record Payment -->
+                <div class="bg-navy border border-teal border-opacity-30 rounded-xl p-4">
+                    <h3 class="text-white font-semibold text-sm mb-3">✅ Record Payment</h3>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="number" name="amount" required min="1" step="0.01"
+                            placeholder="Amount paid (KES)"
+                            class="w-full bg-deep border border-teal border-opacity-20 text-white rounded-lg px-3 py-2 text-sm mb-2 focus:outline-none focus:border-teal"/>
+                        <input type="text" name="note"
+                            placeholder="Note (optional)"
+                            class="w-full bg-deep border border-gold border-opacity-20 text-white rounded-lg px-3 py-2 text-sm mb-3 focus:outline-none focus:border-gold"/>
+                        <button type="submit"
+                            class="w-full bg-teal text-deep font-bold py-2 rounded-lg text-sm hover:bg-cyan-400 transition">
+                            Record Payment
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Send Reminder -->
+                <div class="bg-navy border border-gold border-opacity-20 rounded-xl p-4">
+                    <h3 class="text-white font-semibold text-sm mb-3">📲 Send SMS Reminder</h3>
+                    <p class="text-gray-400 text-xs mb-3">
+                        Send a polite payment reminder to {{ record.debtor_name }} at {{ record.debtor_phone|default:"no phone saved" }}.
+                    </p>
+                    {% if record.debtor_phone %}
+                    <form method="post" action="{% url 'credit:credit_send_reminder' record.pk %}">
+                        {% csrf_token %}
+                        <button type="submit"
+                            class="w-full bg-gold text-deep font-bold py-2 rounded-lg text-sm hover:bg-yellow-400 transition">
+                            Send Reminder
+                        </button>
+                    </form>
+                    {% else %}
+                        <p class="text-gray-500 text-xs">No phone number saved for this debtor.</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Payment History -->
+            {% if payments %}
+            <div class="mb-6">
+                <h3 class="text-white font-semibold text-sm mb-3">🧾 Payment History</h3>
+                <div class="space-y-2">
+                    {% for payment in payments %}
+                    <div class="flex items-center justify-between bg-navy border border-teal border-opacity-10 rounded-lg px-4 py-3">
+                        <div>
+                            <p class="text-teal font-bold text-sm">KES {{ payment.amount|floatformat:0 }}</p>
+                            {% if payment.note %}<p class="text-gray-400 text-xs">{{ payment.note }}</p>{% endif %}
+                        </div>
+                        <p class="text-gray-500 text-xs">{{ payment.paid_at|date:"d M Y, H:i" }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Danger Zone -->
+            <div class="border-t border-red-900 pt-4 mt-4">
+                <form method="post" action="{% url 'credit:credit_delete' record.pk %}"
+                      onsubmit="return confirm('Delete this credit record? This cannot be undone.')">
+                    {% csrf_token %}
+                    <button type="submit"
+                        class="text-red-400 hover:text-red-300 text-sm font-semibold transition">
+                        🗑️ Delete Credit Record
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

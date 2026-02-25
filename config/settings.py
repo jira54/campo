@@ -23,6 +23,8 @@ INSTALLED_APPS = [
     'promotions',
     'analytics',
     'billing',
+    'notes',
+    'credit',
 ]
 
 MIDDLEWARE = [

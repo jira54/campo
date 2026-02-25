@@ -8,10 +8,59 @@
 
     <div class="flex-1 overflow-auto bg-deep">
         <div class="p-4 md:p-8">
-            <!-- Header -->
+            <!-- Daily Greeting Header -->
             <div class="mb-6 md:mb-8">
-                <h1 class="text-2xl md:text-3xl font-bold text-white mb-1">Overview</h1>
-                <p class="text-gray-400 text-sm md:text-base">Track your business metrics at a glance</p>
+                <div class="flex items-start justify-between flex-wrap gap-3">
+                    <div>
+                        <p class="text-gray-400 text-sm mb-1">{{ greeting_emoji }} {{ greeting }}, {{ day_emoji }} Happy {{ day_name }}!</p>
+                        <h1 class="text-2xl md:text-3xl font-bold text-white mb-1">{{ first_name }} 👋</h1>
+                        <p class="text-gold text-sm font-semibold">{{ day_message }}</p>
+                    </div>
+                    <div class="bg-navy border border-gold border-opacity-20 rounded-lg px-4 py-3 max-w-xs">
+                        <p class="text-gray-400 text-xs mb-1">💬 Quote of the day</p>
+                        <p class="text-white text-xs italic">"{{ quote }}"</p>
+                    </div>
+                </div>
+
+                <!-- Daily Tip Banner -->
+                <div class="mt-4 bg-teal bg-opacity-10 border border-teal border-opacity-30 rounded-lg px-4 py-3">
+                    <p class="text-teal text-sm">{{ daily_tip }}</p>
+                </div>
+            </div>
+
+            <!-- Login Streak -->
+            {% if current_streak > 0 %}
+            <div class="mb-6 bg-gold bg-opacity-10 border border-gold border-opacity-30 rounded-lg px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">🔥</span>
+                    <div>
+                        <p class="text-gold font-bold text-sm">{{ current_streak }} day login streak!</p>
+                        <p class="text-gray-400 text-xs">Keep it up — consistency builds success</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Today's Snapshot -->
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6 bg-navy border border-gold border-opacity-10 rounded-lg p-4">
+                <div>
+                    <p class="text-gray-400 text-xs">Today's Revenue</p>
+                    <p class="text-white font-bold text-lg">KES {{ today_revenue|floatformat:0 }}</p>
+                    <p class="text-xs {% if revenue_up %}text-teal{% else %}text-red-400{% endif %}">
+                        {% if revenue_up %}▲{% else %}▼{% endif %}
+                        KES {{ revenue_change|floatformat:0 }} vs yesterday
+                    </p>
+                </div>
+                <div>
+                    <p class="text-gray-400 text-xs">Customers Today</p>
+                    <p class="text-white font-bold text-lg">{{ today_customers }}</p>
+                    <p class="text-gray-500 text-xs">served today</p>
+                </div>
+                <div class="hidden md:block">
+                    <p class="text-gray-400 text-xs">Date</p>
+                    <p class="text-white font-bold text-lg">{{ today_date|date:"d M" }}</p>
+                    <p class="text-gray-500 text-xs">{{ today_date|date:"l" }}</p>
+                </div>
             </div>
 
             <!-- Free Plan Warning -->
@@ -21,6 +70,23 @@
                     <p class="text-gray-300 text-xs md:text-sm mt-1">You've reached {{ customer_limit }} customers. Upgrade to Premium to add more.</p>
                     <a href="{% url 'billing:upgrade' %}" class="text-gold hover:text-yellow-300 text-sm mt-2 inline-block font-bold">Upgrade Now →</a>
                 </div>
+            {% endif %}
+
+            <!-- Overdue Credits Alert -->
+            {% if overdue_credits %}
+            <div class="mb-6 bg-orange-950 border border-orange-500 border-opacity-40 rounded-lg p-4 flex items-center justify-between flex-wrap gap-3">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">💳</span>
+                    <div>
+                        <p class="text-orange-300 font-bold text-sm">{{ overdue_credits }} overdue credit{{ overdue_credits|pluralize }}!</p>
+                        <p class="text-gray-400 text-xs">Total owed: KES {{ total_credit_owed|floatformat:0 }}</p>
+                    </div>
+                </div>
+                <a href="{% url 'credit:credit_list' %}?status=overdue"
+                   class="bg-orange-600 hover:bg-orange-500 text-white font-bold px-4 py-2 rounded text-sm transition">
+                    View Credits →
+                </a>
+            </div>
             {% endif %}
 
             <!-- KPI Cards -->
@@ -78,7 +144,7 @@
                         </div>
                     {% else %}
                         <p class="text-gray-400 text-center py-6 text-sm">No customers yet. Add your first customer to get started!</p>
-                        <a href="{% url 'customers:customer_add' %}" class="block text-center bg-gold text-deep font-bold px-4 py-2 rounded hover:bg-yellow-400 transition">
+                        <a href="{% url 'customers:customer_add' %}" class="block text-center bg-gradient-to-r from-gold to-amber-400 text-deep font-bold px-6 py-3 rounded-lg hover:from-amber-400 hover:to-yellow-300 hover:scale-105 hover:shadow-lg hover:shadow-gold/30 transition-all duration-300 ease-out">
                             Add First Customer
                         </a>
                     {% endif %}
@@ -88,23 +154,23 @@
                 <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-4 md:p-6">
                     <h2 class="text-white font-bold text-base md:text-lg mb-4">Quick Actions</h2>
                     <div class="grid grid-cols-2 md:grid-cols-1 gap-2">
-                        <a href="{% url 'customers:customer_add' %}" class="block bg-gold text-deep font-bold px-4 py-2 rounded text-center hover:bg-yellow-400 transition text-sm md:text-base">
+                        <a href="{% url 'customers:customer_add' %}" class="block bg-gradient-to-r from-gold to-amber-400 text-deep font-bold px-4 py-2 rounded-lg text-center hover:from-amber-400 hover:to-yellow-300 hover:scale-105 hover:shadow-lg hover:shadow-gold/30 transition-all duration-300 ease-out text-sm md:text-base">
                             ➕ Add Customer
                         </a>
                         {% if user.is_premium %}
-                            <a href="{% url 'promotions:promotion_compose' %}" class="block bg-teal text-deep font-bold px-4 py-2 rounded text-center hover:bg-cyan-400 transition text-sm md:text-base">
+                            <a href="{% url 'promotions:promotion_compose' %}" class="block bg-gradient-to-r from-teal to-cyan-400 text-deep font-bold px-4 py-2 rounded-lg text-center hover:from-cyan-400 hover:to-cyan-300 hover:scale-105 hover:shadow-lg hover:shadow-teal/30 transition-all duration-300 ease-out text-sm md:text-base">
                                 📢 Send Promo
                             </a>
                         {% else %}
-                            <button disabled class="block w-full bg-gray-600 text-gray-300 font-bold px-4 py-2 rounded text-center cursor-not-allowed text-sm md:text-base">
+                            <button disabled class="block w-full bg-gradient-to-r from-gray-600 to-gray-500 text-gray-300 font-bold px-4 py-2 rounded-lg text-center cursor-not-allowed text-sm md:text-base opacity-60">
                                 📢 Promo (PRO)
                             </button>
                         {% endif %}
-                        <a href="{% url 'analytics:analytics' %}" class="block bg-navy border border-sea text-sea font-bold px-4 py-2 rounded text-center hover:border-cyan-300 transition text-sm md:text-base">
+                        <a href="{% url 'analytics:analytics' %}" class="block bg-gradient-to-r from-navy to-deep border border-sea text-sea font-bold px-4 py-2 rounded-lg text-center hover:border-cyan-300 hover:text-cyan-300 hover:scale-105 hover:shadow-lg hover:shadow-sea/20 transition-all duration-300 ease-out text-sm md:text-base">
                             📈 Analytics
                         </a>
                         {% if at_risk_count %}
-                            <a href="{% url 'customers:customer_list' %}" class="block bg-red-900 text-red-200 font-bold px-4 py-2 rounded text-center hover:bg-red-800 transition text-sm md:text-base">
+                            <a href="{% url 'customers:customer_list' %}" class="block bg-gradient-to-r from-red-900 to-red-800 text-red-200 font-bold px-4 py-2 rounded-lg text-center hover:from-red-800 hover:to-red-700 hover:text-red-100 hover:scale-105 hover:shadow-lg hover:shadow-red/30 transition-all duration-300 ease-out text-sm md:text-base">
                                 ⚠️ At-Risk ({{ at_risk_count }})
                             </a>
                         {% endif %}

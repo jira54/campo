@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}{{ note.title }} - CampoPawa{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen bg-deep">
+    {% include 'partials/sidebar.html' %}
+
+    <main class="flex-1 p-6">
+        <div class="max-w-4xl mx-auto">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+                <div class="flex items-center gap-3">
+                    <a href="{% url 'notes:note_list' %}" class="text-gray-400 hover:text-white transition">←</a>
+                    <div>
+                        <h1 class="text-2xl font-bold text-white">{{ note.title }}</h1>
+                        <p class="text-gray-400 text-sm">
+                            Created: {{ note.created_at|date:"d M Y, H:i" }}
+                            {% if note.updated_at != note.created_at %}
+                                • Updated: {{ note.updated_at|date:"d M Y, H:i" }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <a href="{% url 'notes:note_edit' note.pk %}"
+                       class="bg-teal text-deep font-bold px-4 py-2 rounded-lg text-sm hover:bg-cyan-400 transition">
+                        ✏️ Edit
+                    </a>
+                    <a href="{% url 'notes:note_delete' note.pk %}"
+                       class="bg-red-900 text-red-300 font-bold px-4 py-2 rounded-lg text-sm hover:bg-red-800 transition"
+                       onclick="return confirm('Delete this note? This cannot be undone.')">
+                        🗑️ Delete
+                    </a>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="bg-navy border border-gold border-opacity-20 rounded-2xl p-6">
+                <div class="prose prose-invert max-w-none">
+                    <div class="text-gray-300 whitespace-pre-wrap">{{ note.content|linebreaks }}</div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="mt-6 flex gap-3">
+                <a href="{% url 'notes:note_list' %}"
+                   class="bg-navy border border-gray-600 text-gray-400 font-bold px-4 py-2 rounded-lg text-sm hover:text-white transition">
+                    ← Back to Notes
+                </a>
+                <a href="{% url 'notes:note_add' %}"
+                   class="bg-gold text-deep font-bold px-4 py-2 rounded-lg text-sm hover:bg-yellow-400 transition">
+                    + New Note
+                </a>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

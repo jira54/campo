@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}Notes - CampoPawa{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen bg-deep">
+    {% include 'partials/sidebar.html' %}
+
+    <main class="flex-1 p-6">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+            <div>
+                <h1 class="text-2xl font-bold text-white mb-1">📝 Notes</h1>
+                <p class="text-gray-400 text-sm">Business ideas, customer feedback, reminders</p>
+            </div>
+            <a href="{% url 'notes:note_add' %}"
+               class="bg-gold text-deep font-bold px-5 py-2 rounded-lg hover:bg-yellow-400 transition text-sm">
+                + New Note
+            </a>
+        </div>
+
+        <!-- Search -->
+        <form method="get" class="mb-6">
+            <input type="text" name="q" value="{{ search }}"
+                placeholder="Search notes..."
+                class="w-full bg-navy border border-gold border-opacity-20 text-white rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-gold"/>
+        </form>
+
+        <!-- Notes Grid -->
+        {% if notes %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for note in notes %}
+                <div class="bg-navy border border-gold border-opacity-10 hover:border-opacity-30 rounded-xl p-4 transition group">
+                    <div class="flex items-start justify-between mb-3">
+                        <h3 class="text-white font-semibold text-sm truncate flex-1">{{ note.title }}</h3>
+                        {% if note.is_recent %}
+                            <span class="text-xs bg-teal bg-opacity-20 text-teal px-2 py-1 rounded ml-2">Recent</span>
+                        {% endif %}
+                    </div>
+                    <p class="text-gray-300 text-xs mb-4 line-clamp-3">{{ note.excerpt }}</p>
+                    <div class="flex items-center justify-between">
+                        <p class="text-gray-500 text-xs">{{ note.updated_at|date:"d M Y, H:i" }}</p>
+                        <div class="flex gap-2">
+                            <a href="{% url 'notes:note_detail' note.pk %}"
+                               class="text-gold hover:text-yellow-300 text-xs transition">
+                                View
+                            </a>
+                            <a href="{% url 'notes:note_edit' note.pk %}"
+                               class="text-teal hover:text-cyan-300 text-xs transition">
+                                Edit
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center mt-20">
+                <span class="text-6xl mb-4">📝</span>
+                <p class="text-white font-bold text-lg mb-2">No notes yet</p>
+                <p class="text-gray-400 text-sm mb-4">Start capturing your business ideas and customer feedback</p>
+                <a href="{% url 'notes:note_add' %}"
+                   class="bg-gold text-deep font-bold px-6 py-2 rounded-lg hover:bg-yellow-400 transition text-sm">
+                    + Create First Note
+                </a>
+            </div>
+        {% endif %}
+    </main>
+</div>
+{% endblock %}

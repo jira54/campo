@@ -1,22 +1,17 @@
 <!-- Mobile Top Bar -->
 <div class="md:hidden fixed top-0 left-0 right-0 z-50 bg-navy border-b border-gold border-opacity-20 px-4 py-3">
     <div class="flex items-center justify-between">
-        <!-- Left: Three Vertical Lines -->
-        <div class="flex items-center gap-2">
-            <div class="w-1 h-8 bg-gradient-to-r from-gold via-amber-400 to-gold rounded-full"></div>
-            <div class="w-1 h-8 bg-gradient-to-r from-gold via-amber-400 to-gold rounded-full"></div>
-            <div class="w-1 h-8 bg-gradient-to-r from-gold via-amber-400 to-gold rounded-full"></div>
-            <button id="menu-toggle" class="text-gold text-2xl leading-none">☰</button>
-        </div>
-        
-        <!-- Right: CampoPawa Branding & Account Name -->
+        <!-- Left: Hamburger Menu -->
         <div class="flex items-center gap-3">
+            <button id="menu-toggle" class="text-gold text-2xl leading-none">☰</button>
             <div class="text-white font-semibold text-sm bg-gradient-to-r from-gold/20 via-gold/30 to-amber-600/20 px-3 py-1 rounded-lg border-l-2 border-gold/50">
                 CampoPawa
             </div>
-            <div class="w-8 h-8 rounded-full bg-gradient-to-r from-gold to-amber-400 text-deep font-bold flex items-center justify-center text-sm shadow-lg shadow-gold/30">
-                {{ user.business_name|first|upper }}
-            </div>
+        </div>
+        
+        <!-- Right: Account Circle -->
+        <div class="w-8 h-8 rounded-full bg-gradient-to-r from-gold to-amber-400 text-deep font-bold flex items-center justify-center text-sm shadow-lg shadow-gold/30">
+            {{ user.business_name|first|upper }}
         </div>
     </div>
 </div>

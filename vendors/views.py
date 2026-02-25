@@ -53,6 +53,10 @@ def register_view(request):
             from billing.models import Subscription
             Subscription.objects.create(vendor=vendor, plan='free')
 
+            # Logout current user to prevent session conflicts
+            if request.user.is_authenticated:
+                logout(request)
+                
             messages.success(request, "Account created successfully. Please sign in to continue.")
             return redirect('login')
     else:

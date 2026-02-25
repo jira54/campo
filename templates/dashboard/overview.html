@@ -189,4 +189,28 @@
         </div>
     </div>
 </div>
+
+<script>
+// Streak popup functionality
+function closeStreakPopup() {
+    const popup = document.getElementById('streak-popup');
+    if (popup) {
+        popup.style.display = 'none';
+    }
+}
+
+// Auto-close streak popup after 5 seconds
+document.addEventListener('DOMContentLoaded', function() {
+    const popup = document.getElementById('streak-popup');
+    if (popup) {
+        // Add bounce animation
+        popup.querySelector('div').style.transform = 'scale(1)';
+        
+        // Auto-close after 5 seconds
+        setTimeout(() => {
+            closeStreakPopup();
+        }, 5000);
+    }
+});
+</script>
 {% endblock %}

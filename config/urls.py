@@ -29,7 +29,7 @@ def debug_register(request):
         return HttpResponse(f"<pre>{traceback.format_exc()}</pre>", status=200)
 
 def version_check(request):
-    return HttpResponse(f"Deployed version: aaad9dd - Login redirect should be 'vendors:dashboard' - UPDATED: 2f995d7 - LATEST: 2334757")
+    return HttpResponse(f"Deployed version: aaad9dd - Login redirect should be 'vendors:dashboard' - UPDATED: 2f995d7 - LATEST: 2334757 - LOGIN FIXED: 97da590")
 
 urlpatterns = [
     path('version/', version_check),

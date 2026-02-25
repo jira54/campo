@@ -160,7 +160,6 @@ def customer_delete(request, pk):
 
 
 @login_required
-@premium_required
 def customer_export_csv(request):
     vendor = request.user
     customers = Customer.objects.filter(vendor=vendor).order_by('name')
@@ -189,7 +188,6 @@ def customer_export_csv(request):
 
 
 @login_required
-@premium_required
 def customer_export_pdf(request):
     """Simple HTML-to-PDF using xhtml2pdf (install: pip install xhtml2pdf)"""
     from xhtml2pdf import pisa

@@ -7,7 +7,7 @@ load_dotenv(BASE_DIR / '.env')
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-xmyxnwqvmbf_rj8sh1ziof0b117ruba8z!)y@_wvuyqjonb%#m')
 
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '127.0.0.1,localhost,campo-09gm.onrender.com').split(',')
 

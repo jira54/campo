@@ -22,7 +22,7 @@ def landing(request):
 def root_redirect(request):
     if hasattr(request, 'user') and request.user.is_authenticated:
         return redirect('vendors:dashboard')
-    return redirect('vendors:landing')
+    return redirect('landing')
 
 def login_view(request):
     if hasattr(request, 'user') and request.user.is_authenticated:

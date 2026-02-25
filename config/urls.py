@@ -1,7 +1,16 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth.views import PasswordResetDoneView, PasswordResetCompleteView
+from django.http import HttpResponse
+import traceback
 from vendors import views as vendor_views
+
+def debug_register(request):
+    try:
+        from vendors.views import register_view
+        return register_view(request)
+    except Exception as e:
+        return HttpResponse(f"<pre>{traceback.format_exc()}</pre>", status=200)
 
 urlpatterns = [
     path('admin/',      admin.site.urls),
@@ -10,6 +19,7 @@ urlpatterns = [
     path('login/',      vendor_views.login_view,    name='login'),
     path('logout/',     vendor_views.logout_view,   name='logout'),
     path('register/',   vendor_views.register_view, name='register'),
+    path('debug-register/', debug_register),
     path('password-reset/', vendor_views.CustomPasswordResetView.as_view(), name='password_reset'),
     path('password-reset/done/', PasswordResetDoneView.as_view(template_name='vendors/password_reset_done.html'), name='password_reset_done'),
     path('password-reset/<uidb64>/<token>/', vendor_views.CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),

@@ -20,7 +20,7 @@ def landing(request):
     return render(request, 'vendors/landing.html')
 
 def root_redirect(request):
-    if request.user.is_authenticated:
+    if hasattr(request, 'user') and request.user.is_authenticated:
         return redirect('vendors:dashboard')
     return redirect('vendors:landing')
 

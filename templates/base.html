@@ -26,9 +26,9 @@
 <body class="bg-deep text-gray-100 pt-16 md:pt-0">
 
     {% if messages %}
-        <div class="fixed top-4 right-4 z-50 space-y-2 max-w-sm">
+        <div class="fixed top-4 right-4 z-50 space-y-2 max-w-sm" id="message-container">
             {% for message in messages %}
-                <div class="px-4 py-3 rounded-xl text-sm font-medium shadow-xl border flex items-start gap-3 {% if 'error' in message.tags %}bg-red-950 border-red-500/40 text-red-200{% elif 'warning' in message.tags %}bg-yellow-950 border-yellow-500/40 text-yellow-200{% else %}bg-navy border-gold/40 text-white{% endif %}">
+                <div class="px-4 py-3 rounded-xl text-sm font-medium shadow-xl border flex items-start gap-3 {% if 'error' in message.tags %}bg-red-950 border-red-500/40 text-red-200{% elif 'warning' in message.tags %}bg-yellow-950 border-yellow-500/40 text-yellow-200{% else %}bg-navy border-gold/40 text-white{% endif %} message-item">
                     <span class="flex-1">{{ message }}</span>
                     <button onclick="this.parentElement.remove()" 
                             class="opacity-50 hover:opacity-100 text-lg leading-none mt-0.5">&times;</button>
@@ -40,6 +40,22 @@
     {% block content %}{% endblock %}
     {% block extra_scripts %}{% endblock %}
     {% block extra_js %}{% endblock %}
+
+    <script>
+        // Auto-dismiss messages after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const messageItems = document.querySelectorAll('.message-item');
+            messageItems.forEach(function(item) {
+                setTimeout(function() {
+                    item.style.transition = 'opacity 0.5s ease-out';
+                    item.style.opacity = '0';
+                    setTimeout(function() {
+                        item.remove();
+                    }, 500);
+                }, 5000);
+            });
+        });
+    </script>
 
 </body>
 </html>

@@ -74,6 +74,10 @@ def customer_add(request):
         if form.is_valid():
             customer        = form.save(commit=False)
             customer.vendor = vendor
+            # Strip premium fields for free users
+            if not vendor.is_premium:
+                customer.notes = ''
+                customer.tags  = ''
             try:
                 customer.save()
                 if purchase_form.is_valid() and request.POST.get('amount'):

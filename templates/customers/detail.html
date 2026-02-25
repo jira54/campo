@@ -43,13 +43,33 @@
                 </div>
             </div>
 
-            <!-- Notes -->
-            {% if customer.notes %}
-                <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-6 mb-8">
-                    <h3 class="text-gold font-bold mb-2">📝 Notes</h3>
-                    <p class="text-gray-300">{{ customer.notes }}</p>
-                </div>
-            {% endif %}
+            <!-- Notes & Tags Section -->
+            <div class="mt-6 mb-8">
+                <h3 class="text-gold font-bold text-sm mb-3">📝 Notes & Tags</h3>
+                {% if user.is_premium %}
+                    {% if customer.notes %}
+                        <div class="bg-navy border border-gold border-opacity-10 rounded p-4 mb-3">
+                            <p class="text-gray-300 text-sm">{{ customer.notes }}</p>
+                        </div>
+                    {% endif %}
+                    {% if customer.tag_list %}
+                        <div class="flex flex-wrap gap-2">
+                            {% for tag in customer.tag_list %}
+                                <span class="bg-teal bg-opacity-20 text-teal text-xs px-3 py-1 rounded-full">{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% if not customer.notes and not customer.tag_list %}
+                        <p class="text-gray-500 text-sm">No notes or tags yet.</p>
+                    {% endif %}
+                {% else %}
+                    <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-4 text-center">
+                        <span class="text-2xl">🔒</span>
+                        <p class="text-gray-400 text-sm mt-1">Add notes & tags with Premium</p>
+                        <a href="{% url 'billing:upgrade' %}" class="text-gold text-xs hover:underline">Upgrade →</a>
+                    </div>
+                {% endif %}
+            </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Purchases Table -->

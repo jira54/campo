@@ -14,6 +14,7 @@ class Customer(models.Model):
     name     = models.CharField(max_length=120)
     phone    = models.CharField(max_length=20)
     notes    = models.TextField(blank=True)
+    tags     = models.CharField(max_length=255, blank=True, default='')
     added_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -60,6 +61,13 @@ class Customer(models.Model):
     def initials(self):
         parts = self.name.strip().split()
         return ''.join(p[0].upper() for p in parts[:2])
+
+    @property
+    def tag_list(self):
+        """Return tags as a list."""
+        if not self.tags:
+            return []
+        return [t.strip() for t in self.tags.split(',') if t.strip()]
 
 
 class Purchase(models.Model):

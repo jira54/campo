@@ -8,54 +8,57 @@
 
     <div class="flex-1 overflow-auto bg-deep">
         <div class="p-4 md:p-8">
-            <!-- Daily Greeting Header -->
-            <div class="mb-6 md:mb-8">
-                <div class="bg-gradient-to-r from-gold/10 to-teal/10 border border-gold border-opacity-20 rounded-xl p-6">
-                    <div class="flex items-center justify-between flex-wrap gap-4">
-                        <div>
-                            <p class="text-gold font-bold text-xl mb-1">{{ greeting_emoji }} {{ greeting }}, {{ first_name }}!</p>
-                            <p class="text-white text-lg">{{ day_emoji }} Happy {{ day_name }}!</p>
-                        </div>
-                        <div class="bg-navy border border-gold border-opacity-30 rounded-lg px-4 py-3 max-w-xs">
-                            <p class="text-gold text-xs font-semibold mb-1">💡 Today's Focus</p>
-                            <p class="text-white text-sm">{{ daily_tip }}</p>
+            <!-- Daily Greeting Section -->
+            <div class="mb-8">
+                <div class="bg-gradient-to-r from-gold/5 via-teal/5 to-gold/5 rounded-2xl p-8 border-l-4 border-gold">
+                    <div class="flex items-start justify-between flex-wrap gap-6">
+                        <div class="flex-1">
+                            <p class="text-gold font-bold text-2xl mb-4">{{ greeting_emoji }} {{ greeting }}, {{ first_name }}!</p>
+                            <div class="bg-gradient-to-r from-gray-800/50 to-gray-700/50 rounded-xl p-4 border-l-2 border-teal">
+                                <p class="text-gray-200 text-sm leading-relaxed">{{ daily_tip }}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Login Streak -->
+            <!-- Login Streak Celebration Popup -->
             {% if current_streak > 0 %}
-            <div class="mb-6 bg-gold bg-opacity-10 border border-gold border-opacity-30 rounded-lg px-4 py-3 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <span class="text-2xl">🔥</span>
-                    <div>
-                        <p class="text-gold font-bold text-sm">{{ current_streak }} day login streak!</p>
-                        <p class="text-gray-400 text-xs">Keep it up — consistency builds success</p>
-                    </div>
+            <div id="streak-popup" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+                <div class="bg-gradient-to-br from-gold to-amber-400 text-deep rounded-2xl p-8 max-w-sm w-full text-center transform scale-0 animate-bounce-in">
+                    <div class="text-6xl mb-4">🔥</div>
+                    <h2 class="text-2xl font-bold mb-2">{{ current_streak }} Day Streak!</h2>
+                    <p class="text-sm mb-6">You're on fire! Keep up the consistency!</p>
+                    <button onclick="closeStreakPopup()" class="bg-deep text-gold font-bold px-6 py-2 rounded-lg hover:bg-navy transition">
+                        Let's Go! 💪
+                    </button>
                 </div>
             </div>
             {% endif %}
 
             <!-- Today's Snapshot -->
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6 bg-navy border border-gold border-opacity-10 rounded-lg p-4">
-                <div>
-                    <p class="text-gray-400 text-xs">Today's Revenue</p>
-                    <p class="text-white font-bold text-lg">KES {{ today_revenue|floatformat:0 }}</p>
-                    <p class="text-xs {% if revenue_up %}text-teal{% else %}text-red-400{% endif %}">
-                        {% if revenue_up %}▲{% else %}▼{% endif %}
-                        KES {{ revenue_change|floatformat:0 }} vs yesterday
-                    </p>
-                </div>
-                <div>
-                    <p class="text-gray-400 text-xs">Customers Today</p>
-                    <p class="text-white font-bold text-lg">{{ today_customers }}</p>
-                    <p class="text-gray-500 text-xs">served today</p>
-                </div>
-                <div class="hidden md:block">
-                    <p class="text-gray-400 text-xs">Date</p>
-                    <p class="text-white font-bold text-lg">{{ today_date|date:"d M" }}</p>
-                    <p class="text-gray-500 text-xs">{{ today_date|date:"l" }}</p>
+            <div class="mb-8">
+                <div class="bg-gradient-to-r from-gray-800/30 to-gray-700/30 rounded-2xl p-6 border-l-4 border-teal">
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+                        <div class="border-l-2 border-gold/30 pl-4">
+                            <p class="text-gray-400 text-xs mb-1">Today's Revenue</p>
+                            <p class="text-white font-bold text-xl">KES {{ today_revenue|floatformat:0 }}</p>
+                            <p class="text-xs {% if revenue_up %}text-teal{% else %}text-red-400{% endif %}">
+                                {% if revenue_up %}▲{% else %}▼{% endif %}
+                                KES {{ revenue_change|floatformat:0 }} vs yesterday
+                            </p>
+                        </div>
+                        <div class="border-l-2 border-sea/30 pl-4">
+                            <p class="text-gray-400 text-xs mb-1">Customers Today</p>
+                            <p class="text-white font-bold text-xl">{{ today_customers }}</p>
+                            <p class="text-gray-500 text-xs">served today</p>
+                        </div>
+                        <div class="hidden md:block border-l-2 border-amber-400/30 pl-4">
+                            <p class="text-gray-400 text-xs mb-1">Date</p>
+                            <p class="text-white font-bold text-xl">{{ today_date|date:"d M" }}</p>
+                            <p class="text-gray-500 text-xs">{{ today_date|date:"l" }}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 

@@ -85,6 +85,7 @@
                                     <th class="px-6 py-3 text-left text-gold font-bold text-sm">Service</th>
                                     <th class="px-6 py-3 text-right text-gold font-bold text-sm">Amount</th>
                                     <th class="px-6 py-3 text-left text-gold font-bold text-sm">Date</th>
+                                    {% if user.is_premium %}<th class="px-6 py-3 text-left text-gold font-bold text-sm">Actions</th>{% endif %}
                                 </tr>
                             </thead>
                             <tbody>
@@ -93,6 +94,14 @@
                                         <td class="px-6 py-4 text-white">{{ purchase.service|default:"—" }}</td>
                                         <td class="px-6 py-4 text-right text-teal font-bold">KES {{ purchase.amount|floatformat:0 }}</td>
                                         <td class="px-6 py-4 text-gray-400 text-sm">{{ purchase.purchased_at|date:"M d, H:i" }}</td>
+                                        {% if user.is_premium %}
+                                        <td class="px-6 py-4">
+                                            <form method="post" action="{% url 'customers:send_receipt' purchase.id %}" class="inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="text-teal hover:text-cyan-300 text-xs" title="Send SMS receipt">🧾 Receipt</button>
+                                            </form>
+                                        </td>
+                                        {% endif %}
                                     </tr>
                                 {% endfor %}
                             </tbody>

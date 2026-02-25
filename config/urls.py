@@ -28,12 +28,27 @@ def debug_register(request):
     except Exception as e:
         return HttpResponse(f"<pre>{traceback.format_exc()}</pre>", status=200)
 
+def debug_test(request):
+    try:
+        from django.conf import settings
+        from django.db import connection
+        tables = connection.introspection.table_names()
+        return HttpResponse(
+            f"DEBUG={settings.DEBUG}\n"
+            f"TABLES={sorted(tables)}\n"
+            f"HOSTS={settings.ALLOWED_HOSTS}",
+            content_type='text/plain'
+        )
+    except Exception as e:
+        return HttpResponse(f"ERROR: {e}", content_type='text/plain')
+
 def version_check(request):
     return HttpResponse(f"Deployed version: aaad9dd - Login redirect should be 'vendors:dashboard' - UPDATED: 2f995d7 - LATEST: 2334757 - LOGIN FIXED: 97da590")
 
 urlpatterns = [
     path('version/', version_check),
     path('test/', test_db),
+    path('debug-test/', debug_test),
     path('admin/',      admin.site.urls),
     path('',            vendor_views.root_redirect, name='root_redirect'),
     path('landing/',    vendor_views.landing,      name='landing'),

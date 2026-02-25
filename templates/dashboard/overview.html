@@ -10,11 +10,11 @@
         <div class="p-4 md:p-8">
             <!-- Daily Greeting Section -->
             <div class="mb-8">
-                <div class="bg-gradient-to-r from-gold/5 via-teal/5 to-gold/5 rounded-2xl p-8 border-l-4 border-gold">
+                <div class="p-8">
                     <div class="flex items-start justify-between flex-wrap gap-6">
                         <div class="flex-1">
                             <p class="text-gold font-bold text-2xl mb-4">{{ greeting_emoji }} {{ greeting }}, {{ first_name }}!</p>
-                            <div class="bg-gradient-to-r from-gray-800/50 to-gray-700/50 rounded-xl p-4 border-l-2 border-teal">
+                            <div class="bg-gradient-to-r from-gray-800/30 to-gray-700/30 p-4 rounded-l-xl">
                                 <p class="text-gray-200 text-sm leading-relaxed">{{ daily_tip }}</p>
                             </div>
                         </div>
@@ -38,9 +38,9 @@
 
             <!-- Today's Snapshot -->
             <div class="mb-8">
-                <div class="bg-gradient-to-r from-gray-800/30 to-gray-700/30 rounded-2xl p-6 border-l-4 border-teal">
+                <div class="p-6">
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
-                        <div class="border-l-2 border-gold/30 pl-4">
+                        <div class="bg-gradient-to-r from-gray-800/20 to-gray-700/20 p-4 rounded-l-xl">
                             <p class="text-gray-400 text-xs mb-1">Today's Revenue</p>
                             <p class="text-white font-bold text-xl">KES {{ today_revenue|floatformat:0 }}</p>
                             <p class="text-xs {% if revenue_up %}text-teal{% else %}text-red-400{% endif %}">
@@ -48,12 +48,12 @@
                                 KES {{ revenue_change|floatformat:0 }} vs yesterday
                             </p>
                         </div>
-                        <div class="border-l-2 border-sea/30 pl-4">
+                        <div class="bg-gradient-to-r from-gray-800/20 to-gray-700/20 p-4 rounded-l-xl">
                             <p class="text-gray-400 text-xs mb-1">Customers Today</p>
                             <p class="text-white font-bold text-xl">{{ today_customers }}</p>
                             <p class="text-gray-500 text-xs">served today</p>
                         </div>
-                        <div class="hidden md:block border-l-2 border-amber-400/30 pl-4">
+                        <div class="hidden md:block bg-gradient-to-r from-gray-800/20 to-gray-700/20 p-4 rounded-l-xl">
                             <p class="text-gray-400 text-xs mb-1">Date</p>
                             <p class="text-white font-bold text-xl">{{ today_date|date:"d M" }}</p>
                             <p class="text-gray-500 text-xs">{{ today_date|date:"l" }}</p>
@@ -152,24 +152,24 @@
                 <!-- Quick Actions -->
                 <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-4 md:p-6">
                     <h2 class="text-white font-bold text-base md:text-lg mb-4">Quick Actions</h2>
-                    <div class="grid grid-cols-2 md:grid-cols-1 gap-2">
-                        <a href="{% url 'customers:customer_add' %}" class="block bg-gradient-to-r from-gold to-amber-400 text-deep font-bold px-4 py-2 rounded-lg text-center hover:from-amber-400 hover:to-yellow-300 hover:scale-105 hover:shadow-lg hover:shadow-gold/30 transition-all duration-300 ease-out text-sm md:text-base">
+                    <div class="grid grid-cols-1 gap-3">
+                        <a href="{% url 'customers:customer_add' %}" class="block bg-gradient-to-r from-gold to-amber-400 text-deep font-bold px-4 py-3 rounded-lg text-center hover:from-amber-400 hover:to-yellow-300 hover:scale-105 hover:shadow-lg hover:shadow-gold/30 transition-all duration-300 ease-out text-sm md:text-base">
                             ➕ Add Customer
                         </a>
                         {% if user.is_premium %}
-                            <a href="{% url 'promotions:promotion_compose' %}" class="block bg-gradient-to-r from-teal to-cyan-400 text-deep font-bold px-4 py-2 rounded-lg text-center hover:from-cyan-400 hover:to-cyan-300 hover:scale-105 hover:shadow-lg hover:shadow-teal/30 transition-all duration-300 ease-out text-sm md:text-base">
+                            <a href="{% url 'promotions:promotion_compose' %}" class="block bg-gradient-to-r from-teal to-cyan-400 text-deep font-bold px-4 py-3 rounded-lg text-center hover:from-cyan-400 hover:to-cyan-300 hover:scale-105 hover:shadow-lg hover:shadow-teal/30 transition-all duration-300 ease-out text-sm md:text-base">
                                 📢 Send Promo
                             </a>
                         {% else %}
-                            <button disabled class="block w-full bg-gradient-to-r from-gray-600 to-gray-500 text-gray-300 font-bold px-4 py-2 rounded-lg text-center cursor-not-allowed text-sm md:text-base opacity-60">
+                            <button disabled class="block w-full bg-gradient-to-r from-gray-600 to-gray-500 text-gray-300 font-bold px-4 py-3 rounded-lg text-center cursor-not-allowed text-sm md:text-base opacity-60">
                                 📢 Promo (PRO)
                             </button>
                         {% endif %}
-                        <a href="{% url 'analytics:analytics' %}" class="block bg-gradient-to-r from-navy to-deep border border-sea text-sea font-bold px-4 py-2 rounded-lg text-center hover:border-cyan-300 hover:text-cyan-300 hover:scale-105 hover:shadow-lg hover:shadow-sea/20 transition-all duration-300 ease-out text-sm md:text-base">
+                        <a href="{% url 'analytics:analytics' %}" class="block bg-gradient-to-r from-navy to-deep border border-sea text-sea font-bold px-4 py-3 rounded-lg text-center hover:border-cyan-300 hover:text-cyan-300 hover:scale-105 hover:shadow-lg hover:shadow-sea/20 transition-all duration-300 ease-out text-sm md:text-base">
                             📈 Analytics
                         </a>
                         {% if at_risk_count %}
-                            <a href="{% url 'customers:customer_list' %}" class="block bg-gradient-to-r from-red-900 to-red-800 text-red-200 font-bold px-4 py-2 rounded-lg text-center hover:from-red-800 hover:to-red-700 hover:text-red-100 hover:scale-105 hover:shadow-lg hover:shadow-red/30 transition-all duration-300 ease-out text-sm md:text-base">
+                            <a href="{% url 'customers:customer_list' %}" class="block bg-gradient-to-r from-red-900 to-red-800 text-red-200 font-bold px-4 py-3 rounded-lg text-center hover:from-red-800 hover:to-red-700 hover:text-red-100 hover:scale-105 hover:shadow-lg hover:shadow-red/30 transition-all duration-300 ease-out text-sm md:text-base">
                                 ⚠️ At-Risk ({{ at_risk_count }})
                             </a>
                         {% endif %}

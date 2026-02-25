@@ -14,8 +14,8 @@
                     <div class="flex items-start justify-between flex-wrap gap-6">
                         <div class="flex-1">
                             <p class="text-gold font-bold text-2xl mb-4">{{ greeting_emoji }} {{ greeting }}, {{ first_name }}!</p>
-                            <div class="bg-gradient-to-r from-gray-800/30 to-gray-700/30 p-4 rounded-l-xl">
-                                <p class="text-gray-200 text-sm leading-relaxed">{{ daily_tip }}</p>
+                            <div class="bg-gradient-to-r from-amber-500/20 via-gold/30 to-amber-600/20 p-4 rounded-l-xl border-l-2 border-gold/50">
+                                <p class="text-amber-100 text-sm leading-relaxed">{{ daily_tip }}</p>
                             </div>
                         </div>
                     </div>
@@ -40,23 +40,23 @@
             <div class="mb-8">
                 <div class="p-6">
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
-                        <div class="bg-gradient-to-r from-gray-800/20 to-gray-700/20 p-4 rounded-l-xl">
-                            <p class="text-gray-400 text-xs mb-1">Today's Revenue</p>
+                        <div class="bg-gradient-to-r from-amber-500/15 via-gold/25 to-amber-600/15 p-4 rounded-l-xl border-l-2 border-gold/40">
+                            <p class="text-amber-200 text-xs mb-1">Today's Revenue</p>
                             <p class="text-white font-bold text-xl">KES {{ today_revenue|floatformat:0 }}</p>
-                            <p class="text-xs {% if revenue_up %}text-teal{% else %}text-red-400{% endif %}">
+                            <p class="text-xs {% if revenue_up %}text-emerald-400{% else %}text-red-400{% endif %}">
                                 {% if revenue_up %}▲{% else %}▼{% endif %}
                                 KES {{ revenue_change|floatformat:0 }} vs yesterday
                             </p>
                         </div>
-                        <div class="bg-gradient-to-r from-gray-800/20 to-gray-700/20 p-4 rounded-l-xl">
-                            <p class="text-gray-400 text-xs mb-1">Customers Today</p>
+                        <div class="bg-gradient-to-r from-teal-500/15 via-cyan-400/25 to-teal-600/15 p-4 rounded-l-xl border-l-2 border-teal/40">
+                            <p class="text-cyan-200 text-xs mb-1">Customers Today</p>
                             <p class="text-white font-bold text-xl">{{ today_customers }}</p>
-                            <p class="text-gray-500 text-xs">served today</p>
+                            <p class="text-cyan-300 text-xs">served today</p>
                         </div>
-                        <div class="hidden md:block bg-gradient-to-r from-gray-800/20 to-gray-700/20 p-4 rounded-l-xl">
-                            <p class="text-gray-400 text-xs mb-1">Date</p>
+                        <div class="hidden md:block bg-gradient-to-r from-violet-500/15 via-purple-400/25 to-violet-600/15 p-4 rounded-l-xl border-l-2 border-violet/40">
+                            <p class="text-violet-200 text-xs mb-1">Date</p>
                             <p class="text-white font-bold text-xl">{{ today_date|date:"d M" }}</p>
-                            <p class="text-gray-500 text-xs">{{ today_date|date:"l" }}</p>
+                            <p class="text-violet-300 text-xs">{{ today_date|date:"l" }}</p>
                         </div>
                     </div>
                 </div>
@@ -91,45 +91,45 @@
             <!-- KPI Cards -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
                 <!-- Total Customers -->
-                <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-4 md:p-6">
-                    <p class="text-gray-400 text-xs mb-1 md:mb-2">Total Customers</p>
-                    <p class="text-2xl md:text-3xl font-bold text-gold">{{ total_customers }}</p>
+                <div class="bg-gradient-to-r from-amber-500/20 via-gold/30 to-amber-600/20 p-4 md:p-6 rounded-l-xl border-l-2 border-gold/50">
+                    <p class="text-amber-200 text-xs mb-1 md:mb-2">Total Customers</p>
+                    <p class="text-2xl md:text-3xl font-bold text-amber-100">{{ total_customers }}</p>
                     {% if not user.is_premium %}
-                        <p class="text-gray-400 text-xs mt-1 md:mt-2">{{ total_customers }}/{{ customer_limit }} Free</p>
+                        <p class="text-amber-300 text-xs mt-1 md:mt-2">{{ total_customers }}/{{ customer_limit }} Free</p>
                     {% endif %}
                 </div>
 
                 <!-- Repeat Rate -->
-                <div class="bg-navy border border-sea border-opacity-20 rounded-lg p-4 md:p-6">
-                    <p class="text-gray-400 text-xs mb-1 md:mb-2">Repeat Rate</p>
-                    <p class="text-2xl md:text-3xl font-bold text-sea">{{ repeat_rate }}%</p>
-                    <p class="text-gray-400 text-xs mt-1 md:mt-2 hidden sm:block">Returning customers</p>
+                <div class="bg-gradient-to-r from-teal-500/20 via-cyan-400/30 to-teal-600/20 p-4 md:p-6 rounded-l-xl border-l-2 border-teal/50">
+                    <p class="text-cyan-200 text-xs mb-1 md:mb-2">Repeat Rate</p>
+                    <p class="text-2xl md:text-3xl font-bold text-cyan-100">{{ repeat_rate }}%</p>
+                    <p class="text-cyan-300 text-xs mt-1 md:mt-2 hidden sm:block">Returning customers</p>
                 </div>
 
                 <!-- Week Revenue -->
-                <div class="bg-navy border border-teal border-opacity-20 rounded-lg p-4 md:p-6">
-                    <p class="text-gray-400 text-xs mb-1 md:mb-2">Week Revenue</p>
-                    <p class="text-2xl md:text-3xl font-bold text-teal">KES {{ week_revenue|floatformat:0 }}</p>
-                    <p class="text-gray-400 text-xs mt-1 md:mt-2 hidden sm:block">Last 7 days</p>
+                <div class="bg-gradient-to-r from-emerald-500/20 via-green-400/30 to-emerald-600/20 p-4 md:p-6 rounded-l-xl border-l-2 border-emerald/50">
+                    <p class="text-emerald-200 text-xs mb-1 md:mb-2">Week Revenue</p>
+                    <p class="text-2xl md:text-3xl font-bold text-emerald-100">KES {{ week_revenue|floatformat:0 }}</p>
+                    <p class="text-emerald-300 text-xs mt-1 md:mt-2 hidden sm:block">Last 7 days</p>
                 </div>
 
                 <!-- Promo Responses -->
-                <div class="bg-navy border border-amber-500 border-opacity-20 rounded-lg p-4 md:p-6">
-                    <p class="text-gray-400 text-xs mb-1 md:mb-2">Promos Sent</p>
-                    <p class="text-2xl md:text-3xl font-bold text-amber-400">{{ promo_responses }}</p>
-                    <p class="text-gray-400 text-xs mt-1 md:mt-2 hidden sm:block">This week</p>
+                <div class="bg-gradient-to-r from-violet-500/20 via-purple-400/30 to-violet-600/20 p-4 md:p-6 rounded-l-xl border-l-2 border-violet/50">
+                    <p class="text-violet-200 text-xs mb-1 md:mb-2">Promos Sent</p>
+                    <p class="text-2xl md:text-3xl font-bold text-violet-100">{{ promo_responses }}</p>
+                    <p class="text-violet-300 text-xs mt-1 md:mt-2 hidden sm:block">This week</p>
                 </div>
             </div>
 
             <!-- Main Content Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
                 <!-- Recent Customers -->
-                <div class="lg:col-span-2 bg-navy border border-gold border-opacity-20 rounded-lg p-4 md:p-6">
+                <div class="lg:col-span-2 bg-gradient-to-r from-gray-800/20 to-gray-700/20 p-4 md:p-6 rounded-l-xl">
                     <h2 class="text-white font-bold text-base md:text-lg mb-4">Recent Customers</h2>
                     {% if recent_customers %}
                         <div class="space-y-3">
                             {% for customer in recent_customers %}
-                                <div class="flex items-center justify-between py-3 border-b border-gold border-opacity-10 last:border-0">
+                                <div class="flex items-center justify-between py-3 border-b border-gray-600/30 last:border-0">
                                     <div class="min-w-0 flex-1">
                                         <p class="text-white font-semibold text-sm md:text-base truncate">{{ customer.name }}</p>
                                         <p class="text-gray-400 text-xs md:text-sm">{{ customer.phone }}</p>
@@ -150,7 +150,7 @@
                 </div>
 
                 <!-- Quick Actions -->
-                <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-4 md:p-6">
+                <div class="bg-gradient-to-r from-gray-800/20 to-gray-700/20 p-4 md:p-6 rounded-l-xl">
                     <h2 class="text-white font-bold text-base md:text-lg mb-4">Quick Actions</h2>
                     <div class="grid grid-cols-1 gap-3">
                         <a href="{% url 'customers:customer_add' %}" class="block bg-gradient-to-r from-gold to-amber-400 text-deep font-bold px-4 py-3 rounded-lg text-center hover:from-amber-400 hover:to-yellow-300 hover:scale-105 hover:shadow-lg hover:shadow-gold/30 transition-all duration-300 ease-out text-sm md:text-base">

@@ -21,12 +21,26 @@
     </div>
 </div>
 
-<!-- Nav -->
-<nav class="flex-1 space-y-1 overflow-y-auto">
-    <a href="{% url 'vendors:dashboard' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'overview' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-blue-800 hover:to-blue-700 hover:text-gray-100 hover:scale-105 hover:shadow-lg hover:shadow-gray-20{% endif %} transition-all duration-300 ease-out">
-        <span class="text-lg">📊</span>
-        <span>Overview</span>
-    </a>
+<!-- Sidebar -->
+<div id="sidebar" class="w-64 bg-navy border-r border-gold border-opacity-20 h-screen p-4 flex flex-col
+    fixed top-0 left-0 z-50 -translate-x-full md:translate-x-0 md:shrink-0 md:sticky md:top-0 transition-transform duration-300">
+
+    <!-- Close button (mobile) -->
+    <button id="menu-close" class="md:hidden self-end text-gray-400 hover:text-gray-200 hover:scale-110 text-xl mb-2 transition-all duration-200">✕</button>
+
+    <!-- Business info -->
+    <div class="mb-6 pb-4 border-b border-gold border-opacity-20 flex-shrink-0">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gold text-deep font-bold flex items-center justify-center">
+                {{ user.business_name|first|upper }}
+            </div>
+            <div>
+                <p class="text-white font-semibold text-sm">{{ user.business_name }}</p>
+                <p class="text-gray-400 text-xs">{{ user.get_business_type_display }}</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Nav -->
     <nav class="flex-1 space-y-1 overflow-y-auto">
         <a href="{% url 'vendors:dashboard' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'overview' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-blue-800 hover:to-blue-700 hover:text-gray-100 hover:scale-105 hover:shadow-lg hover:shadow-gray-20{% endif %} transition-all duration-300 ease-out">

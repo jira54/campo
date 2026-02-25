@@ -14,10 +14,10 @@
     fixed top-0 left-0 z-50 -translate-x-full md:translate-x-0 md:shrink-0 md:sticky md:top-0 transition-transform duration-300 overflow-y-auto">
 
     <!-- Close button (mobile) -->
-    <button id="menu-close" class="md:hidden self-end text-gray-400 hover:text-gold hover:scale-110 text-xl mb-2 transition-all duration-200">✕</button>
+    <button id="menu-close" class="md:hidden self-end text-gray-400 hover:text-gray-200 hover:scale-110 text-xl mb-2 transition-all duration-200">✕</button>
 
     <!-- Business info -->
-    <div class="mb-6 pb-4 border-b border-gold border-opacity-20">
+    <div class="mb-6 pb-4 border-b border-gold border-opacity-20 flex-shrink-0">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-gold text-deep font-bold flex items-center justify-center">
                 {{ user.business_name|first|upper }}
@@ -30,13 +30,13 @@
     </div>
 
     <!-- Nav -->
-    <nav class="flex-1 space-y-1">
-        <a href="{% url 'vendors:dashboard' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'overview' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-gold/20 hover:to-teal/20 hover:text-gold hover:scale-105 hover:shadow-lg hover:shadow-gold/20{% endif %} transition-all duration-300 ease-out">
+    <nav class="flex-1 space-y-1 overflow-y-auto">
+        <a href="{% url 'vendors:dashboard' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'overview' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-gray-700 hover:to-gray-600 hover:text-gray-100 hover:scale-105 hover:shadow-lg hover:shadow-gray-20{% endif %} transition-all duration-300 ease-out">
             <span class="text-lg">📊</span>
             <span>Overview</span>
         </a>
 
-        <a href="{% url 'customers:customer_list' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'customers' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-gold/20 hover:to-teal/20 hover:text-gold hover:scale-105 hover:shadow-lg hover:shadow-gold/20{% endif %} transition-all duration-300 ease-out">
+        <a href="{% url 'customers:customer_list' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'customers' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-gray-700 hover:to-gray-600 hover:text-gray-100 hover:scale-105 hover:shadow-lg hover:shadow-gray-20{% endif %} transition-all duration-300 ease-out">
             <span class="text-lg">👥</span>
             <span>Customers</span>
             {% if user.customers.count > 0 %}
@@ -44,7 +44,7 @@
             {% endif %}
         </a>
 
-        <a href="{% url 'promotions:promotion_list' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'promotions' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-gold/20 hover:to-teal/20 hover:text-gold hover:scale-105 hover:shadow-lg hover:shadow-gold/20{% endif %} transition-all duration-300 ease-out">
+        <a href="{% url 'promotions:promotion_list' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'promotions' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-gray-700 hover:to-gray-600 hover:text-gray-100 hover:scale-105 hover:shadow-lg hover:shadow-gray-20{% endif %} transition-all duration-300 ease-out">
             <span class="text-lg">📢</span>
             <span>Promotions</span>
             {% if not user.is_premium %}
@@ -52,17 +52,17 @@
             {% endif %}
         </a>
 
-        <a href="{% url 'analytics:analytics' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'analytics' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-gold/20 hover:to-teal/20 hover:text-gold hover:scale-105 hover:shadow-lg hover:shadow-gold/20{% endif %} transition-all duration-300 ease-out">
+        <a href="{% url 'analytics:analytics' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'analytics' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-gray-700 hover:to-gray-600 hover:text-gray-100 hover:scale-105 hover:shadow-lg hover:shadow-gray-20{% endif %} transition-all duration-300 ease-out">
             <span class="text-lg">📈</span>
             <span>Analytics</span>
         </a>
 
-        <a href="{% url 'notes:note_list' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'notes' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-gold/20 hover:to-teal/20 hover:text-gold hover:scale-105 hover:shadow-lg hover:shadow-gold/20{% endif %} transition-all duration-300 ease-out">
+        <a href="{% url 'notes:note_list' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'notes' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-gray-700 hover:to-gray-600 hover:text-gray-100 hover:scale-105 hover:shadow-lg hover:shadow-gray-20{% endif %} transition-all duration-300 ease-out">
             <span class="text-lg">📝</span>
             <span>Notes</span>
         </a>
 
-        <a href="{% url 'credit:credit_list' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'credit' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-gold/20 hover:to-teal/20 hover:text-gold hover:scale-105 hover:shadow-lg hover:shadow-gold/20{% endif %} transition-all duration-300 ease-out">
+        <a href="{% url 'credit:credit_list' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'credit' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-gray-700 hover:to-gray-600 hover:text-gray-100 hover:scale-105 hover:shadow-lg hover:shadow-gray-20{% endif %} transition-all duration-300 ease-out">
             <span class="text-lg">💳</span>
             <span>Credit</span>
             {% if not user.is_premium %}
@@ -71,11 +71,11 @@
         </a>
 
         {% if user.is_premium %}
-        <a href="{% url 'customers:loyalty_dashboard' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'loyalty' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-gold/20 hover:to-teal/20 hover:text-gold hover:scale-105 hover:shadow-lg hover:shadow-gold/20{% endif %} transition-all duration-300 ease-out">
+        <a href="{% url 'customers:loyalty_dashboard' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'loyalty' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-gray-700 hover:to-gray-600 hover:text-gray-100 hover:scale-105 hover:shadow-lg hover:shadow-gray-20{% endif %} transition-all duration-300 ease-out">
             <span class="text-lg">🎯</span>
             <span>Loyalty</span>
         </a>
-        <a href="{% url 'customers:smart_reminders' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'reminders' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-gold/20 hover:to-teal/20 hover:text-gold hover:scale-105 hover:shadow-lg hover:shadow-gold/20{% endif %} transition-all duration-300 ease-out">
+        <a href="{% url 'customers:smart_reminders' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'reminders' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-gray-700 hover:to-gray-600 hover:text-gray-100 hover:scale-105 hover:shadow-lg hover:shadow-gray-20{% endif %} transition-all duration-300 ease-out">
             <span class="text-lg">🔔</span>
             <span>Reminders</span>
         </a>
@@ -83,23 +83,23 @@
     </nav>
 
     {% if user.is_premium %}
-        <div class="mb-4 p-3 bg-gold bg-opacity-20 border border-gold rounded-lg">
+        <div class="mb-4 p-3 bg-gold bg-opacity-20 border border-gold rounded-lg flex-shrink-0">
             <p class="text-gold text-xs font-semibold">✨ Premium Active</p>
             <p class="text-gray-300 text-xs">
                 {% if user.subscription.expires_at %}Expires: {{ user.subscription.expires_at|date:"M d" }}{% endif %}
             </p>
         </div>
     {% else %}
-        <div class="mb-4 p-3 bg-teal bg-opacity-20 border border-teal rounded-lg">
+        <div class="mb-4 p-3 bg-teal bg-opacity-20 border border-teal rounded-lg flex-shrink-0">
             <p class="text-teal text-xs font-semibold">🎯 Limited Plan</p>
             <p class="text-gray-300 text-xs">{{ user.customers.count }}/20 customers</p>
             <a href="{% url 'billing:upgrade' %}" class="text-gold text-xs font-semibold mt-1 inline-block hover:underline">Upgrade →</a>
         </div>
     {% endif %}
 
-    <div class="border-t border-gold border-opacity-20 pt-4 space-y-2">
-        <a href="{% url 'vendors:profile' %}" class="block px-4 py-2 text-gray-300 hover:text-gold hover:bg-gradient-to-r hover:from-gold/10 hover:to-transparent hover:scale-105 text-sm rounded-lg transition-all duration-300 ease-out">⚙️ Settings</a>
-        <a href="{% url 'logout' %}" class="block px-4 py-2 text-gray-300 hover:text-red-400 hover:bg-gradient-to-r hover:from-red-500/10 hover:to-transparent hover:scale-105 text-sm rounded-lg transition-all duration-300 ease-out">🚪 Logout</a>
+    <div class="border-t border-gold border-opacity-20 pt-4 space-y-2 flex-shrink-0">
+        <a href="{% url 'vendors:profile' %}" class="block px-4 py-2 text-gray-300 hover:text-gray-100 hover:bg-gradient-to-r hover:from-gray-700 hover:to-transparent hover:scale-105 text-sm rounded-lg transition-all duration-300 ease-out">⚙️ Settings</a>
+        <a href="{% url 'logout' %}" class="block px-4 py-2 text-gray-300 hover:text-red-400 hover:bg-gradient-to-r hover:from-red-900/50 hover:to-transparent hover:scale-105 text-sm rounded-lg transition-all duration-300 ease-out">🚪 Logout</a>
     </div>
 </div>
 

@@ -6,47 +6,72 @@
     {% include 'partials/sidebar.html' %}
 
     <main class="flex-1 p-6">
-        <!-- Header -->
-        <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
-            <div>
-                <h1 class="text-2xl font-bold text-white mb-1">📝 Notes</h1>
-                <p class="text-gray-400 text-sm">Business ideas, customer feedback, reminders</p>
+        <!-- Header with Gradient -->
+        <div class="bg-gradient-to-r from-gold/10 via-teal/10 to-gold/5 border border-gold border-opacity-20 rounded-2xl p-6 mb-6">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                        <span class="text-4xl">📝</span>
+                        Business Notes
+                    </h1>
+                    <p class="text-gray-300 text-sm">Capture ideas, customer feedback, and growth strategies</p>
+                </div>
+                <a href="{% url 'notes:note_add' %}"
+                   class="bg-gradient-to-r from-gold to-amber-400 text-deep font-bold px-6 py-3 rounded-xl hover:from-amber-400 hover:to-yellow-300 hover:scale-105 hover:shadow-lg hover:shadow-gold/30 transition-all duration-300 ease-out flex items-center gap-2">
+                    <span class="text-lg">✨</span>
+                    <span>New Note</span>
+                </a>
             </div>
-            <a href="{% url 'notes:note_add' %}"
-               class="bg-gold text-deep font-bold px-5 py-2 rounded-lg hover:bg-yellow-400 transition text-sm">
-                + New Note
-            </a>
         </div>
 
-        <!-- Search -->
-        <form method="get" class="mb-6">
-            <input type="text" name="q" value="{{ search }}"
-                placeholder="Search notes..."
-                class="w-full bg-navy border border-gold border-opacity-20 text-white rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-gold"/>
-        </form>
+        <!-- Search Bar -->
+        <div class="mb-6">
+            <form method="get" class="relative">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <span class="text-gray-400 text-lg">🔍</span>
+                </div>
+                <input type="text" name="q" value="{{ search }}"
+                    placeholder="Search your business ideas, customer feedback, reminders..."
+                    class="w-full bg-navy border border-gold border-opacity-20 text-white rounded-xl pl-12 pr-4 py-4 text-sm focus:outline-none focus:border-gold focus:ring-2 focus:ring-gold/20 transition-all"/>
+            </form>
+        </div>
 
         <!-- Notes Grid -->
         {% if notes %}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {% for note in notes %}
-                <div class="bg-navy border border-gold border-opacity-10 hover:border-opacity-30 rounded-xl p-4 transition group">
-                    <div class="flex items-start justify-between mb-3">
-                        <h3 class="text-white font-semibold text-sm truncate flex-1">{{ note.title }}</h3>
-                        {% if note.is_recent %}
-                            <span class="text-xs bg-teal bg-opacity-20 text-teal px-2 py-1 rounded ml-2">Recent</span>
-                        {% endif %}
+                <div class="group relative bg-gradient-to-br from-navy to-deep border border-gold border-opacity-10 hover:border-opacity-30 rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-gold/10">
+                    <!-- Recent Badge -->
+                    {% if note.is_recent %}
+                        <div class="absolute top-4 right-4">
+                            <span class="bg-gradient-to-r from-teal to-cyan-400 text-deep text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                                ✨ Recent
+                            </span>
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Note Content -->
+                    <div class="mb-4">
+                        <h3 class="text-white font-bold text-lg mb-3 line-clamp-2">{{ note.title }}</h3>
+                        <p class="text-gray-300 text-sm line-clamp-4 leading-relaxed">{{ note.excerpt }}</p>
                     </div>
-                    <p class="text-gray-300 text-xs mb-4 line-clamp-3">{{ note.excerpt }}</p>
-                    <div class="flex items-center justify-between">
-                        <p class="text-gray-500 text-xs">{{ note.updated_at|date:"d M Y, H:i" }}</p>
+                    
+                    <!-- Footer -->
+                    <div class="flex items-center justify-between pt-4 border-t border-gold border-opacity-10">
+                        <div class="flex items-center gap-2">
+                            <span class="text-gray-500 text-xs">📅</span>
+                            <p class="text-gray-400 text-xs">{{ note.updated_at|date:"d M" }}</p>
+                        </div>
                         <div class="flex gap-2">
                             <a href="{% url 'notes:note_detail' note.pk %}"
-                               class="text-gold hover:text-yellow-300 text-xs transition">
-                                View
+                               class="bg-gold/10 hover:bg-gold/20 text-gold hover:text-yellow-300 px-3 py-1 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center gap-1">
+                                <span>👁️</span>
+                                <span>View</span>
                             </a>
                             <a href="{% url 'notes:note_edit' note.pk %}"
-                               class="text-teal hover:text-cyan-300 text-xs transition">
-                                Edit
+                               class="bg-teal/10 hover:bg-teal/20 text-teal hover:text-cyan-300 px-3 py-1 rounded-lg text-xs font-semibold transition-all duration-200 flex items-center gap-1">
+                                <span>✏️</span>
+                                <span>Edit</span>
                             </a>
                         </div>
                     </div>
@@ -54,14 +79,20 @@
                 {% endfor %}
             </div>
         {% else %}
+            <!-- Empty State -->
             <div class="text-center mt-20">
-                <span class="text-6xl mb-4">📝</span>
-                <p class="text-white font-bold text-lg mb-2">No notes yet</p>
-                <p class="text-gray-400 text-sm mb-4">Start capturing your business ideas and customer feedback</p>
-                <a href="{% url 'notes:note_add' %}"
-                   class="bg-gold text-deep font-bold px-6 py-2 rounded-lg hover:bg-yellow-400 transition text-sm">
-                    + Create First Note
-                </a>
+                <div class="bg-gradient-to-br from-gold/10 to-teal/10 border border-gold border-opacity-20 rounded-3xl p-12 max-w-md mx-auto">
+                    <div class="text-8xl mb-6">📝</div>
+                    <h2 class="text-white font-bold text-2xl mb-4">No Business Notes Yet</h2>
+                    <p class="text-gray-300 text-sm mb-8 leading-relaxed">
+                        Start capturing your brilliant ideas, customer feedback, and growth strategies. Your next big breakthrough could be in a note!
+                    </p>
+                    <a href="{% url 'notes:note_add' %}"
+                       class="bg-gradient-to-r from-gold to-amber-400 text-deep font-bold px-8 py-4 rounded-xl hover:from-amber-400 hover:to-yellow-300 hover:scale-105 hover:shadow-lg hover:shadow-gold/30 transition-all duration-300 ease-out inline-flex items-center gap-3">
+                        <span class="text-xl">✨</span>
+                        <span>Create Your First Note</span>
+                    </a>
+                </div>
             </div>
         {% endif %}
     </main>

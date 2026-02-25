@@ -4,10 +4,10 @@ DAYS = {
     0: ("Monday", "🌟", "New week, new opportunities!"),
     1: ("Tuesday", "🔥", "Keep the momentum going!"),
     2: ("Wednesday", "💪", "Halfway there — you're doing great!"),
-    3: ("Thursday", "🚀", "Almost the weekend — push harder!"),
+    3: ("Thursday", "🚀", "Almost the weekend — Kidogo tuu!"),
     4: ("Friday", "🎉", "End the week strong!"),
     5: ("Saturday", "💰", "Weekend hustle hits different!"),
-    6: ("Sunday", "🌅", "Rest, reflect, and prepare for the week!"),
+    6: ("Sunday", "🌅", "Rest, reflect,we thank God and prepare for the week!"),
 }
 
 QUOTES = {

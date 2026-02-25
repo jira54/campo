@@ -56,6 +56,17 @@
             <span class="text-lg">📈</span>
             <span>Analytics</span>
         </a>
+
+        {% if user.is_premium %}
+        <a href="{% url 'customers:loyalty_dashboard' %}" class="flex items-center gap-3 px-4 py-2 rounded {% if page == 'loyalty' %}bg-gold text-deep{% else %}text-gray-300 hover:bg-navy{% endif %}">
+            <span class="text-lg">🎯</span>
+            <span>Loyalty</span>
+        </a>
+        <a href="{% url 'customers:smart_reminders' %}" class="flex items-center gap-3 px-4 py-2 rounded {% if page == 'reminders' %}bg-gold text-deep{% else %}text-gray-300 hover:bg-navy{% endif %}">
+            <span class="text-lg">🔔</span>
+            <span>Reminders</span>
+        </a>
+        {% endif %}
     </nav>
 
     {% if user.is_premium %}

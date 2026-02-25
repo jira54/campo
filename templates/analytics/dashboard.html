@@ -39,6 +39,38 @@
                 </div>
             </div>
 
+            <!-- Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div class="bg-navy rounded-lg p-6 border border-gold border-opacity-10">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-gold font-bold text-sm">📈 Revenue This Period</h3>
+                        <div class="inline-flex rounded-full bg-deep border border-gold border-opacity-30 text-xs">
+                            <button type="button"
+                                    class="px-3 py-1 rounded-full text-gold bg-gold bg-opacity-10 font-semibold"
+                                    data-chart-toggle="revenue"
+                                    data-chart-type="line">
+                                Line
+                            </button>
+                            <button type="button"
+                                    class="px-3 py-1 rounded-full text-gray-300 hover:text-gold"
+                                    data-chart-toggle="revenue"
+                                    data-chart-type="bar">
+                                Histogram
+                            </button>
+                        </div>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="revenue-chart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-navy rounded-lg p-6 border border-gold border-opacity-10">
+                    <h3 class="text-gold font-bold text-sm mb-4">👥 Customer Segments</h3>
+                    <div class="h-64 flex items-center justify-center">
+                        <canvas id="segment-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
             <!-- Top Customers -->
             <div class="bg-navy rounded-lg p-4 border border-gold border-opacity-10">
                 <h2 class="text-gold font-bold text-sm mb-3">🏆 Top Customers This Period</h2>
@@ -76,4 +108,110 @@
         {% endif %}
     </main>
 </div>
+
+{% if is_premium %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+(function() {
+    const labels = {{ chart_labels|safe }};
+    const data = {{ chart_revenue|safe }};
+
+    // Revenue chart with type toggle (line / histogram)
+    let revenueChart = null;
+    const revenueCanvas = document.getElementById('revenue-chart');
+
+    function renderRevenueChart(type) {
+        if (!revenueCanvas) return;
+
+        const ctx = revenueCanvas.getContext('2d');
+        if (revenueChart) {
+            revenueChart.destroy();
+        }
+
+        revenueChart = new Chart(ctx, {
+            type: type,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Revenue (KES)',
+                    data: data,
+                    borderColor: '#E8871E',
+                    backgroundColor: type === 'line'
+                        ? 'rgba(232, 135, 30, 0.1)'
+                        : 'rgba(232, 135, 30, 0.6)',
+                    borderWidth: 2,
+                    tension: type === 'line' ? 0.4 : 0,
+                    fill: type === 'line',
+                    pointBackgroundColor: '#E8871E',
+                    pointBorderColor: '#FCD34D',
+                    pointRadius: type === 'line' ? 4 : 0,
+                    pointHoverRadius: type === 'line' ? 6 : 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: '#9CA3AF', font: { size: 10 } },
+                        grid: { color: 'rgba(232, 135, 30, 0.1)' }
+                    },
+                    x: {
+                        ticks: { color: '#9CA3AF', font: { size: 10 }, maxRotation: 45 },
+                        grid: { color: 'rgba(232, 135, 30, 0.1)' }
+                    }
+                }
+            }
+        });
+    }
+
+    // Initialize revenue chart as line by default
+    renderRevenueChart('line');
+
+    // Toggle buttons for revenue chart type
+    const toggleButtons = document.querySelectorAll('[data-chart-toggle=\"revenue\"]');
+    toggleButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const type = btn.getAttribute('data-chart-type') || 'line';
+
+            // Update active button styling
+            toggleButtons.forEach(b => {
+                b.classList.remove('text-gold', 'bg-gold', 'bg-opacity-10', 'font-semibold');
+                b.classList.add('text-gray-300');
+            });
+            btn.classList.remove('text-gray-300');
+            btn.classList.add('text-gold', 'bg-gold', 'bg-opacity-10', 'font-semibold');
+
+            renderRevenueChart(type);
+        });
+    });
+
+    const segmentCtx = document.getElementById('segment-chart');
+    if (segmentCtx) {
+        const seg = {{ segments|safe }};
+        new Chart(segmentCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Loyal', 'Regular', 'New', 'At-Risk'],
+                datasets: [{
+                    data: [seg.loyal || 0, seg.regular || 0, seg.new || 0, seg.atrisk || 0],
+                    backgroundColor: ['#0D9488', '#14B8A6', '#10B981', '#EF4444'],
+                    borderColor: '#0C2340',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: '#E5E7EB', padding: 12, font: { size: 11 } } }
+                }
+            }
+        });
+    }
+})();
+</script>
+{% endif %}
 {% endblock %}

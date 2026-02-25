@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.db.models import Sum, Count, Q
 from django.db.models.functions import TruncDate, ExtractWeekDay
 from datetime import timedelta
+import json
 from customers.models import Customer, Purchase
 
 
@@ -77,6 +78,20 @@ def analytics_dashboard(request):
         else:
             change_pct = 100 if total_rev > 0 else 0
 
+        # Chart-ready: revenue by day (labels + values)
+        daily_list = list(daily)
+        chart_labels = [d['day'].strftime('%a %d') if d.get('day') else '' for d in daily_list]
+        chart_revenue = [float(d.get('revenue') or 0) for d in daily_list]
+
+        # Segment breakdown for doughnut (all customers, not just period)
+        all_customers = list(Customer.objects.filter(vendor=vendor))
+        segments = {
+            'loyal': sum(1 for c in all_customers if c.status == 'loyal'),
+            'regular': sum(1 for c in all_customers if c.status == 'regular'),
+            'new': sum(1 for c in all_customers if c.status == 'new'),
+            'atrisk': sum(1 for c in all_customers if c.status == 'atrisk'),
+        }
+
         context.update({
             'period': period,
             'start_date': start_date,
@@ -88,6 +103,9 @@ def analytics_dashboard(request):
             'top_customers': top_customers,
             'weekday_data': weekday_data,
             'best_day': best_day,
+            'chart_labels': json.dumps(chart_labels),
+            'chart_revenue': json.dumps(chart_revenue),
+            'segments': json.dumps(segments),
         })
     else:
         # Free users see locked features list

@@ -16,114 +16,91 @@
     </nav>
 
     <!-- Hero Section -->
-    <div class="max-w-6xl mx-auto px-8 py-20">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <!-- Left: Content -->
-            <div>
+    <section class="py-20 px-4">
+        <div class="max-w-6xl mx-auto text-center">
+            <div class="mb-12">
                 <h2 class="text-5xl font-bold text-white mb-6 leading-tight">
                     Grow Your Campus Business &#128200;
                 </h2>
-                <p class="text-xl text-gray-300 mb-8">
-                    CampoPawa helps you track customers, send targeted promotions, and grow your food, printing, or retail business on campus.
+                <p class="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
+                    The all-in-one management platform for campus vendors. Track customers, manage promotions, and grow your business with powerful analytics.
                 </p>
-
-                <!-- Features List -->
-                <div class="space-y-4 mb-8">
-                    <div class="flex items-start gap-4">
-                        <span class="text-gold text-2xl">&#10003;</span>
-                        <div>
-                            <h4 class="text-white font-bold">Customer Tracking</h4>
-                            <p class="text-gray-400 text-sm">Never lose track of your customers</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <span class="text-sea text-2xl">&#10003;</span>
-                        <div>
-                            <h4 class="text-white font-bold">Smart Promotions</h4>
-                            <p class="text-gray-400 text-sm">Send personalized SMS/WhatsApp campaigns</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <span class="text-teal text-2xl">&#10003;</span>
-                        <div>
-                            <h4 class="text-white font-bold">Real-Time Analytics</h4>
-                            <p class="text-gray-400 text-sm">Understand your business metrics instantly</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start gap-4">
-                        <span class="text-amber-400 text-2xl">Check</span>
-                        <div>
-                            <h4 class="text-white font-bold">Affordable</h4>
-                            <p class="text-gray-400 text-sm">Less than two mandazis a day! &#9749;</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CTA Button -->
-                <a href="{% url 'register' %}" class="inline-block bg-gold text-deep font-bold px-8 py-4 rounded hover:bg-yellow-400 transition text-lg">
-                    Start Your Free Trial
-                </a>
-                <p class="text-gray-400 text-sm mt-4">No credit card needed. Free plan includes 20 customers.</p>
             </div>
 
-            <!-- Right: Hero Image / Benefits -->
+            <!-- Features -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+                <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-8 text-center">
+                    <div class="text-6xl mb-6">&#128241;&#128187;&#128200;</div>
+                    <h4 class="text-white font-bold mb-4">All in One Platform</h4>
+                    <p class="text-gray-400">Manage everything from customer relationships to sales analytics in one place.</p>
+                </div>
+
+                <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-8 text-center">
+                    <div class="text-6xl mb-6">&#128179;&#128187;</div>
+                    <h4 class="text-white font-bold mb-4">Customer Management</h4>
+                    <p class="text-gray-400">Keep track of your customers, their preferences, and purchase history.</p>
+                </div>
+
+                <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-8 text-center">
+                    <div class="text-6xl mb-6">&#128200;</div>
+                    <h4 class="text-white font-bold mb-4">Smart Analytics</h4>
+                    <p class="text-gray-400">Get insights into your business performance with detailed reports.</p>
+                </div>
+
+                <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-8 text-center">
+                    <div class="text-6xl mb-6">&#128229;&#128188;</div>
+                    <h4 class="text-white font-bold mb-4">Promotion Tools</h4>
+                    <p class="text-gray-400">Create and send targeted promotions to your customer base.</p>
+                </div>
+            </div>
+
+            <!-- CTA Section -->
             <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-8 text-center">
                 <div class="text-6xl mb-6">&#128241;&#128187;&#128200;</div>
-                <h3 class="text-2xl font-bold text-white mb-4">All in One Platform</h3>
-                <div class="space-y-4 text-left">
-                    <div class="bg-deep border border-teal border-opacity-30 rounded p-3">
-                        <p class="text-teal font-bold">20 Customers</p>
-                        <p class="text-gray-400 text-sm">Free Plan</p>
-                    </div>
-                    <div class="bg-deep border border-gold border-opacity-30 rounded p-3">
-                        <p class="text-gold font-bold">KES 400/month</p>
-                        <p class="text-gray-400 text-sm">Unlimited Customers</p>
-                    </div>
-                    <div class="bg-deep border border-sea border-opacity-30 rounded p-3">
-                        <p class="text-sea font-bold">KES 1,600/month</p>
-                        <p class="text-gray-400 text-sm">5 Vendors Bundle</p>
-                    </div>
+                <h4 class="text-white font-bold mb-4">Affordable</h4>
+                <p class="text-gray-400 text-sm">Less than two mandazis a day! &#9749;</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="py-16 px-4 bg-deep">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl font-bold text-center text-gold mb-12">How CampoPawa Works</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="text-4xl mb-4">&#128640;</div>
+                    <h4 class="text-white font-bold mb-2">Get Started</h4>
+                    <p class="text-gray-400">Sign up in minutes and start managing your business immediately.</p>
+                </div>
+
+                <div class="text-center">
+                    <div class="text-4xl mb-4">&#128273;</div>
+                    <h4 class="text-white font-bold mb-2">Manage Customers</h4>
+                    <p class="text-gray-400">Add customers, track purchases, and build lasting relationships.</p>
+                </div>
+
+                <div class="text-center">
+                    <div class="text-4xl mb-4">&#128172;</div>
+                    <h4 class="text-white font-bold mb-2">Grow Revenue</h4>
+                    <p class="text-gray-400">Use analytics and promotions to increase your sales and customer loyalty.</p>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Trust Section -->
-    <div class="bg-navy border-t border-b border-gold border-opacity-20 py-16">
-        <div class="max-w-6xl mx-auto px-8">
-            <h3 class="text-2xl font-bold text-white mb-8 text-center">Why Choose CampoPawa?</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="text-center">
-                    <p class="text-4xl mb-4">&#128640;</p>
-                    <h4 class="text-white font-bold mb-2">Quick Setup</h4>
-                    <p class="text-gray-400">Start in 2 minutes. No technical knowledge needed.</p>
-                </div>
-                <div class="text-center">
-                    <p class="text-4xl mb-4">&#128273;</p>
-                    <h4 class="text-white font-bold mb-2">Secure & Reliable</h4>
-                    <p class="text-gray-400">Built with security first. Powered by Africa&apos;s top payment systems.</p>
-                </div>
-                <div class="text-center">
-                    <p class="text-4xl mb-4">&#128172;</p>
-                    <h4 class="text-white font-bold mb-2">Great Support</h4>
-                    <p class="text-gray-400">Email support available. Community of growing businesses.</p>
-                </div>
+    <!-- Security & Trust -->
+    <section class="py-16 px-4 bg-navy">
+        <div class="max-w-6xl mx-auto text-center">
+            <h2 class="text-3xl font-bold text-center text-gold mb-12">Secure & Reliable</h2>
+            
+            <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-8">
+                <div class="text-6xl mb-6">&#128241;&#128187;&#128200;</div>
+                <h4 class="text-white font-bold mb-2">Secure & Reliable</h4>
+                <p class="text-gray-400">Built with security first. Powered by Africa&apos;s top payment systems.</p>
             </div>
         </div>
-    </div>
-
-    <!-- CTA Section -->
-    <div class="max-w-4xl mx-auto px-8 py-20 text-center">
-        <h3 class="text-3xl font-bold text-white mb-4">Ready to Grow Your Business?</h3>
-        <p class="text-xl text-gray-400 mb-8">Join hundreds of campus vendors using CampoPawa to boost sales.</p>
-        <a href="{% url 'register' %}" class="inline-block bg-gold text-deep font-bold px-8 py-4 rounded hover:bg-yellow-400 transition text-lg">
-            Sign Up Now
-        </a>
-    </div>
-
-    <!-- Footer -->
-    <div class="border-t border-gold border-opacity-20 py-8 text-center text-gray-400 text-sm">
-        <p>&copy; 2026 CampoPawa. All rights reserved.</p>
-    </div>
+    </section>
 </div>
 {% endblock %}

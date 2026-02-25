@@ -15,7 +15,7 @@ from promotions.models import Promotion
 from credit.models import CreditRecord
 
 def landing(request):
-    if request.user.is_authenticated:
+    if hasattr(request, 'user') and request.user.is_authenticated:
         return redirect('vendors:dashboard')
     return render(request, 'vendors/landing.html')
 
@@ -25,7 +25,7 @@ def root_redirect(request):
     return redirect('vendors:landing')
 
 def login_view(request):
-    if request.user.is_authenticated:
+    if hasattr(request, 'user') and request.user.is_authenticated:
         return redirect('vendors:dashboard')
     error = None
     if request.method == 'POST':

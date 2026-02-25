@@ -46,15 +46,11 @@
         <a href="{% url 'customers:customer_list' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'customers' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-blue-800 hover:to-blue-700 hover:text-gray-100 hover:scale-105 hover:shadow-lg hover:shadow-gray-20{% endif %} transition-all duration-300 ease-out">
             <span class="text-lg">👥</span>
             <span>Customers</span>
-            {% if user.customers.count > 0 %}
-                <span class="ml-auto bg-teal text-deep text-xs px-2 py-1 rounded-full font-semibold">{{ user.customers.count }}</span>
-            {% endif %}
         </a>
 
         <a href="{% url 'promotions:promotion_list' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'promotions' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-blue-800 hover:to-blue-700 hover:text-gray-100 hover:scale-105 hover:shadow-lg hover:shadow-gray-20{% endif %} transition-all duration-300 ease-out">
             <span class="text-lg">📢</span>
             <span>Promotions</span>
-            {% if not user.is_premium %}
                 <span class="text-xs bg-gradient-to-r from-gold to-amber-400 text-deep px-2 py-1 rounded-full font-bold ml-auto">PRO</span>
             {% endif %}
         </a>

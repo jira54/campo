@@ -41,10 +41,9 @@
                     <label class="block text-gold font-bold mb-2">Password</label>
                     <div class="relative">
                         <input 
-                            id="id_password" 
                             type="password" 
                             name="password" 
-                            placeholder="••••••••"
+                            placeholder="•••••••"
                             required
                             class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold"
                         >
@@ -74,7 +73,7 @@
 </div>
         <script>
         document.addEventListener('DOMContentLoaded', function(){
-            const pwd = document.getElementById('id_password');
+            const pwd = document.querySelector('input[name="password"]');
             const btn = document.getElementById('togglePassword');
             if (pwd && btn) {
                 btn.addEventListener('click', function(){

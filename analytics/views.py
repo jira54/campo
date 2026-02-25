@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from django.db.models import Sum, Count, Avg
 from django.utils import timezone
+from django.db.models import Sum, Count, Q
+from django.db.models.functions import TruncDate, ExtractWeekDay
 from datetime import timedelta
 from customers.models import Customer, Purchase
 
@@ -9,79 +10,93 @@ from customers.models import Customer, Purchase
 @login_required
 def analytics_dashboard(request):
     vendor = request.user
-    now    = timezone.now()
+    is_premium = vendor.is_premium
+    today = timezone.now().date()
 
-    customers = Customer.objects.filter(vendor=vendor)
-    total     = customers.count()
-
-    # Basic stats (free tier gets these too)
     context = {
-        'total_customers': total,
-        'is_premium':      vendor.is_premium,
+        'page': 'analytics',
+        'is_premium': is_premium,
+        'total_customers': Customer.objects.filter(vendor=vendor).count(),
     }
 
-    if vendor.is_premium:
-        # Full analytics — premium only
-        month_ago  = now - timedelta(days=30)
-        week_ago   = now - timedelta(days=7)
+    if is_premium:
+        # --- Date range ---
+        period = request.GET.get('period', '7')  # 7, 30, 90
+        days = int(period)
+        start_date = today - timedelta(days=days)
 
-        # Retention rate
-        repeat = customers.annotate(pc=Count('purchases')).filter(pc__gt=1).count()
-        context['retention_rate'] = round(repeat / total * 100) if total else 0
+        purchases = Purchase.objects.filter(
+            customer__vendor=vendor,
+            purchased_at__date__gte=start_date
+        )
 
-        # Revenue
-        month_rev = Purchase.objects.filter(
-            customer__vendor=vendor, purchased_at__gte=month_ago
-        ).aggregate(t=Sum('amount'))['t'] or 0
-        context['month_revenue'] = month_rev
+        # --- Summary stats ---
+        summary = purchases.aggregate(
+            total_revenue=Sum('amount'),
+            total_transactions=Count('id'),
+        )
 
-        # Avg spend per visit
-        avg_spend = Purchase.objects.filter(
-            customer__vendor=vendor
-        ).aggregate(a=Avg('amount'))['a'] or 0
-        context['avg_spend'] = round(avg_spend)
+        # --- Daily breakdown ---
+        daily = purchases.annotate(
+            day=TruncDate('purchased_at')
+        ).values('day').annotate(
+            revenue=Sum('amount'),
+            count=Count('id'),
+        ).order_by('day')
 
-        # Top customers
-        # Use spent_total to avoid conflict with @property total_spent
-        context['top_customers'] = customers.annotate(
-            spent_total=Sum('purchases__amount'),
-            visit_count=Count('purchases')
-        ).order_by('-spent_total')[:5]
+        # --- Top customers by spend ---
+        top_customers = Customer.objects.filter(vendor=vendor).annotate(
+            period_spent=Sum('purchases__amount', filter=Q(purchases__purchased_at__date__gte=start_date))
+        ).exclude(period_spent=None).order_by('-period_spent')[:10]
 
-        # Weekly revenue (last 7 days, grouped by day)
-        context['weekly_data'] = _weekly_revenue(vendor, now)
+        # --- Revenue by day of week ---
+        by_weekday = purchases.annotate(
+            weekday=ExtractWeekDay('purchased_at')
+        ).values('weekday').annotate(
+            revenue=Sum('amount'),
+        ).order_by('weekday')
 
-        # Segment breakdown
-        all_c = list(customers)
-        context['segments'] = {
-            'loyal':   sum(1 for c in all_c if c.status == 'loyal'),
-            'regular': sum(1 for c in all_c if c.status == 'regular'),
-            'new':     sum(1 for c in all_c if c.status == 'new'),
-            'atrisk':  sum(1 for c in all_c if c.status == 'atrisk'),
-        }
+        weekday_names = {1: 'Sun', 2: 'Mon', 3: 'Tue', 4: 'Wed', 5: 'Thu', 6: 'Fri', 7: 'Sat'}
+        weekday_data = [{'day': weekday_names.get(d['weekday'], '?'), 'revenue': float(d['revenue'] or 0)} for d in by_weekday]
+        best_day = max(weekday_data, key=lambda x: x['revenue'])['day'] if weekday_data else '—'
+
+        # --- Average daily revenue ---
+        total_rev = summary['total_revenue'] or 0
+        avg_daily = total_rev / max(days, 1)
+
+        # --- Week-over-week change ---
+        prev_start = start_date - timedelta(days=days)
+        prev_revenue = Purchase.objects.filter(
+            customer__vendor=vendor,
+            purchased_at__date__gte=prev_start,
+            purchased_at__date__lt=start_date,
+        ).aggregate(total=Sum('amount'))['total'] or 0
+
+        if prev_revenue > 0:
+            change_pct = ((total_rev - prev_revenue) / prev_revenue) * 100
+        else:
+            change_pct = 100 if total_rev > 0 else 0
+
+        context.update({
+            'period': period,
+            'start_date': start_date,
+            'total_revenue': total_rev,
+            'total_transactions': summary['total_transactions'] or 0,
+            'avg_daily': round(avg_daily),
+            'change_pct': round(change_pct, 1),
+            'daily_data': list(daily),
+            'top_customers': top_customers,
+            'weekday_data': weekday_data,
+            'best_day': best_day,
+        })
     else:
-        # Free tier sees a locked upgrade prompt instead of charts
+        # Free users see locked features list
         context['locked_features'] = [
-            'Retention rate tracking',
-            'Revenue analytics',
-            'Top customer ranking',
-            'Weekly revenue chart',
-            'Customer segment breakdown',
+            'Daily & weekly revenue breakdowns',
+            'Top customer rankings',
+            'Best selling days analysis',
+            'Revenue trend charts',
+            'Period-over-period comparisons',
         ]
 
     return render(request, 'analytics/dashboard.html', context)
-
-
-def _weekly_revenue(vendor, now):
-    """Returns list of {day, revenue} for the last 7 days."""
-    result = []
-    for i in range(6, -1, -1):
-        day   = now - timedelta(days=i)
-        start = day.replace(hour=0, minute=0, second=0, microsecond=0)
-        end   = day.replace(hour=23, minute=59, second=59)
-        rev   = Purchase.objects.filter(
-            customer__vendor=vendor,
-            purchased_at__range=(start, end)
-        ).aggregate(t=Sum('amount'))['t'] or 0
-        result.append({'day': day.strftime('%a'), 'revenue': float(rev)})
-    return result

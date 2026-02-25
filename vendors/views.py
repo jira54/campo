@@ -27,7 +27,11 @@ def root_redirect(request):
 def login_view(request):
     if hasattr(request, 'user') and request.user.is_authenticated:
         return redirect('vendors:dashboard')
-    error = None
+    
+    # Check if coming from registration with stored email
+    stored_email = request.session.get('registration_email')
+    stored_error = None
+    
     if request.method == 'POST':
         user = authenticate(
             request,
@@ -35,10 +39,22 @@ def login_view(request):
             password=request.POST.get('password')
         )
         if user:
+            # Clear stored registration email on successful login
+            if 'registration_email' in request.session:
+                del request.session['registration_email']
             login(request, user)
             return redirect('vendors:dashboard')
         error = "Invalid email or password."
-    return render(request, 'vendors/login.html', {'error': error})
+    else:
+        error = stored_error  # Use stored error if coming from registration
+        
+    # Pre-fill form with registration email if available
+    initial_email = stored_email if stored_email else ''
+    
+    return render(request, 'vendors/login.html', {
+        'error': error,
+        'initial_email': initial_email
+    })
 
 def logout_view(request):
     logout(request)
@@ -49,6 +65,7 @@ def register_view(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             vendor = form.save()
+            email = form.cleaned_data['email']  # Get the registered email
 
             from billing.models import Subscription
             Subscription.objects.create(vendor=vendor, plan='free')
@@ -56,6 +73,9 @@ def register_view(request):
             # Logout current user to prevent session conflicts
             if request.user.is_authenticated:
                 logout(request)
+                
+            # Store email in session for login form pre-fill
+            request.session['registration_email'] = email
                 
             messages.success(request, "Account created successfully. Please sign in to continue.")
             return redirect('login')

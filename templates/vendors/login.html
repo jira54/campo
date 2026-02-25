@@ -30,6 +30,7 @@
                     <input 
                         type="email" 
                         name="email" 
+                        value="{{ initial_email|default:'' }}"
                         placeholder="your@email.com"
                         required
                         class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold"

@@ -49,6 +49,7 @@ class Vendor(AbstractBaseUser, PermissionsMixin):
     email             = models.EmailField(unique=True)
     is_active         = models.BooleanField(default=True)
     is_staff          = models.BooleanField(default=False)
+    trial_end_date    = models.DateTimeField(null=True, blank=True)
     created_at        = models.DateTimeField(auto_now_add=True)
 
     objects = VendorManager()
@@ -69,6 +70,9 @@ class Vendor(AbstractBaseUser, PermissionsMixin):
 
     @property
     def is_premium(self):
+        # Check if user has active trial
+        if self.trial_end_date and self.trial_end_date > timezone.now():
+            return True
         return self.plan in ('premium', 'bundle')
 
     @property

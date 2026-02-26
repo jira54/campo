@@ -6,7 +6,7 @@ from billing.decorators import premium_required
 from customers.models import Customer
 from .models import Promotion
 from .forms import PromotionForm
-
+import urllib.parse
 
 @login_required
 @premium_required
@@ -72,3 +72,30 @@ def _send_sms(promo, vendor):
             sms.send(message, phones, sender_id=os.getenv('AT_SENDER_ID', 'CampoPawa'))
     except Exception as e:
         print(f"SMS send failed: {e}")
+
+
+@login_required
+@premium_required
+def promotion_detail(request, promo_id):
+    promo = get_object_or_404(Promotion, id=promo_id, vendor=request.user)
+    customers = Customer.objects.filter(vendor=request.user)
+    
+    if promo.segment != 'all':
+        customers = customers.filter(status=promo.segment)
+    
+    # Add WhatsApp URLs to each customer
+    for customer in customers:
+        if customer.phone:
+            customer.whatsapp_url = _get_whatsapp_url(promo, customer)
+    
+    return render(request, 'promotions/detail.html', {
+        'promo': promo,
+        'customers': customers,
+    })
+
+
+def _get_whatsapp_url(promo, customer):
+    """Generate WhatsApp URL for individual customer"""
+    message = urllib.parse.quote(promo.message.replace('{name}', customer.name or 'there'))
+    phone_clean = customer.phone.strip().replace("+", "").replace(" ", "").replace("-", "")
+    return f"https://wa.me/{phone_clean}?text={message}"

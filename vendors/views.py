@@ -65,10 +65,14 @@ def register_view(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             vendor = form.save()
-            email = form.cleaned_data['email']  # Get the registered email
+            email = form.cleaned_data['email']  # Get registered email
 
             from billing.models import Subscription
             Subscription.objects.create(vendor=vendor, plan='free')
+
+            # Add 10-day free trial
+            vendor.trial_end_date = timezone.now() + timedelta(days=10)
+            vendor.save()
 
             # Logout current user to prevent session conflicts
             if request.user.is_authenticated:
@@ -88,6 +92,12 @@ def register_view(request):
 def dashboard(request):
     vendor   = request.user
     now      = timezone.now()
+    
+    # Check if trial has expired and downgrade if needed
+    if vendor.trial_end_date and vendor.trial_end_date < now:
+        vendor.trial_end_date = None
+        vendor.save()
+    
     today    = now.date()
     week_ago = now - timedelta(days=7)
     yesterday = today - timedelta(days=1)

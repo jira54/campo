@@ -52,17 +52,20 @@
             <span class="text-lg">📢</span>
             <span>Promotions</span>
             {% if not user.is_premium %}
-                <span class="text-xs bg-gradient-to-r from-gold to-amber-400 text-deep px-2 py-1 rounded-full font-bold ml-auto">PRO</span>
+                <span class="text-xs bg-gradient-to-r from-gold to-amber-400 text-deep px-2 py-1 rounded-full font-bold ml-auto">premium</span>
             {% endif %}
         </a>
 
-        <a href="{% url 'analytics:analytics' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'analytics' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-blue-800 hover:to-blue-700 hover:text-gray-100 hover:scale-105 hover:shadow-lg hover:shadow-gray-20{% endif %} transition-all duration-300 ease-out">
-            <span class="text-lg">📈</span>
-            <span>Analytics</span>
-            {% if not user.is_premium %}
-                <span class="text-xs bg-gradient-to-r from-gold to-amber-400 text-deep px-2 py-1 rounded-full font-bold ml-auto">PRO</span>
-            {% endif %}
+        {% if user.is_premium %}
+        <a href="{% url 'customers:loyalty_dashboard' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'loyalty' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-blue-800 hover:to-blue-700 hover:text-gray-100 hover:scale-105 hover:shadow-lg hover:shadow-gray-20{% endif %} transition-all duration-300 ease-out">
+            <span class="text-lg">🎯</span>
+            <span>Loyalty (premium)</span>
         </a>
+        <a href="{% url 'customers:smart_reminders' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'reminders' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-blue-800 hover:to-blue-700 hover:text-gray-100 hover:scale-105 hover:shadow-lg hover:shadow-gray-20{% endif %} transition-all duration-300 ease-out">
+            <span class="text-lg">🔔</span>
+            <span>Reminders (premium)</span>
+        </a>
+        {% endif %}
 
         <a href="{% url 'notes:note_list' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'notes' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-blue-800 hover:to-blue-700 hover:text-gray-100 hover:scale-105 hover:shadow-lg hover:shadow-gray-20{% endif %} transition-all duration-300 ease-out">
             <span class="text-lg">📝</span>
@@ -72,21 +75,7 @@
         <a href="{% url 'credit:credit_list' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'credit' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-blue-800 hover:to-blue-700 hover:text-gray-100 hover:scale-105 hover:shadow-lg hover:shadow-gray-20{% endif %} transition-all duration-300 ease-out">
             <span class="text-lg">💳</span>
             <span>Credit</span>
-            {% if not user.is_premium %}
-                <span class="text-xs bg-gradient-to-r from-gold to-amber-400 text-deep px-2 py-1 rounded-full font-bold ml-auto">PRO</span>
-            {% endif %}
         </a>
-
-        {% if user.is_premium %}
-        <a href="{% url 'customers:loyalty_dashboard' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'loyalty' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-blue-800 hover:to-blue-700 hover:text-gray-100 hover:scale-105 hover:shadow-lg hover:shadow-gray-20{% endif %} transition-all duration-300 ease-out">
-            <span class="text-lg">🎯</span>
-            <span>Loyalty</span>
-        </a>
-        <a href="{% url 'customers:smart_reminders' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'reminders' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-blue-800 hover:to-blue-700 hover:text-gray-100 hover:scale-105 hover:shadow-lg hover:shadow-gray-20{% endif %} transition-all duration-300 ease-out">
-            <span class="text-lg">🔔</span>
-            <span>Reminders</span>
-        </a>
-        {% endif %}
     </nav>
 
     {% if user.is_premium %}

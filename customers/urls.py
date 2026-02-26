@@ -8,6 +8,7 @@ urlpatterns = [
     path('add/',             views.customer_add,        name='customer_add'),
     path('<int:pk>/',        views.customer_detail,     name='customer_detail'),
     path('<int:pk>/delete/', views.customer_delete,     name='customer_delete'),
+    path('<int:pk>/toggle-active/', views.customer_toggle_active, name='customer_toggle_active'),
 
     # Export (Premium)
     path('export/csv/',      views.customer_export_csv, name='customer_export_csv'),

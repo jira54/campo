@@ -20,7 +20,7 @@ def customer_list(request):
     segment = request.GET.get('segment', 'all')
     query   = request.GET.get('q', '')
 
-    customers = Customer.objects.filter(vendor=vendor)
+    customers = Customer.objects.filter(vendor=vendor, is_active=True)
 
     if query:
         customers = customers.filter(name__icontains=query) | \
@@ -156,6 +156,17 @@ def customer_delete(request, pk):
         name = customer.name
         customer.delete()
         messages.success(request, f"{name} removed.")
+    return redirect('customers:customer_list')
+
+
+@login_required
+def customer_toggle_active(request, pk):
+    customer = get_object_or_404(Customer, pk=pk, vendor=request.user)
+    if request.method == 'POST':
+        customer.is_active = not customer.is_active
+        customer.save()
+        status = "activated" if customer.is_active else "deactivated"
+        messages.success(request, f"{customer.name} {status}.")
     return redirect('customers:customer_list')
 
 

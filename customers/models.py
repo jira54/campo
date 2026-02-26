@@ -15,6 +15,7 @@ class Customer(models.Model):
     phone    = models.CharField(max_length=20)
     notes    = models.TextField(blank=True)
     tags     = models.CharField(max_length=255, blank=True, default='')
+    is_active = models.BooleanField(default=True)
     added_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

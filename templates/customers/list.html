@@ -117,7 +117,17 @@
                             </div>
                             <div class="flex gap-3">
                                 <a href="{% url 'customers:customer_detail' customer.id %}" class="bg-teal text-deep px-4 py-2 rounded text-sm font-bold hover:bg-cyan-400 transition">View</a>
-                                <a href="{% url 'customers:customer_delete' customer.id %}" class="bg-red-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-red-700 transition">Delete</a>
+                                {% if customer.is_active %}
+                                    <form method="post" action="{% url 'customers:customer_toggle_active' customer.id %}" class="inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="bg-amber-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-amber-700 transition">Deactivate</button>
+                                    </form>
+                                {% else %}
+                                    <form method="post" action="{% url 'customers:customer_toggle_active' customer.id %}" class="inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-green-700 transition">Activate</button>
+                                    </form>
+                                {% endif %}
                             </div>
                         </div>
                     {% endfor %}
@@ -155,7 +165,17 @@
                                     </td>
                                     <td class="px-6 py-4 text-center space-x-2">
                                         <a href="{% url 'customers:customer_detail' customer.id %}" class="text-teal hover:text-cyan-300">View</a>
-                                        <a href="{% url 'customers:customer_delete' customer.id %}" class="text-red-400 hover:text-red-300">Delete</a>
+                                        {% if customer.is_active %}
+                                            <form method="post" action="{% url 'customers:customer_toggle_active' customer.id %}" class="inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="text-amber-400 hover:text-amber-300 text-sm">Deactivate</button>
+                                            </form>
+                                        {% else %}
+                                            <form method="post" action="{% url 'customers:customer_toggle_active' customer.id %}" class="inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="text-green-400 hover:text-green-300 text-sm">Activate</button>
+                                            </form>
+                                        {% endif %}
                                     </td>
                                 </tr>
                             {% endfor %}

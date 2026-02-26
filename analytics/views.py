@@ -14,14 +14,15 @@ from billing.decorators import premium_required
 def analytics_dashboard(request):
     vendor = request.user
     
+    # TEMPORARILY DISABLE PREMIUM CHECK - ALL USERS CAN ACCESS ANALYTICS
     # Redirect non-premium users with message
-    if not vendor.is_premium:
-        messages.warning(
-            request,
-            "Analytics requires a Premium plan. "
-            "Upgrade to Premium for KES 300/month for detailed insights."
-        )
-        return redirect('billing:upgrade')
+    # if not vendor.is_premium:
+    #     messages.warning(
+    #         request,
+    #         "Analytics requires a Premium plan. "
+    #         "Upgrade to Premium for KES 300/month for detailed insights."
+    #     )
+    #     return redirect('billing:upgrade')
     
     today = timezone.now().date()
 

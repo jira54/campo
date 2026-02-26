@@ -59,22 +59,22 @@
         {% if user.is_premium %}
         <a href="{% url 'customers:loyalty_dashboard' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'loyalty' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-blue-800 hover:to-blue-700 hover:text-gray-100 hover:scale-105 hover:shadow-lg hover:shadow-gray-20{% endif %} transition-all duration-300 ease-out">
             <span class="text-lg">🎯</span>
-            <span>Loyalty (premium)</span>
+            <span>Loyalty</span>
         </a>
         <a href="{% url 'customers:smart_reminders' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'reminders' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-blue-800 hover:to-blue-700 hover:text-gray-100 hover:scale-105 hover:shadow-lg hover:shadow-gray-20{% endif %} transition-all duration-300 ease-out">
             <span class="text-lg">🔔</span>
-            <span>Reminders (premium)</span>
+            <span>Reminders</span>
         </a>
         {% else %}
         <a href="{% url 'customers:loyalty_dashboard' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'loyalty' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-blue-800 hover:to-blue-700 hover:text-gray-100 hover:scale-105 hover:shadow-lg hover:shadow-gray-20{% endif %} transition-all duration-300 ease-out">
             <span class="text-lg">🎯</span>
             <span>Loyalty</span>
-            <span class="text-xs bg-gradient-to-r from-amber-700 to-amber-800 text-yellow-200 px-2 py-1 rounded-full font-bold ml-auto border border-amber-600">premium</span>
+            <span class="text-xs text-orange-400 font-bold ml-auto animate-pulse">premium</span>
         </a>
         <a href="{% url 'customers:smart_reminders' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'reminders' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-blue-800 hover:to-blue-700 hover:text-gray-100 hover:scale-105 hover:shadow-lg hover:shadow-gray-20{% endif %} transition-all duration-300 ease-out">
             <span class="text-lg">🔔</span>
             <span>Reminders</span>
-            <span class="text-xs bg-gradient-to-r from-amber-700 to-amber-800 text-yellow-200 px-2 py-1 rounded-full font-bold ml-auto border border-amber-600">premium</span>
+            <span class="text-xs text-orange-400 font-bold ml-auto animate-pulse">premium</span>
         </a>
         {% endif %}
 
@@ -85,7 +85,7 @@
 
         <a href="{% url 'credit:credit_list' %}" class="flex items-center gap-3 px-4 py-2 rounded-lg {% if page == 'credit' %}bg-gold text-deep shadow-lg shadow-gold/30{% else %}text-gray-300 hover:bg-gradient-to-r hover:from-blue-800 hover:to-blue-700 hover:text-gray-100 hover:scale-105 hover:shadow-lg hover:shadow-gray-20{% endif %} transition-all duration-300 ease-out">
             <span class="text-lg">💳</span>
-            <span>Credit (premium)</span>
+            <span>Credit</span>
             {% if not user.is_premium %}
                 <span class="text-xs text-orange-400 font-bold ml-auto animate-pulse">premium</span>
             {% endif %}

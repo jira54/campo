@@ -28,6 +28,7 @@ def analytics_dashboard(request):
 
     context = {
         'page': 'analytics',
+        'is_premium': True,  # Force premium for template
         'total_customers': Customer.objects.filter(vendor=vendor).count(),
     }
 

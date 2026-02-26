@@ -3,71 +3,71 @@
 {% block title %}Upgrade Plan - CampoPawa{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-deep p-8">
+<div class="min-h-screen bg-deep p-4 md:p-8">
     <div class="max-w-6xl mx-auto">
 
         <!-- Header -->
-        <div class="mb-12">
-            <div class="flex justify-start mb-6">
+        <div class="mb-8 md:mb-12">
+            <div class="flex justify-start mb-4 md:mb-6">
                 <a href="{% url 'vendors:dashboard' %}" 
-                   class="inline-flex items-center gap-2 px-4 py-2 bg-navy border border-gold border-opacity-40 
+                   class="inline-flex items-center gap-2 px-3 md:px-4 py-2 bg-navy border border-gold border-opacity-40 
                           text-gold text-sm font-semibold rounded-lg 
                           hover:bg-gold hover:text-deep transition-all duration-200">
                     ← Back to Dashboard
                 </a>
             </div>
             <div class="text-center">
-                <h1 class="text-4xl font-bold text-white mb-2">Choose Your Plan</h1>
-                <p class="text-gray-400 text-lg">Less than two mandazis a day! ☕</p>
+                <h1 class="text-2xl md:text-4xl font-bold text-white mb-2">Choose Your Plan</h1>
+                <p class="text-gray-400 text-sm md:text-lg">Less than two mandazis a day! ☕</p>
             </div>
         </div>
 
         <!-- Current Plan Info -->
         {% if current_plan != 'free' %}
-            <div class="mb-8 bg-navy border border-gold border-opacity-20 rounded-lg p-6 text-center">
-                <p class="text-gold font-bold">You're currently on: {{ current_plan|upper }}</p>
+            <div class="mb-6 md:mb-8 bg-navy border border-gold border-opacity-20 rounded-lg p-4 md:p-6 text-center">
+                <p class="text-gold font-bold text-sm md:text-base">You're currently on: {{ current_plan|upper }}</p>
                 {% if days_remaining %}
-                    <p class="text-gray-300 text-sm mt-1">{{ days_remaining }} days remaining</p>
+                    <p class="text-gray-300 text-xs md:text-sm mt-1">{{ days_remaining }} days remaining</p>
                 {% endif %}
             </div>
         {% endif %}
 
         <!-- Plans Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12">
 
             <!-- Free Plan -->
             <div class="bg-navy border {% if current_plan == 'free' %}border-gold border-opacity-100{% else %}border-gold border-opacity-20{% endif %} rounded-lg overflow-hidden hover:border-opacity-40 transition">
-                <div class="bg-navy bg-opacity-50 border-b border-gold border-opacity-20 p-6">
-                    <h3 class="text-white font-bold text-xl mb-1">Free Plan</h3>
-                    <p class="text-gold text-4xl font-bold">KES 0</p>
-                    <p class="text-gray-400 text-sm mt-2">Forever free</p>
+                <div class="bg-navy bg-opacity-50 border-b border-gold border-opacity-20 p-4 md:p-6">
+                    <h3 class="text-white font-bold text-lg md:text-xl mb-1">Free Plan</h3>
+                    <p class="text-gold text-2xl md:text-4xl font-bold">KES 0</p>
+                    <p class="text-gray-400 text-xs md:text-sm mt-2">Forever free</p>
                 </div>
-                <div class="p-6 space-y-3">
-                    <div class="flex items-center gap-3 text-gray-300">
-                        <span class="text-green-400">✓</span> 20 customers limit
+                <div class="p-4 md:p-6 space-y-2 md:space-y-3">
+                    <div class="flex items-center gap-2 md:gap-3 text-gray-300 text-sm">
+                        <span class="text-green-400 text-sm md:text-base">✓</span> 20 customers limit
                     </div>
-                    <div class="flex items-center gap-3 text-gray-300">
-                        <span class="text-green-400">✓</span> Customer tracking
+                    <div class="flex items-center gap-2 md:gap-3 text-gray-300 text-sm">
+                        <span class="text-green-400 text-sm md:text-base">✓</span> Customer tracking
                     </div>
-                    <div class="flex items-center gap-3 text-gray-300">
-                        <span class="text-green-400">✓</span> Basic dashboard
+                    <div class="flex items-center gap-2 md:gap-3 text-gray-300 text-sm">
+                        <span class="text-green-400 text-sm md:text-base">✓</span> Basic dashboard
                     </div>
-                    <div class="flex items-center gap-3 text-gray-400">
-                        <span class="text-gray-600">✗</span> Promotions
+                    <div class="flex items-center gap-2 md:gap-3 text-gray-400 text-sm">
+                        <span class="text-gray-600 text-sm md:text-base">✗</span> Promotions
                     </div>
-                    <div class="flex items-center gap-3 text-gray-400">
-                        <span class="text-gray-600">✗</span> SMS/WhatsApp
+                    <div class="flex items-center gap-2 md:gap-3 text-gray-400 text-sm">
+                        <span class="text-gray-600 text-sm md:text-base">✗</span> SMS/WhatsApp
                     </div>
-                    <div class="flex items-center gap-3 text-gray-400">
-                        <span class="text-gray-600">✗</span> Analytics
+                    <div class="flex items-center gap-2 md:gap-3 text-gray-400 text-sm">
+                        <span class="text-gray-600 text-sm md:text-base">✗</span> Analytics
                     </div>
                     {% if current_plan == 'free' %}
-                        <button disabled class="w-full mt-6 bg-gray-600 text-gray-300 font-bold px-6 py-3 rounded cursor-not-allowed">
+                        <button disabled class="w-full mt-4 md:mt-6 bg-gray-600 text-gray-300 font-bold px-4 md:px-6 py-2 md:py-3 rounded cursor-not-allowed text-sm">
                             Currently Active
                         </button>
                     {% else %}
                         <a href="{% url 'vendors:dashboard' %}" 
-                           class="block text-center mt-6 bg-navy border border-gold text-gold font-bold px-6 py-3 rounded hover:bg-gold hover:text-deep transition-all duration-200">
+                           class="block text-center mt-4 md:mt-6 bg-navy border border-gold text-gold font-bold px-4 md:px-6 py-2 md:py-3 rounded hover:bg-gold hover:text-deep transition-all duration-200 text-sm">
                             Switch Back
                         </a>
                     {% endif %}
@@ -76,38 +76,38 @@
 
             <!-- Premium Plan -->
             <div class="relative">
-                <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gold text-deep px-4 py-1 rounded-full font-bold text-sm">
+                <div class="absolute -top-3 md:-top-4 left-1/2 transform -translate-x-1/2 bg-gold text-deep px-3 md:px-4 py-1 rounded-full font-bold text-xs md:text-sm">
                     ⭐ MOST POPULAR
                 </div>
                 <div class="bg-navy border border-gold border-opacity-100 rounded-lg overflow-hidden hover:border-opacity-80 transition shadow-lg transform scale-105">
-                    <div class="bg-gradient-to-r from-gold to-yellow-400 p-6 text-deep">
-                        <h3 class="font-bold text-xl mb-1">Premium</h3>
-                        <p class="text-4xl font-bold">KES 300</p>
-                        <p class="text-sm mt-2">per month</p>
+                    <div class="bg-gradient-to-r from-gold to-yellow-400 p-4 md:p-6 text-deep">
+                        <h3 class="font-bold text-lg md:text-xl mb-1">Premium</h3>
+                        <p class="text-2xl md:text-4xl font-bold">KES 300</p>
+                        <p class="text-xs md:text-sm mt-2">per month</p>
                     </div>
-                    <div class="p-6 space-y-3">
-                        <div class="flex items-center gap-3 text-white">
-                            <span class="text-teal">✓</span> <strong>Unlimited customers</strong>
+                    <div class="p-4 md:p-6 space-y-2 md:space-y-3">
+                        <div class="flex items-center gap-2 md:gap-3 text-white text-sm">
+                            <span class="text-teal text-sm md:text-base">✓</span> <strong>Unlimited customers</strong>
                         </div>
-                        <div class="flex items-center gap-3 text-gray-300">
-                            <span class="text-teal">✓</span> All Basic features
+                        <div class="flex items-center gap-2 md:gap-3 text-gray-300 text-sm">
+                            <span class="text-teal text-sm md:text-base">✓</span> All Basic features
                         </div>
-                        <div class="flex items-center gap-3 text-white">
-                            <span class="text-teal">✓</span> <strong>Promotions & SMS</strong>
+                        <div class="flex items-center gap-2 md:gap-3 text-white text-sm">
+                            <span class="text-teal text-sm md:text-base">✓</span> <strong>Promotions & SMS</strong>
                         </div>
-                        <div class="flex items-center gap-3 text-white">
-                            <span class="text-teal">✓</span> <strong>Analytics Dashboard</strong>
+                        <div class="flex items-center gap-2 md:gap-3 text-white text-sm">
+                            <span class="text-teal text-sm md:text-base">✓</span> <strong>Analytics Dashboard</strong>
                         </div>
-                        <div class="flex items-center gap-3 text-gray-300">
-                            <span class="text-teal">✓</span> Email support
+                        <div class="flex items-center gap-2 md:gap-3 text-gray-300 text-sm">
+                            <span class="text-teal text-sm md:text-base">✓</span> Email support
                         </div>
                         {% if current_plan == 'premium' %}
-                            <button disabled class="w-full mt-6 bg-gold text-deep font-bold px-6 py-3 rounded cursor-not-allowed">
+                            <button disabled class="w-full mt-4 md:mt-6 bg-gold text-deep font-bold px-4 md:px-6 py-2 md:py-3 rounded cursor-not-allowed text-sm">
                                 Currently Active
                             </button>
                         {% else %}
                             <button type="button" onclick="showPaymentModal('premium')" 
-                                    class="w-full mt-6 bg-gold text-deep font-bold px-6 py-3 rounded hover:bg-yellow-400 transition">
+                                    class="w-full mt-4 md:mt-6 bg-gold text-deep font-bold px-4 md:px-6 py-2 md:py-3 rounded hover:bg-yellow-400 transition text-sm">
                                 Choose Premium
                             </button>
                         {% endif %}
@@ -117,34 +117,34 @@
 
             <!-- Bundle Plan -->
             <div class="bg-navy border border-gold border-opacity-20 rounded-lg overflow-hidden hover:border-opacity-40 transition">
-                <div class="bg-navy bg-opacity-50 border-b border-gold border-opacity-20 p-6">
-                    <h3 class="text-white font-bold text-xl mb-1">Campus Bundle</h3>
-                    <p class="text-gold text-4xl font-bold">KES 1,600</p>
-                    <p class="text-gray-400 text-sm mt-2">per month (up to 5 vendors)</p>
+                <div class="bg-navy bg-opacity-50 border-b border-gold border-opacity-20 p-4 md:p-6">
+                    <h3 class="text-white font-bold text-lg md:text-xl mb-1">Campus Bundle</h3>
+                    <p class="text-gold text-2xl md:text-4xl font-bold">KES 1,600</p>
+                    <p class="text-gray-400 text-xs md:text-sm mt-2">per month (up to 5 vendors)</p>
                 </div>
-                <div class="p-6 space-y-3">
-                    <div class="flex items-center gap-3 text-white">
-                        <span class="text-sea">✓</span> <strong>Up to 5 vendors</strong>
+                <div class="p-4 md:p-6 space-y-2 md:space-y-3">
+                    <div class="flex items-center gap-2 md:gap-3 text-white text-sm">
+                        <span class="text-sea text-sm md:text-base">✓</span> <strong>Up to 5 vendors</strong>
                     </div>
-                    <div class="flex items-center gap-3 text-white">
-                        <span class="text-sea">✓</span> <strong>Unlimited customers</strong>
+                    <div class="flex items-center gap-2 md:gap-3 text-white text-sm">
+                        <span class="text-sea text-sm md:text-base">✓</span> <strong>Unlimited customers</strong>
                     </div>
-                    <div class="flex items-center gap-3 text-white">
-                        <span class="text-sea">✓</span> <strong>All Premium features</strong>
+                    <div class="flex items-center gap-2 md:gap-3 text-white text-sm">
+                        <span class="text-sea text-sm md:text-base">✓</span> <strong>All Premium features</strong>
                     </div>
-                    <div class="flex items-center gap-3 text-gray-300">
-                        <span class="text-sea">✓</span> Central dashboard
+                    <div class="flex items-center gap-2 md:gap-3 text-gray-300 text-sm">
+                        <span class="text-sea text-sm md:text-base">✓</span> Central dashboard
                     </div>
-                    <div class="flex items-center gap-3 text-gray-300">
-                        <span class="text-sea">✓</span> Priority support
+                    <div class="flex items-center gap-2 md:gap-3 text-gray-300 text-sm">
+                        <span class="text-sea text-sm md:text-base">✓</span> Priority support
                     </div>
                     {% if current_plan == 'bundle' %}
-                        <button disabled class="w-full mt-6 bg-gray-600 text-gray-300 font-bold px-6 py-3 rounded cursor-not-allowed">
+                        <button disabled class="w-full mt-4 md:mt-6 bg-gray-600 text-gray-300 font-bold px-4 md:px-6 py-2 md:py-3 rounded cursor-not-allowed text-sm">
                             Currently Active
                         </button>
                     {% else %}
                         <button type="button" onclick="showPaymentModal('bundle')" 
-                                class="w-full mt-6 bg-gold text-deep font-bold px-6 py-3 rounded hover:bg-yellow-400 transition">
+                                class="w-full mt-4 md:mt-6 bg-gold text-deep font-bold px-4 md:px-6 py-2 md:py-3 rounded hover:bg-yellow-400 transition text-sm">
                             Choose Bundle
                         </button>
                     {% endif %}
@@ -154,96 +154,217 @@
 
         <!-- Comparison Table -->
         <div class="bg-navy border border-gold border-opacity-20 rounded-lg overflow-hidden">
-            <h3 class="text-gold font-bold text-lg p-6 border-b border-gold border-opacity-20">Feature Comparison</h3>
-            <table class="w-full">
-                <thead>
-                    <tr class="bg-navy bg-opacity-50 border-b border-gold border-opacity-20">
-                        <th class="px-6 py-3 text-left text-gold font-bold">Feature</th>
-                        <th class="px-6 py-3 text-center text-gold font-bold">Free</th>
-                        <th class="px-6 py-3 text-center text-gold font-bold">Premium</th>
-                        <th class="px-6 py-3 text-center text-gold font-bold">Bundle</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="border-b border-gold border-opacity-10 hover:bg-navy hover:bg-opacity-50">
-                        <td class="px-6 py-4 text-white">Customer Limit</td>
-                        <td class="px-6 py-4 text-center text-gray-300">20</td>
-                        <td class="px-6 py-4 text-center text-teal font-bold">Unlimited</td>
-                        <td class="px-6 py-4 text-center text-sea font-bold">Unlimited</td>
-                    </tr>
-                    <tr class="border-b border-gold border-opacity-10 hover:bg-navy hover:bg-opacity-50">
-                        <td class="px-6 py-4 text-white">Customer Tracking</td>
-                        <td class="px-6 py-4 text-center text-green-400">✓</td>
-                        <td class="px-6 py-4 text-center text-green-400">✓</td>
-                        <td class="px-6 py-4 text-center text-green-400">✓</td>
-                    </tr>
-                    <tr class="border-b border-gold border-opacity-10 hover:bg-navy hover:bg-opacity-50">
-                        <td class="px-6 py-4 text-white">SMS/WhatsApp Promotions</td>
-                        <td class="px-6 py-4 text-center text-red-400">✗</td>
-                        <td class="px-6 py-4 text-center text-green-400">✓</td>
-                        <td class="px-6 py-4 text-center text-green-400">✓</td>
-                    </tr>
-                    <tr class="border-b border-gold border-opacity-10 hover:bg-navy hover:bg-opacity-50">
-                        <td class="px-6 py-4 text-white">Advanced Analytics</td>
-                        <td class="px-6 py-4 text-center text-red-400">✗</td>
-                        <td class="px-6 py-4 text-center text-green-400">✓</td>
-                        <td class="px-6 py-4 text-center text-green-400">✓</td>
-                    </tr>
-                    <tr class="border-b border-gold border-opacity-10 hover:bg-navy hover:bg-opacity-50">
-                        <td class="px-6 py-4 text-white">Number of Vendors</td>
-                        <td class="px-6 py-4 text-center text-gray-300">1</td>
-                        <td class="px-6 py-4 text-center text-gray-300">1</td>
-                        <td class="px-6 py-4 text-center text-sea font-bold">5</td>
-                    </tr>
-                    <tr class="hover:bg-navy hover:bg-opacity-50">
-                        <td class="px-6 py-4 text-white">Support</td>
-                        <td class="px-6 py-4 text-center text-gray-300">Community</td>
-                        <td class="px-6 py-4 text-center text-gray-300">Email</td>
-                        <td class="px-6 py-4 text-center text-gray-300">Priority</td>
-                    </tr>
-                </tbody>
-            </table>
+            <h3 class="text-gold font-bold text-base md:text-lg p-4 md:p-6 border-b border-gold border-opacity-20">Feature Comparison</h3>
+            
+            <!-- Mobile Card View -->
+            <div class="md:hidden p-4 md:p-6 space-y-3 md:space-y-4">
+                <!-- Customer Limit -->
+                <div class="bg-deep border border-gold border-opacity-20 rounded-lg p-3 md:p-4">
+                    <h4 class="text-white font-bold mb-2 md:mb-3 text-sm md:text-base">Customer Limit</h4>
+                    <div class="space-y-1 md:space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Free:</span>
+                            <span class="text-gray-300">20</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Premium:</span>
+                            <span class="text-teal font-bold">Unlimited</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Bundle:</span>
+                            <span class="text-sea font-bold">Unlimited</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Tracking -->
+                <div class="bg-deep border border-gold border-opacity-20 rounded-lg p-3 md:p-4">
+                    <h4 class="text-white font-bold mb-2 md:mb-3 text-sm md:text-base">Customer Tracking</h4>
+                    <div class="space-y-1 md:space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Free:</span>
+                            <span class="text-green-400">✓</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Premium:</span>
+                            <span class="text-green-400">✓</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Bundle:</span>
+                            <span class="text-green-400">✓</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SMS/WhatsApp Promotions -->
+                <div class="bg-deep border border-gold border-opacity-20 rounded-lg p-3 md:p-4">
+                    <h4 class="text-white font-bold mb-2 md:mb-3 text-sm md:text-base">SMS/WhatsApp Promotions</h4>
+                    <div class="space-y-1 md:space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Free:</span>
+                            <span class="text-red-400">✗</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Premium:</span>
+                            <span class="text-green-400">✓</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Bundle:</span>
+                            <span class="text-green-400">✓</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Analytics -->
+                <div class="bg-deep border border-gold border-opacity-20 rounded-lg p-3 md:p-4">
+                    <h4 class="text-white font-bold mb-2 md:mb-3 text-sm md:text-base">Advanced Analytics</h4>
+                    <div class="space-y-1 md:space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Free:</span>
+                            <span class="text-red-400">✗</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Premium:</span>
+                            <span class="text-green-400">✓</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Bundle:</span>
+                            <span class="text-green-400">✓</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Number of Vendors -->
+                <div class="bg-deep border border-gold border-opacity-20 rounded-lg p-3 md:p-4">
+                    <h4 class="text-white font-bold mb-2 md:mb-3 text-sm md:text-base">Number of Vendors</h4>
+                    <div class="space-y-1 md:space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Free:</span>
+                            <span class="text-gray-300">1</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Premium:</span>
+                            <span class="text-gray-300">1</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Bundle:</span>
+                            <span class="text-sea font-bold">5</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Support -->
+                <div class="bg-deep border border-gold border-opacity-20 rounded-lg p-3 md:p-4">
+                    <h4 class="text-white font-bold mb-2 md:mb-3 text-sm md:text-base">Support</h4>
+                    <div class="space-y-1 md:space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Free:</span>
+                            <span class="text-gray-300">Community</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Premium:</span>
+                            <span class="text-gray-300">Email</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Bundle:</span>
+                            <span class="text-gray-300">Priority</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Desktop Table View -->
+            <div class="hidden md:block">
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-navy bg-opacity-50 border-b border-gold border-opacity-20">
+                            <th class="px-4 md:px-6 py-3 text-left text-gold font-bold text-sm">Feature</th>
+                            <th class="px-4 md:px-6 py-3 text-center text-gold font-bold text-sm">Free</th>
+                            <th class="px-4 md:px-6 py-3 text-center text-gold font-bold text-sm">Premium</th>
+                            <th class="px-4 md:px-6 py-3 text-center text-gold font-bold text-sm">Bundle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-gold border-opacity-10 hover:bg-navy hover:bg-opacity-50">
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-white text-sm">Customer Limit</td>
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-center text-gray-300 text-sm">20</td>
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-center text-teal font-bold text-sm">Unlimited</td>
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-center text-sea font-bold text-sm">Unlimited</td>
+                        </tr>
+                        <tr class="border-b border-gold border-opacity-10 hover:bg-navy hover:bg-opacity-50">
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-white text-sm">Customer Tracking</td>
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-center text-green-400 text-sm">✓</td>
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-center text-green-400 text-sm">✓</td>
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-center text-green-400 text-sm">✓</td>
+                        </tr>
+                        <tr class="border-b border-gold border-opacity-10 hover:bg-navy hover:bg-opacity-50">
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-white text-sm">SMS/WhatsApp Promotions</td>
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-center text-red-400 text-sm">✗</td>
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-center text-green-400 text-sm">✓</td>
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-center text-green-400 text-sm">✓</td>
+                        </tr>
+                        <tr class="border-b border-gold border-opacity-10 hover:bg-navy hover:bg-opacity-50">
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-white text-sm">Advanced Analytics</td>
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-center text-red-400 text-sm">✗</td>
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-center text-green-400 text-sm">✓</td>
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-center text-green-400 text-sm">✓</td>
+                        </tr>
+                        <tr class="border-b border-gold border-opacity-10 hover:bg-navy hover:bg-opacity-50">
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-white text-sm">Number of Vendors</td>
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-center text-gray-300 text-sm">1</td>
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-center text-gray-300 text-sm">1</td>
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-center text-sea font-bold text-sm">5</td>
+                        </tr>
+                        <tr class="hover:bg-navy hover:bg-opacity-50">
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-white text-sm">Support</td>
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-center text-gray-300 text-sm">Community</td>
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-center text-gray-300 text-sm">Email</td>
+                            <td class="px-4 md:px-6 py-3 md:py-4 text-center text-gray-300 text-sm">Priority</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Payment Modal -->
-<div id="payment-modal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex items-center justify-center z-50">
-    <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-8 max-w-md w-full mx-4">
-        <h2 class="text-white font-bold text-2xl mb-2">Complete Payment</h2>
-        <p class="text-gray-400 mb-6">Enter your M-Pesa registered phone number</p>
+<div id="payment-modal" class="fixed inset-0 bg-black bg-opacity-70 hidden flex items-center justify-center z-50 p-4">
+    <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-6 md:p-8 max-w-md w-full mx-4">
+        <h2 class="text-white font-bold text-xl md:text-2xl mb-2">Complete Payment</h2>
+        <p class="text-gray-400 mb-6 text-sm md:text-base">Enter your M-Pesa registered phone number</p>
         <form id="payment-form" method="post" action="{% url 'billing:pay' %}">
             {% csrf_token %}
             <input type="hidden" name="plan" id="selected_plan" value="">
             <div class="mb-6">
-                <label class="block text-gold font-bold mb-2">Phone Number</label>
+                <label class="block text-gold font-bold mb-2 text-sm">Phone Number</label>
                 <input 
                     type="tel" 
                     name="phone" 
                     placeholder="+254712345678 or 0712345678"
                     value="{{ user.phone }}"
-                    class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold"
+                    class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold text-sm"
                     required
                 >
                 <p class="text-gray-400 text-xs mt-2">Must be M-Pesa enabled account</p>
             </div>
             <div class="bg-deep border border-gold border-opacity-30 rounded-lg p-4 mb-6">
                 <div class="flex justify-between items-center mb-2">
-                    <span class="text-gray-300">Plan</span>
-                    <span class="text-white font-bold" id="plan-name">Premium</span>
+                    <span class="text-gray-300 text-sm">Plan</span>
+                    <span class="text-white font-bold text-sm" id="plan-name">Premium</span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="text-gray-300">Amount</span>
-                    <span class="text-gold font-bold text-lg" id="plan-amount">KES 300</span>
+                    <span class="text-gray-300 text-sm">Amount</span>
+                    <span class="text-gold font-bold text-lg md:text-xl" id="plan-amount">KES 300</span>
                 </div>
             </div>
             <div class="flex gap-4">
                 <button type="submit" 
-                        class="flex-1 bg-gold text-deep font-bold px-6 py-3 rounded hover:bg-yellow-400 transition">
+                        class="flex-1 bg-gold text-deep font-bold px-4 md:px-6 py-2 md:py-3 rounded hover:bg-yellow-400 transition text-sm">
                     Pay with M-Pesa
                 </button>
                 <button type="button" onclick="closePaymentModal()" 
-                        class="flex-1 bg-navy border border-gold text-gold font-bold px-6 py-3 rounded hover:bg-gold hover:text-deep transition-all duration-200">
+                        class="flex-1 bg-navy border border-gold text-gold font-bold px-4 md:px-6 py-2 md:py-3 rounded hover:bg-gold hover:text-deep transition-all duration-200 text-sm">
                     Cancel
                 </button>
             </div>

@@ -19,6 +19,7 @@ PROMO_SEGMENT = [
     ('regular', 'Regular'),
     ('new',     'New Customers'),
     ('atrisk',  'At-Risk'),
+    ('individual', 'Individual Customer'),
 ]
 
 class Promotion(models.Model):
@@ -27,6 +28,7 @@ class Promotion(models.Model):
     message        = models.TextField()
     channel        = models.CharField(max_length=15, choices=PROMO_CHANNEL, default='whatsapp')
     segment        = models.CharField(max_length=15, choices=PROMO_SEGMENT, default='all')
+    individual_customer = models.ForeignKey('customers.Customer', on_delete=models.SET_NULL, null=True, blank=True, related_name='individual_promotions')
     status         = models.CharField(max_length=15, choices=PROMO_STATUS, default='draft')
     scheduled_at   = models.DateTimeField(null=True, blank=True)
     sent_at        = models.DateTimeField(null=True, blank=True)

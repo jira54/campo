@@ -19,7 +19,7 @@ def promotion_list(request):
 @premium_required
 def promotion_compose(request):
     vendor    = request.user
-    form      = PromotionForm()
+    form      = PromotionForm(vendor=vendor)
     customers = Customer.objects.filter(vendor=vendor)
     segment_counts = {
         'all':     customers.count(),
@@ -30,11 +30,17 @@ def promotion_compose(request):
     }
 
     if request.method == 'POST':
-        form = PromotionForm(request.POST)
+        form = PromotionForm(request.POST, vendor=vendor)
         if form.is_valid():
             promo            = form.save(commit=False)
             promo.vendor     = vendor
-            seg_count        = segment_counts.get(promo.segment, 0)
+            
+            # Calculate recipients based on segment
+            if promo.segment == 'individual':
+                seg_count = 1 if promo.individual_customer else 0
+            else:
+                seg_count = segment_counts.get(promo.segment, 0)
+            
             promo.recipients = seg_count
             if promo.scheduled_at:
                 promo.status = 'scheduled'
@@ -78,14 +84,17 @@ def _send_sms(promo, vendor):
 @premium_required
 def promotion_detail(request, promo_id):
     promo = get_object_or_404(Promotion, id=promo_id, vendor=request.user)
-    customers = Customer.objects.filter(vendor=request.user)
     
-    if promo.segment != 'all':
-        customers = customers.filter(status=promo.segment)
+    if promo.segment == 'individual':
+        customers = [promo.individual_customer] if promo.individual_customer else []
+    else:
+        customers = Customer.objects.filter(vendor=request.user)
+        if promo.segment != 'all':
+            customers = [c for c in customers if c.status == promo.segment]
     
     # Add WhatsApp URLs to each customer
     for customer in customers:
-        if customer.phone:
+        if customer and customer.phone:
             customer.whatsapp_url = _get_whatsapp_url(promo, customer)
     
     return render(request, 'promotions/detail.html', {

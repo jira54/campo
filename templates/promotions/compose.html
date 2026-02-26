@@ -66,8 +66,21 @@
                                 <option value="regular">📊 Regular ({{ segment_counts.regular }})</option>
                                 <option value="new">🆕 New Customers ({{ segment_counts.new }})</option>
                                 <option value="atrisk">⚠️ At-Risk ({{ segment_counts.atrisk }})</option>
+                                <option value="individual">🎯 Individual Customer</option>
                             </select>
                         </div>
+                    </div>
+
+                    <!-- Individual Customer Selection (Hidden by default) -->
+                    <div id="individual-customer-field" class="bg-navy border border-gold border-opacity-20 rounded-lg p-6" style="display: none;">
+                        <label class="block text-gold font-bold mb-2">Select Customer *</label>
+                        <select name="individual_customer" id="individual-customer-select" class="w-full bg-deep border border-gold border-opacity-30 text-white px-4 py-2 rounded focus:outline-none focus:border-gold">
+                            <option value="">Select a customer...</option>
+                            {% for customer in form.individual_customer.field.queryset %}
+                                <option value="{{ customer.id }}">{{ customer.name }} ({{ customer.phone }})</option>
+                            {% endfor %}
+                        </select>
+                        <p class="text-gray-400 text-xs mt-2">Choose the specific customer for this promotion</p>
                     </div>
 
                     <!-- Schedule (Optional) -->
@@ -157,8 +170,18 @@
             'loyal': '{{ segment_counts.loyal }}, Loyal Only',
             'regular': '{{ segment_counts.regular }}, Regular',
             'new': '{{ segment_counts.new }}, New Customers',
-            'atrisk': '{{ segment_counts.atrisk }}, At-Risk'
+            'atrisk': '{{ segment_counts.atrisk }}, At-Risk',
+            'individual': '1, Individual Customer'
         };
+        
+        // Show/hide individual customer field
+        const individualField = document.getElementById('individual-customer-field');
+        if (this.value === 'individual') {
+            individualField.style.display = 'block';
+        } else {
+            individualField.style.display = 'none';
+        }
+        
         const [count, label] = segments[this.value].split(', ');
         document.getElementById('recipient-count').textContent = count;
         document.getElementById('segment-label').textContent = label;

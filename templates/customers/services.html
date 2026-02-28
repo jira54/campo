@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'vendors.css' %}">
+{% endblock %}
+{% block content %}
+
+<div class="flex h-screen">
+    {% include 'partials/sidebar.html' with page='services' %}
+    
+    <div class="flex-1 overflow-auto bg-deep">
+        <div class="p-4 md:p-8 max-w-4xl">
+            <!-- Header -->
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+                <div class="flex flex-col md:flex-row md:items-center gap-4">
+                    <a href="{% url 'vendors:dashboard' %}" class="text-gold hover:text-yellow-300 transition font-medium">
+                        ← Back
+                    </a>
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-bold text-white">⚙️ My Services</h1>
+                        <p class="text-gold text-sm md:text-lg mt-1">Here, you define services and prices for quick customer addition</p>
+                    </div>
+                </div>
+                <a href="{% url 'customers:service_add' %}" class="bg-gold text-deep px-4 py-2 md:px-6 md:py-3 rounded-lg hover:bg-yellow-400 transition font-bold text-sm md:text-base">
+                    ➕ Add Service
+                </a>
+            </div>
+
+  <!-- Popular Services (Quick Add) -->
+  {% if popular_services %}
+  <div class="bg-yellow-900 bg-opacity-20 border border-yellow-500 border-opacity-30 rounded-lg p-4 mb-6">
+    <h3 class="font-semibold text-yellow-400 mb-2">⭐ Popular Services (Quick Add)</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+      {% for service in popular_services %}
+        <div class="bg-navy border border-yellow-500 border-opacity-30 rounded p-3 flex items-center justify-between">
+          <div>
+            <div class="font-medium text-white">{{ service.name }}</div>
+            <div class="text-sm text-gray-400">{{ service.description }}</div>
+            <div class="text-sm font-bold text-yellow-400">KES {{ service.price }}</div>
+          </div>
+          <form method="post" action="{% url 'customers:service_toggle_popular' service.id %}" class="ml-2">
+            {% csrf_token %}
+            <button type="submit" class="text-yellow-400 hover:text-yellow-300" title="Remove from quick add">
+              ⭐
+            </button>
+          </form>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- All Services -->
+  <div class="bg-navy border border-gold border-opacity-20 rounded-lg">
+    {% if regular_services %}
+      <div class="p-4">
+        <h3 class="text-gray-300 font-semibold mb-2">📋 All Services</h3>
+        <div class="space-y-2" id="services-list">
+          {% for service in regular_services %}
+            <div class="service-item border border-gray-600 border-opacity-30 rounded-lg p-3 md:p-4 hover:bg-deep hover:bg-opacity-60 transition {% if not service.is_active %}opacity-50{% endif %}" 
+                 data-service-id="{{ service.id }}">
+              <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div class="flex-1">
+                  <div class="flex items-start gap-3">
+                    <div class="cursor-move text-gray-400 mt-1" title="Drag to reorder">⋮⋮</div>
+                    <div>
+                      <h4 class="font-semibold text-white text-base md:text-lg">{{ service.name }}</h4>
+                      {% if service.description %}
+                        <p class="text-sm text-gray-400">{{ service.description }}</p>
+                      {% endif %}
+                      <div class="flex flex-wrap items-center gap-2 md:gap-4 mt-1">
+                        <span class="text-base md:text-lg font-bold text-green-400">KES {{ service.price }}</span>
+                        {% if service.is_popular %}
+                          <span class="text-xs bg-yellow-900 bg-opacity-30 text-yellow-400 px-2 py-1 rounded-full border border-yellow-500 border-opacity-30">⭐ Popular</span>
+                        {% endif %}
+                        {% if not service.is_active %}
+                          <span class="text-xs bg-red-900 bg-opacity-30 text-red-400 px-2 py-1 rounded-full border border-red-500 border-opacity-30">Inactive</span>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="flex items-center gap-2 ml-0 md:ml-4">
+                  <!-- Toggle Popular -->
+                  <form method="post" action="{% url 'customers:service_toggle_popular' service.id %}" class="inline">
+                    {% csrf_token %}
+                    <button type="submit" 
+                            class="p-2 rounded {% if service.is_popular %}bg-yellow-900 bg-opacity-30 text-yellow-400 border border-yellow-500 border-opacity-30{% else %}bg-gray-700 text-gray-400{% endif %} hover:bg-yellow-800 hover:bg-opacity-30 transition"
+                            title="{% if service.is_popular %}Remove from quick add{% else %}Add to quick add{% endif %}">
+                      ⭐
+                    </button>
+                  </form>
+                  
+                  <!-- Edit -->
+                  <a href="{% url 'customers:service_edit' service.id %}" 
+                     class="p-2 bg-blue-900 bg-opacity-30 text-blue-400 rounded hover:bg-blue-800 hover:bg-opacity-30 transition border border-blue-500 border-opacity-30"
+                     title="Edit service">
+                    ✏️
+                  </a>
+                  
+                  <!-- Delete -->
+                  <form method="post" action="{% url 'customers:service_delete' service.id %}" class="inline"
+                        onsubmit="return confirm('Are you sure you want to delete {{ service.name }}?')">
+                    {% csrf_token %}
+                    <button type="submit" 
+                            class="p-2 bg-red-900 bg-opacity-30 text-red-400 rounded hover:bg-red-800 hover:bg-opacity-30 transition border border-red-500 border-opacity-30"
+                            title="Delete service">
+                      🗑️
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% else %}
+      <div class="p-8 text-center">
+        <div class="text-6xl mb-4">🛠️</div>
+        <h3 class="text-lg font-semibold text-white mb-2">No services yet</h3>
+        <p class="text-gray-400 mb-4">Add your first service to speed up customer addition</p>
+        <a href="{% url 'customers:service_add' %}" 
+           class="inline-block bg-gold text-deep px-6 py-3 rounded-lg hover:bg-yellow-400 transition font-bold">
+          ⚙️ Add Your First Service
+        </a>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Tips -->
+  <div class="mt-6 bg-navy border border-gold border-opacity-20 rounded-lg p-4">
+    <h3 class="font-semibold text-gold mb-2">💡 Tips</h3>
+    <ul class="text-sm text-gray-300 space-y-1">
+      <li>• Mark popular services as "Popular" to show them in quick add section</li>
+      <li>• Drag and drop services to reorder them</li>
+      <li>• Set clear prices to avoid manual entry during customer addition</li>
+      <li>• Inactive services won't appear in customer addition forms</li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<script>
+// Drag and drop reordering
+document.addEventListener('DOMContentLoaded', function() {
+  const servicesList = document.getElementById('services-list');
+  if (!servicesList) return;
+
+  let draggedItem = null;
+
+  function handleDragStart(e) {
+    draggedItem = this;
+    this.style.opacity = '0.5';
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', this.innerHTML);
+  }
+
+  function handleDragEnd(e) {
+    this.style.opacity = '';
+    
+    // Save new order
+    const serviceItems = document.querySelectorAll('.service-item');
+    const serviceIds = Array.from(serviceItems).map(item => item.dataset.serviceId);
+    
+    fetch('{% url "customers:services_reorder" %}', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+      },
+      body: 'service_ids[]=' + serviceIds.join('&service_ids[]=')
+    })
+    .then(response => {
+      if (response.ok) {
+        console.log('Order saved successfully');
+      }
+    })
+    .catch(error => console.error('Error saving order:', error));
+  }
+
+  function handleDragOver(e) {
+    if (e.preventDefault) {
+      e.preventDefault();
+    }
+    e.dataTransfer.dropEffect = 'move';
+    
+    const afterElement = getDragAfterElement(servicesList, e.clientY);
+    if (afterElement == null) {
+      servicesList.appendChild(draggedItem);
+    } else {
+      servicesList.insertBefore(draggedItem, afterElement);
+    }
+    
+    return false;
+  }
+
+  function getDragAfterElement(container, y) {
+    const draggableElements = [...container.querySelectorAll('.service-item:not(.dragging)')];
+    
+    return draggableElements.reduce((closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+      
+      if (offset < 0 && offset > closest.offset) {
+        return { offset: offset, element: child };
+      } else {
+        return closest;
+      }
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+  }
+
+  // Add drag event listeners to service items
+  const serviceItems = document.querySelectorAll('.service-item');
+  serviceItems.forEach(item => {
+    item.draggable = true;
+    item.addEventListener('dragstart', handleDragStart, false);
+    item.addEventListener('dragend', handleDragEnd, false);
+    item.addEventListener('dragover', handleDragOver, false);
+  });
+});
+</script>
+
+{% endblock %}

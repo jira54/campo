@@ -57,46 +57,125 @@
 
                 <hr class="border-gold border-opacity-20">
 
-                <!-- Initial Purchase (Optional) -->
+                <!-- Services Selection -->
+                {% if services %}
                 <div>
-                    <h3 class="text-gold font-bold mb-4">📊 Log First Purchase (optional)</h3>
+                    <h3 class="text-gold font-bold mb-4">⚙️ What did this customer buy today?</h3>
+                    <p class="text-gray-400 text-sm mb-4">Select all items the customer purchased. Prices will be added automatically.</p>
                     
-                    <div class="space-y-4">
-                        <!-- Service -->
-                        <div>
-                            <label for="{{ purchase_form.service.id_for_label }}" class="block text-gray-300 font-semibold mb-2">Service</label>
-                            <input 
-                                type="text" 
-                                name="service" 
-                                placeholder="e.g., Lunch, Coffee, Premium Package"
-                                class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold"
-                            >
-                        </div>
-
-                        <!-- Amount -->
-                        <div>
-                            <label for="{{ purchase_form.amount.id_for_label }}" class="block text-gray-300 font-semibold mb-2">Amount (KES)</label>
-                            <input 
-                                type="number" 
-                                name="amount" 
-                                placeholder="e.g., 250"
-                                step="0.01"
-                                min="0"
-                                class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold"
-                            >
-                        </div>
-
-                        <!-- Notes -->
-                        <div>
-                            <label for="{{ purchase_form.notes.id_for_label }}" class="block text-gray-300 font-semibold mb-2">Purchase Notes</label>
-                            <textarea 
-                                name="notes" 
-                                placeholder="e.g., Paid in cash, delivery note..."
-                                rows="2"
-                                class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold"
-                            ></textarea>
+                    <!-- Popular Services Quick Add -->
+                    {% if popular_services %}
+                    <div class="mb-4">
+                        <h4 class="text-yellow-400 font-semibold mb-2">⭐ Popular Items (Quick Select)</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-40 overflow-y-auto pr-2">
+                            {% for service in popular_services %}
+                            <label class="flex items-center p-3 bg-yellow-900 bg-opacity-20 border border-yellow-500 border-opacity-30 rounded cursor-pointer hover:bg-yellow-900 hover:bg-opacity-30 transition">
+                                <input type="checkbox" name="services" value="{{ service.id }}" class="mr-3 h-4 w-4 text-yellow-400 focus:ring-yellow-500 border-gray-300 rounded">
+                                <div class="flex-1">
+                                    <div class="font-medium text-white">{{ service.name }}</div>
+                                    {% if service.description %}
+                                        <div class="text-xs text-gray-400">{{ service.description }}</div>
+                                    {% endif %}
+                                    <div class="text-sm font-bold text-yellow-400">KES {{ service.price }}</div>
+                                </div>
+                            </label>
+                            {% endfor %}
                         </div>
                     </div>
+                    {% endif %}
+                    
+                    <!-- All Services -->
+                    <div>
+                        <h4 class="text-gray-300 font-semibold mb-2">📋 All Available Items</h4>
+                        <div class="space-y-2 max-h-48 overflow-y-auto pr-2 border border-gray-600 border-opacity-30 rounded-lg p-2 bg-deep bg-opacity-40 mb-3">
+                            {% for service in regular_services %}
+                            <label class="flex items-center p-3 bg-deep bg-opacity-60 border border-gray-600 border-opacity-30 rounded cursor-pointer hover:bg-deep hover:bg-opacity-80 transition">
+                                <input type="checkbox" name="services" value="{{ service.id }}" class="mr-3 h-4 w-4 text-blue-400 focus:ring-blue-500 border-gray-300 rounded service-checkbox" data-price="{{ service.price }}">
+                                <div class="flex-1">
+                                    <div class="font-medium text-white">{{ service.name }}</div>
+                                    {% if service.description %}
+                                        <div class="text-xs text-gray-400">{{ service.description }}</div>
+                                    {% endif %}
+                                    <div class="text-sm font-bold text-green-400">KES {{ service.price }}</div>
+                                </div>
+                            </label>
+                            {% endfor %}
+                        </div>
+                        
+                        <!-- Other Service Option (Outside scrollable list) -->
+                        <button type="button" 
+                                id="other-service-button"
+                                class="w-full p-3 bg-blue-900 text-white font-bold rounded-lg hover:bg-blue-800 transition cursor-pointer border-2 border-blue-600 hover:border-blue-500 shadow-lg hover:shadow-xl">
+                            📝 Other (Item not listed)
+                        </button>
+
+                        <!-- Custom Service Details (Hidden by default) -->
+                        <div id="custom-service-details" class="mt-4 p-4 bg-purple-900 bg-opacity-20 border border-purple-500 border-opacity-30 rounded hidden">
+                            <h4 class="text-purple-400 font-semibold mb-3">📝 Custom Item Details</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-gray-300 text-sm font-medium mb-1">Item Name</label>
+                                    <input type="text" 
+                                           id="custom-service-name" 
+                                           name="custom_service_name" 
+                                           placeholder="e.g., Special chapati, Phone repair, Delivery fee"
+                                           class="w-full bg-deep border border-purple-500 border-opacity-30 text-white placeholder-gray-600 px-3 py-2 rounded focus:outline-none focus:border-purple-400">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-300 text-sm font-medium mb-1">Price (KES)</label>
+                                    <input type="number" 
+                                           id="custom-service-price" 
+                                           name="custom_service_price" 
+                                           placeholder="50.00"
+                                           step="0.01"
+                                           min="0"
+                                           pattern="[0-9]+\.?[0-9]*"
+                                           inputmode="numeric"
+                                           class="w-full bg-deep border border-purple-500 border-opacity-30 text-white placeholder-gray-600 px-3 py-2 rounded focus:outline-none focus:border-purple-400"
+                                           onkeypress="return event.charCode >= 48 && event.charCode <= 57 || event.charCode === 46">
+                                </div>
+                                <div>
+                                    <label class="block text-gray-300 text-sm font-medium mb-1">Description (optional)</label>
+                                    <input type="text" 
+                                           id="custom-service-description" 
+                                           name="custom_service_description" 
+                                           placeholder="e.g., Extra large, With sauce, Express service"
+                                           class="w-full bg-deep border border-purple-500 border-opacity-30 text-white placeholder-gray-600 px-3 py-2 rounded focus:outline-none focus:border-purple-400">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Total Calculation -->
+                    <div class="mt-4 p-3 bg-green-900 bg-opacity-20 border border-green-500 border-opacity-30 rounded">
+                        <div class="flex justify-between items-center">
+                            <span class="text-green-400 font-semibold">Total Amount:</span>
+                            <span class="text-green-400 font-bold text-lg">KES <span id="services-total">0</span></span>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="bg-gold border-4 border-white rounded-xl p-8 text-center shadow-2xl">
+                    <h3 class="text-deep font-black text-3xl mb-4">📦 SETUP YOUR ITEMS FIRST!</h3>
+                    <p class="text-deep text-xl font-black mb-4">Define your services and goods for quick customer addition</p>
+                    <p class="text-deep text-lg font-black mb-6">Add tea, chapati, WiFi, airtime, etc. → Save time every day → Faster service</p>
+                    <a href="{% url 'customers:services_list' %}" class="inline-block bg-deep text-gold px-8 py-4 rounded-xl hover:bg-navy transition font-black text-xl shadow-lg transform hover:scale-105 border-2 border-white">
+                        ⚙️ ADD YOUR ITEMS NOW
+                    </a>
+                </div>
+                {% endif %}
+
+                <hr class="border-gold border-opacity-20">
+
+                <!-- Purchase Notes -->
+                <div>
+                    <label for="{{ form.notes.id_for_label }}" class="block text-gold font-bold mb-2">Purchase Notes (optional)</label>
+                    <textarea 
+                        name="notes" 
+                        placeholder="e.g., Paid in cash, delivery note..."
+                        rows="2"
+                        class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold"
+                    ></textarea>
                 </div>
 
                 <hr class="border-gold border-opacity-20">
@@ -121,4 +200,89 @@
         </div>
     </div>
 </div>
+
+<script>
+// Auto-calculate totals and handle custom service fields
+document.addEventListener('DOMContentLoaded', function() {
+    const serviceCheckboxes = document.querySelectorAll('input[name="services"]');
+    const servicesTotalSpan = document.getElementById('services-total');
+    const otherServiceButton = document.getElementById('other-service-button');
+    const customServiceDetails = document.getElementById('custom-service-details');
+    const customServicePrice = document.getElementById('custom-service-price');
+    const customServiceName = document.getElementById('custom-service-name');
+
+    function calculateTotals() {
+        // Calculate services total
+        let servicesTotal = 0;
+        serviceCheckboxes.forEach(function(checkbox) {
+            if (checkbox.checked && checkbox.value !== 'other') {
+                const price = parseFloat(checkbox.dataset.price) || 0;
+                servicesTotal += price;
+            }
+        });
+
+        // Add custom service price if custom details are visible and price is entered
+        if (!customServiceDetails.classList.contains('hidden') && customServicePrice.value) {
+            servicesTotal += parseFloat(customServicePrice.value) || 0;
+        }
+
+        // Update display
+        servicesTotalSpan.textContent = servicesTotal.toFixed(2);
+    }
+
+    // Handle "Other" button click
+    function handleOtherButtonClick() {
+        const otherHiddenInput = document.getElementById('other-service-hidden');
+        
+        // Toggle custom service details
+        if (customServiceDetails.classList.contains('hidden')) {
+            customServiceDetails.classList.remove('hidden');
+            // Add hidden input to form
+            if (!otherHiddenInput) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'services';
+                input.value = 'other';
+                input.id = 'other-service-hidden';
+                customServiceDetails.appendChild(input);
+            }
+            // Make name field required when opened
+            customServiceName.required = true;
+        } else {
+            customServiceDetails.classList.add('hidden');
+            // Remove hidden input when closed
+            const otherInput = document.getElementById('other-service-hidden');
+            if (otherInput) {
+                otherInput.remove();
+            }
+            // Remove required when closed
+            customServiceName.required = false;
+            // Clear custom fields
+            customServicePrice.value = '';
+            customServiceName.value = '';
+            document.getElementById('custom-service-description').value = '';
+        }
+        calculateTotals();
+    }
+
+    // Add event listeners
+    serviceCheckboxes.forEach(function(checkbox) {
+        checkbox.addEventListener('change', calculateTotals);
+    });
+    
+    // Add event listener for "Other" button
+    otherServiceButton.addEventListener('click', function() {
+        handleOtherButtonClick();
+        calculateTotals(); // Recalculate when toggled
+    });
+    
+    // Add event listeners for custom service fields
+    customServicePrice.addEventListener('input', calculateTotals);
+    customServiceName.addEventListener('input', calculateTotals);
+
+    // Initial calculation
+    calculateTotals();
+});
+</script>
+
 {% endblock %}

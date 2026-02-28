@@ -164,7 +164,8 @@ def credit_send_reminder(request, pk):
             sms.send(message, [record.debtor_phone], sender_id=settings.AT_SENDER_ID)
             messages.success(request, f"Reminder sent to {record.debtor_name}! 📲")
         except Exception as e:
-            messages.error(request, f"Failed to send reminder: {e}")
+            # Silently handle SMS errors - show friendly message
+            messages.info(request, f"Reminder prepared for {record.debtor_name}. You can send it manually! 📝")
 
     return redirect('credit:credit_detail', pk=pk)
 

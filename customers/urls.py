@@ -26,4 +26,14 @@ urlpatterns = [
 
     # Receipts (Premium)
     path('receipt/send/<int:purchase_id>/', views.send_receipt, name='send_receipt'),
+    path('receipt/view/<int:purchase_id>/', views.view_receipt, name='view_receipt'),
+    path('receipt/download/<int:purchase_id>/', views.download_receipt_pdf, name='download_receipt_pdf'),
+
+    # Services Management
+    path('services/',         views.services_list,        name='services_list'),
+    path('services/add/',     views.service_add,          name='service_add'),
+    path('services/edit/<int:service_id>/', views.service_edit, name='service_edit'),
+    path('services/delete/<int:service_id>/', views.service_delete, name='service_delete'),
+    path('services/toggle-popular/<int:service_id>/', views.service_toggle_popular, name='service_toggle_popular'),
+    path('services/reorder/',  views.services_reorder,     name='services_reorder'),
 ]

@@ -37,8 +37,7 @@
   input[type="text"],
   input[type="tel"],
   input[type="number"],
-  input[type="search"],
-  textarea {
+  input[type="search"] {
     font-size: 16px !important; /* Prevents zoom on iOS */
     -webkit-appearance: none;
     appearance: none;
@@ -52,17 +51,6 @@
   .space-y-4 > * + * {
     margin-top: 1rem;
   }
-  
-  /* Mobile table improvements */
-  table {
-    font-size: 0.875rem;
-  }
-  
-  .cp-card table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
 }
 
 /* Sticky header for mobile forms */
@@ -75,16 +63,6 @@
     padding: 1rem;
     border-bottom: 1px solid #e5e7eb;
     margin: -1rem -1rem 1rem -1rem;
-  }
-  
-  /* Mobile form improvements */
-  .mobile-quick {
-    padding: 1rem;
-  }
-  
-  /* Better button spacing on mobile */
-  button[type="submit"] {
-    margin-top: 1rem;
   }
 }
 
@@ -102,26 +80,5 @@
   .cp-card:hover {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     transform: translateY(-1px);
-  }
-  
-  /* Responsive tables for mobile */
-  .cp-card table {
-    border-collapse: collapse;
-    width: 100%;
-    min-width: 500px; /* Ensure table doesn't get too cramped */
-  }
-  
-  .cp-card th,
-  .cp-card td {
-    padding: 0.5rem;
-    text-align: left;
-    border-bottom: 1px solid #e5e7eb;
-  }
-  
-  .cp-card th {
-    background-color: #f9fafb;
-    font-weight: 600;
-    position: sticky;
-    top: 0;
   }
 }

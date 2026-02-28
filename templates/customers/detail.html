@@ -7,7 +7,7 @@
     {% include 'partials/sidebar.html' with page='customers' %}
     
     <div class="flex-1 overflow-auto bg-deep">
-        <div class="p-8 max-w-3xl">
+        <div class="p-8">
             <!-- Header -->
             <div class="flex items-center justify-between mb-8">
                 <div>
@@ -79,33 +79,36 @@
                     </div>
 
                     {% if purchases %}
-                        <table class="w-full">
-                            <thead class="bg-navy bg-opacity-50 border-b border-gold border-opacity-20">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-gold font-bold text-sm">Service</th>
-                                    <th class="px-6 py-3 text-right text-gold font-bold text-sm">Amount</th>
-                                    <th class="px-6 py-3 text-left text-gold font-bold text-sm">Date</th>
-                                    {% if user.is_premium %}<th class="px-6 py-3 text-left text-gold font-bold text-sm">Actions</th>{% endif %}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for purchase in purchases %}
-                                    <tr class="border-b border-gold border-opacity-10 hover:bg-navy hover:bg-opacity-50 transition">
-                                        <td class="px-6 py-4 text-white">{{ purchase.service|default:"—" }}</td>
-                                        <td class="px-6 py-4 text-right text-teal font-bold">KES {{ purchase.amount|floatformat:0 }}</td>
-                                        <td class="px-6 py-4 text-gray-400 text-sm">{{ purchase.purchased_at|date:"M d, H:i" }}</td>
-                                        {% if user.is_premium %}
-                                        <td class="px-6 py-4">
-                                            <form method="post" action="{% url 'customers:send_receipt' purchase.id %}" class="inline">
-                                                {% csrf_token %}
-                                                <button type="submit" class="text-teal hover:text-cyan-300 text-xs" title="Send SMS receipt">🧾 Receipt</button>
-                                            </form>
-                                        </td>
-                                        {% endif %}
+                        <div class="overflow-x-auto">
+                            <table class="w-full min-w-[600px]">
+                                <thead class="bg-navy bg-opacity-50 border-b border-gold border-opacity-20">
+                                    <tr>
+                                        <th class="px-3 md:px-6 py-3 text-left text-gold font-bold text-sm">Service</th>
+                                        <th class="px-3 md:px-6 py-3 text-right text-gold font-bold text-sm">Amount</th>
+                                        <th class="px-3 md:px-6 py-3 text-left text-gold font-bold text-sm">Date</th>
+                                        {% if user.is_premium %}<th class="px-3 md:px-6 py-3 text-left text-gold font-bold text-sm">Actions</th>{% endif %}
                                     </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {% for purchase in purchases %}
+                                        <tr class="border-b border-gold border-opacity-10 hover:bg-navy hover:bg-opacity-50 transition">
+                                            <td class="px-3 md:px-6 py-4 text-white text-sm">{{ purchase.service|default:"—" }}</td>
+                                            <td class="px-3 md:px-6 py-4 text-right text-teal font-bold text-sm">KES {{ purchase.amount|floatformat:0 }}</td>
+                                            <td class="px-3 md:px-6 py-4 text-gray-400 text-sm">{{ purchase.purchased_at|date:"M d, H:i" }}</td>
+                                            {% if user.is_premium %}
+                                            <td class="px-3 md:px-6 py-4">
+                                                <a href="{% url 'customers:view_receipt' purchase.id %}" 
+                                                   class="text-teal hover:text-cyan-300 text-xs flex items-center gap-1" 
+                                                   title="View/Download receipt">
+                                                    🧾 Receipt
+                                                </a>
+                                            </td>
+                                            {% endif %}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     {% else %}
                         <p class="px-6 py-8 text-gray-400 text-center">No purchases yet</p>
                     {% endif %}
@@ -113,7 +116,10 @@
 
                 <!-- Log Purchase Form -->
                 <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-6">
-                    <h3 class="text-gold font-bold mb-4">📊 Log Purchase</h3>
+                    <div class="mb-4">
+    <h3 class="text-gold font-bold">📊 Log Purchase</h3>
+    <h4 class="text-gray-400 text-sm mt-1 ml-8">(next visit)</h4>
+</div>
                     
                     <form method="post" class="space-y-4">
                         {% csrf_token %}

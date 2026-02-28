@@ -93,6 +93,33 @@ def analytics_dashboard(request):
     chart_labels = [d['day'].strftime('%a %d') if d.get('day') else '' for d in daily_list]
     chart_revenue = [float(d.get('revenue') or 0) for d in daily_list]
 
+    # Service breakdown for this period
+    service_sales = []
+    service_names = []
+    service_revenues = []
+    
+    # Get all services for this vendor
+    from customers.models import Service
+    vendor_services = Service.objects.filter(vendor=vendor)
+    
+    # Calculate revenue per service
+    for service in vendor_services:
+        service_revenue = purchases.filter(
+            service__contains=service.name
+        ).aggregate(total=Sum('amount'))['total'] or 0
+        
+        if service_revenue > 0:
+            service_sales.append({
+                'name': service.name,
+                'revenue': float(service_revenue),
+                'count': purchases.filter(service__contains=service.name).count()
+            })
+            service_names.append(service.name)
+            service_revenues.append(float(service_revenue))
+    
+    # Sort by revenue
+    service_sales.sort(key=lambda x: x['revenue'], reverse=True)
+
     # Segment breakdown for doughnut (all customers, not just period)
     all_customers = list(Customer.objects.filter(vendor=vendor))
     segments = {
@@ -116,6 +143,9 @@ def analytics_dashboard(request):
         'chart_labels': json.dumps(chart_labels),
         'chart_revenue': json.dumps(chart_revenue),
         'segments': json.dumps(segments),
+        'service_sales': service_sales[:10],  # Top 10 services
+        'service_names': json.dumps(service_names),
+        'service_revenues': json.dumps(service_revenues),
     })
 
     return render(request, 'analytics/dashboard.html', context)

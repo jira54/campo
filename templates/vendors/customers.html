@@ -1,11 +1,17 @@
 {% extends 'vendors/base.html' %}
+{% load static %}
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'vendors.css' %}">
+{% endblock %}
 {% block content %}
   <h2 class="text-2xl font-semibold mb-6">Record visits & manage customers</h2>
 
   <!-- Quick Record Section -->
-  <div class="cp-card p-6 mb-6">
-    <h3 class="text-lg font-semibold mb-2">Add visit — takes 10 seconds</h3>
-    <p class="text-sm text-gray-600 mb-4">Enter phone and optionally name. If it's a returning customer, we'll add a visit automatically.</p>
+  <div class="cp-card p-4 md:p-6 mb-6 mobile-safe-area">
+    <div class="sticky-header">
+      <h3 class="text-lg font-semibold mb-2">Add visit — takes 10 seconds</h3>
+      <p class="text-sm text-gray-600 mb-4">Enter phone and optionally name. If it's a returning customer, we'll add a visit automatically.</p>
+    </div>
     
     <form method="post" autocomplete="off" class="space-y-3">
       {% csrf_token %}

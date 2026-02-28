@@ -7,7 +7,7 @@
     {% include 'partials/sidebar.html' with page='promotions' %}
     
     <div class="flex-1 overflow-auto bg-deep">
-        <div class="p-8 max-w-3xl">
+        <div class="p-8">
             <!-- Header -->
             <div class="mb-8">
                 <a href="{% url 'promotions:promotion_list' %}" class="text-gray-400 hover:text-gold text-sm mb-2 inline-block">← Back to Promotions</a>
@@ -15,37 +15,39 @@
                 <p class="text-gray-400">Send SMS or WhatsApp to your customers</p>
             </div>
 
-            <form method="post" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <form method="post" class="space-y-8">
                 {% csrf_token %}
 
-                <!-- Main Form -->
-                <div class="lg:col-span-2 space-y-6">
-                    <!-- Title -->
-                    <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-6">
-                        <label class="block text-gold font-bold mb-2">Campaign Title *</label>
-                        <input 
-                            type="text" 
-                            name="title" 
-                            placeholder="e.g., 'Weekend Special Offer'"
-                            class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold"
-                            required
-                        >
-                        <p class="text-gray-400 text-xs mt-2">Keep it short and catchy</p>
-                    </div>
+                <!-- Main Form Content -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Left Column - Main Form Fields -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <!-- Title -->
+                        <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-6">
+                            <label class="block text-gold font-bold mb-2">Campaign Title *</label>
+                            <input 
+                                type="text" 
+                                name="title" 
+                                placeholder="e.g., 'Weekend Special Offer'"
+                                class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold"
+                                required
+                            >
+                            <p class="text-gray-400 text-xs mt-2">Keep it short and catchy</p>
+                        </div>
 
-                    <!-- Message -->
-                    <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-6">
-                        <label class="block text-gold font-bold mb-2">Message *</label>
-                        <textarea 
-                            name="message" 
-                            placeholder="Craft your message here. Keep SMS under 160 characters for affordability."
-                            rows="4"
-                            maxlength="500"
-                            class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold resize-none"
-                            required
-                        ></textarea>
-                        <p class="text-gray-400 text-xs mt-2" id="char-count">0/500 characters</p>
-                    </div>
+                        <!-- Message -->
+                        <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-6">
+                            <label class="block text-gold font-bold mb-2">Message *</label>
+                            <textarea 
+                                name="message" 
+                                placeholder="Craft your message here. Keep SMS under 160 characters for affordability."
+                                rows="4"
+                                maxlength="500"
+                                class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold resize-none"
+                                required
+                            ></textarea>
+                            <p class="text-gray-400 text-xs mt-2" id="char-count">0/500 characters</p>
+                        </div>
 
                     <!-- Channel & Segment -->
                     <div class="grid grid-cols-2 gap-4">
@@ -103,46 +105,47 @@
                             Cancel
                         </a>
                     </div>
+                    </div>
+
+                    <!-- Right Column - Preview Panel -->
+                    <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-6 h-fit sticky top-8">
+                        <h3 class="text-gold font-bold mb-4">📊 Preview</h3>
+
+                        <!-- Message Preview -->
+                        <div class="bg-deep border border-gray-600 rounded-lg p-4 mb-4">
+                            <p class="text-gray-500 text-xs mb-2">Campaign Title</p>
+                            <p class="text-white font-semibold mb-2" id="preview-title">Your title here</p>
+                            
+                            <p class="text-gray-500 text-xs mb-2">Message</p>
+                            <p class="text-gray-300 text-sm mb-4 whitespace-pre-wrap" id="preview-message">Your message will appear here. SMS preview...</p>
+                        </div>
+
+                        <!-- Recipients Counter -->
+                        <div class="bg-deep border border-teal border-opacity-30 rounded-lg p-4 mb-4">
+                            <p class="text-gray-400 text-xs mb-1">Recipients</p>
+                            <p class="text-3xl font-bold text-teal" id="recipient-count">
+                                {% for key, count in segment_counts.items %}
+                                    {% if key == 'all' %}{{ count }}{% endif %}
+                                {% endfor %}
+                            </p>
+                            <p class="text-gray-400 text-xs mt-2" id="segment-label">All Customers</p>
+                        </div>
+
+                        <!-- Cost Estimate -->
+                        <div class="bg-deep border border-amber border-opacity-30 rounded-lg p-4">
+                            <p class="text-gray-400 text-xs mb-1">Est. SMS Cost</p>
+                            <p class="text-2xl font-bold text-amber" id="cost-estimate">KSh 0</p>
+                            <p class="text-gray-400 text-xs mt-2">Based on current rates</p>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Preview Panel -->
-                <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-6 h-fit sticky top-8">
-                    <h3 class="text-gold font-bold mb-4">📊 Preview</h3>
+                <hr class="border-gold border-opacity-20 my-4">
 
-                    <!-- Message Preview -->
-                    <div class="bg-deep border border-gray-600 rounded-lg p-4 mb-4">
-                        <p class="text-gray-500 text-xs mb-2">Campaign Title</p>
-                        <p class="text-white font-semibold mb-2" id="preview-title">Your title here</p>
-                        
-                        <p class="text-gray-500 text-xs mb-2">Message</p>
-                        <p class="text-gray-300 text-sm mb-4 whitespace-pre-wrap" id="preview-message">Your message will appear here. SMS preview...</p>
-                    </div>
-
-                    <!-- Recipients Counter -->
-                    <div class="bg-deep border border-teal border-opacity-30 rounded-lg p-4 mb-4">
-                        <p class="text-gray-400 text-xs mb-1">Recipients</p>
-                        <p class="text-3xl font-bold text-teal" id="recipient-count">
-                            {% for key, count in segment_counts.items %}
-                                {% if key == 'all' %}{{ count }}{% endif %}
-                            {% endfor %}
-                        </p>
-                        <p class="text-gray-400 text-xs mt-2" id="segment-label">All Customers</p>
-                    </div>
-
-                    <!-- Cost Estimate -->
-                    <div class="bg-deep border border-sea border-opacity-30 rounded-lg p-4">
-                        <p class="text-gray-400 text-xs mb-1">Est. Cost</p>
-                        <p class="text-2xl font-bold text-sea" id="cost-estimate">KES 0</p>
-                        <p class="text-gray-400 text-xs mt-2">~KES 1 per SMS</p>
-                    </div>
-
-                    <hr class="border-gold border-opacity-20 my-4">
-
-                    <p class="text-gray-400 text-xs">
-                        ✓ Green confirmed means segment selected
-                        • Update message to see preview update
-                    </p>
-                </div>
+                <p class="text-gray-400 text-xs">
+                    ✓ Green confirmed means segment selected
+                    • Update message to see preview update
+                </p>
             </form>
         </div>
     </div>

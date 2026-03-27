@@ -57,6 +57,26 @@
 
                 <hr class="border-gold border-opacity-20">
 
+                <!-- Amount Paid -->
+                <div>
+                    <label class="block text-gold font-bold mb-2">Amount Paid (KES) *</label>
+                    <input 
+                        type="number" 
+                        name="amount_paid" 
+                        placeholder="0.00"
+                        step="0.01"
+                        min="0"
+                        pattern="[0-9]+\.?[0-9]*"
+                        inputmode="numeric"
+                        class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold font-bold text-lg"
+                        onkeypress="return event.charCode >= 48 && event.charCode <= 57 || event.charCode === 46"
+                        required
+                    >
+                    <p class="text-gray-400 text-sm mt-1">Enter the total amount the customer paid</p>
+                </div>
+
+                <hr class="border-gold border-opacity-20">
+
                 <!-- Services Selection -->
                 {% if services %}
                 <div>
@@ -148,9 +168,20 @@
                     
                     <!-- Total Calculation -->
                     <div class="mt-4 p-3 bg-green-900 bg-opacity-20 border border-green-500 border-opacity-30 rounded">
-                        <div class="flex justify-between items-center">
-                            <span class="text-green-400 font-semibold">Total Amount:</span>
-                            <span class="text-green-400 font-bold text-lg">KES <span id="services-total">0</span></span>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-green-400 font-semibold">Amount Paid:</span>
+                                <span class="text-green-400 font-bold text-lg">KES <span id="amount-paid">0</span></span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-blue-400 font-semibold">Items Total:</span>
+                                <span class="text-blue-400 font-bold text-lg">KES <span id="services-total">0</span></span>
+                            </div>
+                            <hr class="border-green-500 border-opacity-30">
+                            <div class="flex justify-between items-center">
+                                <span class="text-yellow-400 font-bold">Balance/Change:</span>
+                                <span class="text-yellow-400 font-bold text-lg">KES <span id="balance-amount">0</span></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -206,6 +237,9 @@
 document.addEventListener('DOMContentLoaded', function() {
     const serviceCheckboxes = document.querySelectorAll('input[name="services"]');
     const servicesTotalSpan = document.getElementById('services-total');
+    const amountPaidInput = document.querySelector('input[name="amount_paid"]');
+    const amountPaidSpan = document.getElementById('amount-paid');
+    const balanceAmountSpan = document.getElementById('balance-amount');
     const otherServiceButton = document.getElementById('other-service-button');
     const customServiceDetails = document.getElementById('custom-service-details');
     const customServicePrice = document.getElementById('custom-service-price');
@@ -226,8 +260,25 @@ document.addEventListener('DOMContentLoaded', function() {
             servicesTotal += parseFloat(customServicePrice.value) || 0;
         }
 
-        // Update display
+        // Get amount paid
+        const amountPaid = parseFloat(amountPaidInput.value) || 0;
+        
+        // Calculate balance (amount paid - items total)
+        const balance = amountPaid - servicesTotal;
+
+        // Update displays
         servicesTotalSpan.textContent = servicesTotal.toFixed(2);
+        amountPaidSpan.textContent = amountPaid.toFixed(2);
+        balanceAmountSpan.textContent = balance.toFixed(2);
+        
+        // Color code balance
+        if (balance > 0) {
+            balanceAmountSpan.className = 'text-green-400 font-bold text-lg'; // Change due
+        } else if (balance < 0) {
+            balanceAmountSpan.className = 'text-red-400 font-bold text-lg'; // Customer owes
+        } else {
+            balanceAmountSpan.className = 'text-yellow-400 font-bold text-lg'; // Exact
+        }
     }
 
     // Handle "Other" button click
@@ -279,6 +330,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listeners for custom service fields
     customServicePrice.addEventListener('input', calculateTotals);
     customServiceName.addEventListener('input', calculateTotals);
+    
+    // Add event listener for amount paid field
+    amountPaidInput.addEventListener('input', calculateTotals);
 
     // Initial calculation
     calculateTotals();

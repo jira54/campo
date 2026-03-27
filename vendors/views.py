@@ -33,18 +33,52 @@ def login_view(request):
     stored_error = None
     
     if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        
+        # Debug logging
+        print(f"Login attempt for email: {email}")
+        print(f"Password provided: {'Yes' if password else 'No'}")
+        
+        # Check if user exists
+        from .models import Vendor
+        try:
+            user_obj = Vendor.objects.get(email=email)
+            print(f"User found: {user_obj.email}")
+            print(f"User active: {user_obj.is_active}")
+            print(f"Password check: {user_obj.check_password(password)}")
+        except Vendor.DoesNotExist:
+            print(f"User not found: {email}")
+            user_obj = None
+        
         user = authenticate(
             request,
-            username=request.POST.get('email'),
-            password=request.POST.get('password')
+            username=email,
+            password=password
         )
+        
         if user:
+            print(f"Authentication successful for: {email}")
             # Clear stored registration email on successful login
             if 'registration_email' in request.session:
                 del request.session['registration_email']
             login(request, user)
             return redirect('vendors:dashboard')
-        error = "Invalid email or password."
+        else:
+            print(f"Authentication failed for: {email}")
+            # Provide detailed error message
+            if not email:
+                error = "Email is required."
+            elif not password:
+                error = "Password is required."
+            elif not user_obj:
+                error = f"No account found for email: {email}"
+            elif not user_obj.is_active:
+                error = "Your account is inactive. Please contact support."
+            elif not user_obj.check_password(password):
+                error = "Incorrect password. Please try again."
+            else:
+                error = "Authentication failed. Please try again."
     else:
         error = stored_error  # Use stored error if coming from registration
         

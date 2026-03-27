@@ -273,9 +273,7 @@
 <script>
 
 (function() {
-
     const labels = {{ chart_labels|safe }};
-
     const data = {{ chart_revenue|safe }};
 
 
@@ -425,9 +423,7 @@
 
 
     const segmentCtx = document.getElementById('segment-chart');
-
     if (segmentCtx) {
-
         const seg = {{ segments|safe }};
 
         new Chart(segmentCtx, {
@@ -470,10 +466,48 @@
 
     }
 
+    // Service revenue chart
+    const serviceCtx = document.getElementById('service-chart');
+    if (serviceCtx) {
+        const serviceNames = {{ service_names|safe }};
+        const serviceRevenues = {{ service_revenues|safe }};
+        
+        new Chart(serviceCtx, {
+            type: 'doughnut',
+            data: {
+                labels: serviceNames,
+                datasets: [{
+                    data: serviceRevenues,
+                    backgroundColor: [
+                        '#E8871E', '#F59E0B', '#10B981', '#3B82F6', 
+                        '#8B5CF6', '#EC4899', '#14B8A6', '#F97316',
+                        '#6366F1', '#84CC16'
+                    ],
+                    borderColor: '#0C2340',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { 
+                        position: 'bottom', 
+                        labels: { 
+                            color: '#E5E7EB', 
+                            padding: 12, 
+                            font: { size: 11 },
+                            boxWidth: 12
+                        } 
+                    }
+                }
+            }
+        });
+    }
+
 })();
 
 </script>
-
 {% endif %}
 
 {% endblock %}

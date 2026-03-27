@@ -94,12 +94,20 @@ def customer_add(request):
             try:
                 customer.save()
                 
-                # Handle services and purchase
-                service_ids = request.POST.getlist('services')
+                # Get amount paid
+                amount_paid = request.POST.get('amount_paid')
                 total_amount = Decimal('0')
                 service_names = []
                 
+                # Start with amount paid if provided
+                if amount_paid:
+                    try:
+                        total_amount += Decimal(amount_paid)
+                    except (ValueError, TypeError):
+                        pass
+                
                 # Process predefined services
+                service_ids = request.POST.getlist('services')
                 if service_ids:
                     # Filter out 'other' to handle separately
                     predefined_service_ids = [sid for sid in service_ids if sid != 'other']

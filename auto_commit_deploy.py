@@ -29,7 +29,7 @@ def main():
     commands = [
         ('git add .', 'Stage all changes'),
         ('git commit -m "Auto-commit: Analytics fixes and enhanced data"', 'Commit changes to GitHub'),
-        ('git push origin main', 'Push to GitHub'),
+        ('git push origin master', 'Push to GitHub'),
         ('fly deploy', 'Deploy to Fly.io'),
     ]
     

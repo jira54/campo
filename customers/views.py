@@ -513,8 +513,8 @@ def download_receipt_pdf(request, purchase_id):
     <head>
         <style>
             @page {{
-                size: 60mm 90mm;
-                margin: 2mm;
+                size: 58mm 100mm;
+                margin: 1.5mm;
             }}
             body {{ 
                 font-family: 'Arial', sans-serif; 
@@ -652,7 +652,7 @@ def download_receipt_pdf(request, purchase_id):
             </div>
             <div class="line">
                 <span class="line-label">Date:</span>
-                <span class="line-value">{purchase.purchased_at.strftime('%d %b %Y %H:%M')}</span>
+                <span class="line-value">{purchase.purchased_at.astimezone().strftime('%d %b %Y %H:%M')}</span>
             </div>
             
             <div class="separator"></div>
@@ -679,7 +679,7 @@ def download_receipt_pdf(request, purchase_id):
             
             <div class="footer">
                 <div><strong>Karibu, tena!</strong></div>
-                <div>{timezone.now().strftime('%d %b %Y %H:%M')}</div>
+                <div>{timezone.now().astimezone().strftime('%d %b %Y %H:%M')}</div>
                 <div style="font-size: 4px; color: #999;">Powered by CampoPawa</div>
             </div>
         </div>
@@ -716,7 +716,7 @@ def send_receipt(request, purchase_id):
                 f"RECEIPT #{receipt.receipt_number}\n"
                 f"{vendor.business_name}\n"
                 f"Amount: KES {purchase.amount}\n"
-                f"Date: {purchase.purchased_at.strftime('%d %b %Y %H:%M')}\n"
+                f"Date: {purchase.purchased_at.astimezone().strftime('%d %b %Y %H:%M')}\n"
                 f"Customer: {customer.name}\n"
                 f"Karibu, tena!"
             )

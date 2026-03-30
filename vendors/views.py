@@ -234,6 +234,47 @@ def profile_view(request):
     return render(request, 'vendors/profile.html', {'form': form})
 
 
+@login_required
+def quick_sale(request):
+    if request.method == 'POST':
+        customer_id = request.POST.get('customer_id')
+        amount = request.POST.get('amount')
+        notes = request.POST.get('notes', '')
+        
+        try:
+            customer = Customer.objects.get(id=customer_id, vendor=request.user)
+            amount = float(amount)
+            
+            # Create a purchase record
+            from customers.models import Purchase, Service
+            
+            # Get a default service for quick sales
+            default_service = Service.objects.filter(vendor=request.user).first()
+            if not default_service:
+                # Create a default service if none exists
+                default_service = Service.objects.create(
+                    vendor=request.user,
+                    name="Quick Sale",
+                    description="Quick sale from dashboard",
+                    price=amount
+                )
+            
+            Purchase.objects.create(
+                customer=customer,
+                amount=amount,
+                service=default_service.name,
+                notes=notes or "Quick sale from dashboard"
+            )
+            
+            messages.success(request, f"Sale of KES {amount:.2f} logged for {customer.name}")
+            return redirect('vendors:dashboard')
+            
+        except (ValueError, Customer.DoesNotExist):
+            messages.error(request, "Invalid customer or amount")
+            return redirect('vendors:dashboard')
+    
+    return redirect('vendors:dashboard')
+
 class CustomPasswordResetView(PasswordResetView):
     template_name = 'vendors/password_reset.html'
     email_template_name = 'vendors/password_reset_email.html'

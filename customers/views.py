@@ -251,7 +251,7 @@ def customer_export_csv(request):
 
     for c in customers:
         first_added = getattr(c, 'added_at', None)
-        first_added_str = first_added.strftime('%Y-%m-%d') if first_added else ''
+        first_added_str = first_added.astimezone().strftime('%Y-%m-%d') if first_added else ''
         writer.writerow([
             c.name,
             c.phone,

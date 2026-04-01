@@ -21,28 +21,20 @@ jobs:
         git config --global user.name "Auto-Commit Bot"
         git config --global user.email "bot@auto-commit.com"
         
-    - name: Check for changes
+    - name: Create daily update
       run: |
-        if [[ -n $(git status --porcelain) ]]; then
-          echo "changes=true" >> $GITHUB_ENV
-        else
-          echo "changes=false" >> $GITHUB_ENV
-        fi
-        
-    - name: Create daily update file
-      if: env.changes == 'false'
-      run: |
-        # Create a small update to maintain streak
-        echo "🤖 Daily auto-commit - $(date +'%Y-%m-%d')" > daily_update.md
-        echo "This file maintains the GitHub contribution streak." >> daily_update.md
+        # Always create a daily update to maintain streak
+        echo "🤖 Daily auto-commit - $(date +'%Y-%m-%d %H:%M')" > daily_update.md
+        echo "This file maintains GitHub contribution streak." >> daily_update.md
         echo "Last updated: $(date)" >> daily_update.md
+        echo "Repository: CampoPawa" >> daily_update.md
         
     - name: Commit and push changes
       run: |
-        git add .
+        git add daily_update.md
         
         # Get today's date for commit message
         COMMIT_MSG="🤖 Daily auto-commit - $(date +'%Y-%m-%d %H:%M')"
         
-        git commit -m "$COMMIT_MSG" || echo "No changes to commit"
+        git commit -m "$COMMIT_MSG"
         git push origin master

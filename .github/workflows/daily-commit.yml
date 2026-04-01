@@ -14,7 +14,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.PAT_TOKEN }}
         
     - name: Configure Git
       run: |
@@ -45,4 +45,4 @@ jobs:
         COMMIT_MSG="🤖 Daily auto-commit - $(date +'%Y-%m-%d %H:%M')"
         
         git commit -m "$COMMIT_MSG" || echo "No changes to commit"
-        git push origin main || git push origin master
+        git push origin master

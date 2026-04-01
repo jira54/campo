@@ -1,0 +1,48 @@
+name: Daily Auto-Commit
+
+on:
+  schedule:
+    # Run daily at 9:00 AM Africa/Nairobi Time (UTC+3)
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Configure Git
+      run: |
+        git config --global user.name "Auto-Commit Bot"
+        git config --global user.email "bot@auto-commit.com"
+        
+    - name: Check for changes
+      run: |
+        if [[ -n $(git status --porcelain) ]]; then
+          echo "changes=true" >> $GITHUB_ENV
+        else
+          echo "changes=false" >> $GITHUB_ENV
+        fi
+        
+    - name: Create daily update file
+      if: env.changes == 'false'
+      run: |
+        # Create a small update to maintain streak
+        echo "🤖 Daily auto-commit - $(date +'%Y-%m-%d')" > daily_update.md
+        echo "This file maintains the GitHub contribution streak." >> daily_update.md
+        echo "Last updated: $(date)" >> daily_update.md
+        
+    - name: Commit and push changes
+      run: |
+        git add .
+        
+        # Get today's date for commit message
+        COMMIT_MSG="🤖 Daily auto-commit - $(date +'%Y-%m-%d %H:%M')"
+        
+        git commit -m "$COMMIT_MSG" || echo "No changes to commit"
+        git push origin main || git push origin master

@@ -1,0 +1,100 @@
+﻿[2m2026-04-06T23:01:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/core/management/__init__.py", line 443, in execute_from_command_line
+[2m2026-04-06T23:01:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    utility.execute()
+[2m2026-04-06T23:01:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/core/management/__init__.py", line 437, in execute
+[2m2026-04-06T23:01:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    self.fetch_command(subcommand).run_from_argv(self.argv)
+[2m2026-04-06T23:01:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/core/management/base.py", line 420, in run_from_argv
+[2m2026-04-06T23:01:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    self.execute(*args, **cmd_options)
+[2m2026-04-06T23:01:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/core/management/base.py", line 464, in execute
+[2m2026-04-06T23:01:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    output = self.handle(*args, **options)
+[2m2026-04-06T23:01:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2m2026-04-06T23:01:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/core/management/base.py", line 111, in wrapper
+[2m2026-04-06T23:01:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    res = handle_func(*args, **kwargs)
+[2m2026-04-06T23:01:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2m2026-04-06T23:01:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/core/management/commands/migrate.py", line 118, in handle
+[2m2026-04-06T23:01:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    executor.loader.check_consistent_history(connection)
+[2m2026-04-06T23:01:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/db/migrations/loader.py", line 361, in check_consistent_history
+[2m2026-04-06T23:01:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    raise InconsistentMigrationHistory(
+[2m2026-04-06T23:01:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]django.db.migrations.exceptions.InconsistentMigrationHistory: Migration admin.0001_initial is applied before its dependency vendors.0001_initial on database 'default'.
+[2m2026-04-06T23:01:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m][32m INFO[0m Main child exited normally with code: 1
+[2m2026-04-06T23:01:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m][32m INFO[0m Starting clean up.
+[2m2026-04-06T23:01:22Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m][    4.996167] reboot: Restarting system
+[2m2026-04-06T23:01:22Z[0m runner[2871549fe43968] [32mjnb[0m [[34minfo[0m]machine has reached its max restart count of 10
+[2m2026-04-06T23:01:25Z[0m proxy[2871549fe43968] [32mjnb[0m [[34minfo[0m]waiting for machine to be reachable on 0.0.0.0:8000 (waited 7.403059279s so far)
+[2merror.message=[0m"failed to connect to machine: gave up after 15 attempts (in 10.367286109s)" [2m2026-04-06T23:01:28Z[0m proxy[2871549fe43968] [32mjnb[0m [[31merror[0m]
+[2m2026-04-06T23:01:31Z[0m proxy[2871549fe43968] [32mjnb[0m [[34minfo[0m]Starting machine
+[2m2026-04-06T23:01:31Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]2026-04-06T23:01:31.628217887 [01KNJG4EBE9AJJ5TQC3MFQEQ6G:main] Running Firecracker v1.14.2
+[2m2026-04-06T23:01:31Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]2026-04-06T23:01:31.628394370 [01KNJG4EBE9AJJ5TQC3MFQEQ6G:main] Listening on API socket ("/fc.sock").
+[2m2026-04-06T23:01:32Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m][32m INFO[0m Starting init (commit: 350f2667)...
+[2m2026-04-06T23:01:32Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m][32m INFO[0m Preparing to run: `sh -c python manage.py migrate && python create_user.py && gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000}` as root
+[2m2026-04-06T23:01:32Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m][32m INFO[0m [fly api proxy] listening at /.fly/api
+[2m2026-04-06T23:01:32Z[0m runner[2871549fe43968] [32mjnb[0m [[34minfo[0m]Machine started in 1.265s
+[2m2026-04-06T23:01:32Z[0m proxy[2871549fe43968] [32mjnb[0m [[34minfo[0m]machine started in 1.380098478s
+[2m2026-04-06T23:01:35Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]2026/04/06 23:01:35 INFO SSH listening listen_address=[fdaa:4c:2925:a7b:2e2:c159:6d5c:2]:22
+[2m2026-04-06T23:01:38Z[0m proxy[2871549fe43968] [32mjnb[0m [[34minfo[0m]waiting for machine to be reachable on 0.0.0.0:8000 (waited 5.835729113s so far)
+[2merror.message=[0m"failed to connect to machine: gave up after 15 attempts (in 8.99389465s)" [2m2026-04-06T23:01:41Z[0m proxy[2871549fe43968] [32mjnb[0m [[31merror[0m]
+[2merror.message=[0m"instance refused connection. is your app listening on 0.0.0.0:8000? make sure it is not only listening on 127.0.0.1 (hint: look at your startup logs, servers often print the address they are listening on)" [2m2026-04-06T23:01:44Z[0m proxy[2871549fe43968] [32mjnb[0m [[31merror[0m]
+[2m2026-04-06T23:01:51Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]Traceback (most recent call last):
+[2m2026-04-06T23:01:51Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/app/manage.py", line 22, in <module>
+[2m2026-04-06T23:01:51Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    main()
+[2m2026-04-06T23:01:51Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/app/manage.py", line 18, in main
+[2m2026-04-06T23:01:51Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    execute_from_command_line(sys.argv)
+[2m2026-04-06T23:01:51Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/core/management/__init__.py", line 443, in execute_from_command_line
+[2m2026-04-06T23:01:51Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    utility.execute()
+[2m2026-04-06T23:01:51Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/core/management/__init__.py", line 437, in execute
+[2m2026-04-06T23:01:51Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    self.fetch_command(subcommand).run_from_argv(self.argv)
+[2m2026-04-06T23:01:51Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/core/management/base.py", line 420, in run_from_argv
+[2m2026-04-06T23:01:51Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    self.execute(*args, **cmd_options)
+[2m2026-04-06T23:01:51Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/core/management/base.py", line 464, in execute
+[2m2026-04-06T23:01:51Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    output = self.handle(*args, **options)
+[2m2026-04-06T23:01:51Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2m2026-04-06T23:01:51Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/core/management/base.py", line 111, in wrapper
+[2m2026-04-06T23:01:51Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    res = handle_func(*args, **kwargs)
+[2m2026-04-06T23:01:51Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2m2026-04-06T23:01:51Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/core/management/commands/migrate.py", line 118, in handle
+[2m2026-04-06T23:01:51Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    executor.loader.check_consistent_history(connection)
+[2m2026-04-06T23:01:51Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/db/migrations/loader.py", line 361, in check_consistent_history
+[2m2026-04-06T23:01:51Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    raise InconsistentMigrationHistory(
+[2m2026-04-06T23:01:51Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]django.db.migrations.exceptions.InconsistentMigrationHistory: Migration admin.0001_initial is applied before its dependency vendors.0001_initial on database 'default'.
+[2m2026-04-06T23:01:52Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m][32m INFO[0m Main child exited normally with code: 1
+[2m2026-04-06T23:01:52Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m][32m INFO[0m Starting clean up.
+[2m2026-04-06T23:01:52Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m][   20.765497] reboot: Restarting system
+[2m2026-04-06T23:01:52Z[0m runner[2871549fe43968] [32mjnb[0m [[34minfo[0m]machine has reached its max restart count of 10
+[2m2026-04-06T23:01:55Z[0m proxy[2871549fe43968] [32mjnb[0m [[34minfo[0m]Starting machine
+[2m2026-04-06T23:01:56Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]2026-04-06T23:01:56.040093018 [01KNJG4EBE9AJJ5TQC3MFQEQ6G:main] Running Firecracker v1.14.2
+[2m2026-04-06T23:01:56Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]2026-04-06T23:01:56.040296892 [01KNJG4EBE9AJJ5TQC3MFQEQ6G:main] Listening on API socket ("/fc.sock").
+[2m2026-04-06T23:01:57Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m][32m INFO[0m Starting init (commit: 350f2667)...
+[2m2026-04-06T23:01:58Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m][32m INFO[0m Preparing to run: `sh -c python manage.py migrate && python create_user.py && gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000}` as root
+[2m2026-04-06T23:01:58Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m][32m INFO[0m [fly api proxy] listening at /.fly/api
+[2m2026-04-06T23:01:58Z[0m runner[2871549fe43968] [32mjnb[0m [[34minfo[0m]Machine started in 2.583s
+[2m2026-04-06T23:01:58Z[0m proxy[2871549fe43968] [32mjnb[0m [[34minfo[0m]machine started in 2.698293499s
+[2m2026-04-06T23:02:03Z[0m proxy[2871549fe43968] [32mjnb[0m [[34minfo[0m]waiting for machine to be reachable on 0.0.0.0:8000 (waited 5.048584739s so far)
+[2m2026-04-06T23:02:04Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]2026/04/06 23:02:04 INFO SSH listening listen_address=[fdaa:4c:2925:a7b:2e2:c159:6d5c:2]:22
+[2merror.message=[0m"failed to connect to machine: gave up after 15 attempts (in 9.246493334s)" [2m2026-04-06T23:02:07Z[0m proxy[2871549fe43968] [32mjnb[0m [[31merror[0m]
+[2merror.message=[0m"instance refused connection. is your app listening on 0.0.0.0:8000? make sure it is not only listening on 127.0.0.1 (hint: look at your startup logs, servers often print the address they are listening on)" [2m2026-04-06T23:02:10Z[0m proxy[2871549fe43968] [32mjnb[0m [[31merror[0m]
+[2merror.message=[0m"could not find a good candidate within 40 attempts at load balancing" [2m2026-04-06T23:02:17Z[0m proxy[2871549fe43968] [32mjnb[0m [[31merror[0m][2mrequest.url=[0m"https://campo.fly.dev/" 
+[2m2026-04-06T23:02:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]Traceback (most recent call last):
+[2m2026-04-06T23:02:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/app/manage.py", line 22, in <module>
+[2m2026-04-06T23:02:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    main()
+[2m2026-04-06T23:02:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/app/manage.py", line 18, in main
+[2m2026-04-06T23:02:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    execute_from_command_line(sys.argv)
+[2m2026-04-06T23:02:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/core/management/__init__.py", line 443, in execute_from_command_line
+[2m2026-04-06T23:02:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    utility.execute()
+[2m2026-04-06T23:02:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/core/management/__init__.py", line 437, in execute
+[2m2026-04-06T23:02:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    self.fetch_command(subcommand).run_from_argv(self.argv)
+[2m2026-04-06T23:02:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/core/management/base.py", line 420, in run_from_argv
+[2m2026-04-06T23:02:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    self.execute(*args, **cmd_options)
+[2m2026-04-06T23:02:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/core/management/base.py", line 464, in execute
+[2m2026-04-06T23:02:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    output = self.handle(*args, **options)
+[2m2026-04-06T23:02:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2m2026-04-06T23:02:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/core/management/base.py", line 111, in wrapper
+[2m2026-04-06T23:02:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    res = handle_func(*args, **kwargs)
+[2m2026-04-06T23:02:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2m2026-04-06T23:02:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/core/management/commands/migrate.py", line 118, in handle
+[2m2026-04-06T23:02:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    executor.loader.check_consistent_history(connection)
+[2m2026-04-06T23:02:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/db/migrations/loader.py", line 361, in check_consistent_history
+[2m2026-04-06T23:02:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]    raise InconsistentMigrationHistory(
+[2m2026-04-06T23:02:21Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m]django.db.migrations.exceptions.InconsistentMigrationHistory: Migration admin.0001_initial is applied before its dependency vendors.0001_initial on database 'default'.
+[2m2026-04-06T23:02:22Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m][32m INFO[0m Main child exited normally with code: 1
+[2m2026-04-06T23:02:22Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m][32m INFO[0m Starting clean up.
+[2m2026-04-06T23:02:22Z[0m app[2871549fe43968] [32mjnb[0m [[34minfo[0m][   26.037082] reboot: Restarting system
+[2m2026-04-06T23:02:22Z[0m runner[2871549fe43968] [32mjnb[0m [[34minfo[0m]machine has reached its max restart count of 10

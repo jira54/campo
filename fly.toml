@@ -10,7 +10,7 @@ app = "campo"
   CSRF_TRUSTED_ORIGINS = "https://campo-09gm.onrender.com,https://campo.fly.dev"
 
 [deploy]
-  release_command = "python manage.py migrate"
+  release_command = "sh -c 'python manage.py fix_migration_history && python manage.py migrate'"
 
 [[services]]
   protocol = "tcp"

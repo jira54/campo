@@ -45,7 +45,7 @@ To prevent Tier 1 (KES 700) users from accessing Tier 2 (KES 3500) isolated syst
 
 ---
 
-## 💰 3. Dynamic Billing & The "God Mode" Admin
+## 💰 3. Dynamic Billing & The "Great Mode" Admin
 The `billing/models.py` natively separates `premium_retail` from `enterprise_ngo`. 
 
 ### The `/saas-admin/` Core

@@ -22,7 +22,7 @@ def landing(request):
 def root_redirect(request):
     if hasattr(request, 'user') and request.user.is_authenticated:
         return redirect('vendors:dashboard')
-    return redirect('landing')
+    return render(request, 'vendors/landing.html')
 
 def login_view(request):
     if hasattr(request, 'user') and request.user.is_authenticated:
@@ -35,50 +35,25 @@ def login_view(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
-        
-        # Debug logging
-        print(f"Login attempt for email: {email}")
-        print(f"Password provided: {'Yes' if password else 'No'}")
-        
-        # Check if user exists
-        from .models import Vendor
-        try:
-            user_obj = Vendor.objects.get(email=email)
-            print(f"User found: {user_obj.email}")
-            print(f"User active: {user_obj.is_active}")
-            print(f"Password check: {user_obj.check_password(password)}")
-        except Vendor.DoesNotExist:
-            print(f"User not found: {email}")
-            user_obj = None
-        
+
         user = authenticate(
             request,
             username=email,
             password=password
         )
-        
+
         if user:
-            print(f"Authentication successful for: {email}")
             # Clear stored registration email on successful login
             if 'registration_email' in request.session:
                 del request.session['registration_email']
             login(request, user)
             return redirect('vendors:dashboard')
         else:
-            print(f"Authentication failed for: {email}")
-            # Provide detailed error message
-            if not email:
-                error = "Email is required."
-            elif not password:
-                error = "Password is required."
-            elif not user_obj:
-                error = f"No account found for email: {email}"
-            elif not user_obj.is_active:
-                error = "Your account is inactive. Please contact support."
-            elif not user_obj.check_password(password):
-                error = "Incorrect password. Please try again."
+            # Generic message — do not reveal whether email exists
+            if not email or not password:
+                error = "Please enter your email and password."
             else:
-                error = "Authentication failed. Please try again."
+                error = "Invalid email or password. Please try again."
     else:
         error = stored_error  # Use stored error if coming from registration
         
@@ -125,6 +100,13 @@ def register_view(request):
 @login_required
 def dashboard(request):
     vendor   = request.user
+    
+    # --- Enterprise Dashboard Router ---
+    if vendor.business_type == 'ngo':
+        return redirect('ngo_portal:dashboard')
+    elif vendor.business_type == 'resort':
+        return redirect('resort_portal:dashboard')
+
     now      = timezone.now()
     
     # Check if trial has expired and downgrade if needed
@@ -174,10 +156,12 @@ def dashboard(request):
 
     recent_customers = customers.order_by('-added_at')[:5]
 
-    at_risk_ids   = customers.filter(
-        purchases__purchased_at__lt=now - timedelta(days=14)
-    ).values_list('id', flat=True).distinct()
-    at_risk_count = len(set(at_risk_ids))
+    at_risk_count = customers.annotate(
+        last_purchase_date=models.Max('purchases__purchased_at')
+    ).filter(
+        last_purchase_date__lt=now - timedelta(days=14),
+        last_purchase_date__isnull=False,
+    ).count()
 
     # Get login streak
     streak = getattr(vendor, 'streak', None)
@@ -191,11 +175,13 @@ def dashboard(request):
             vendor=vendor,
             status='overdue'
         ).count()
-        total_credit_owed = CreditRecord.objects.filter(
+        _credit_agg = CreditRecord.objects.filter(
             vendor=vendor
         ).exclude(status='paid').aggregate(
-            total=Sum('amount_given') - Sum('amount_paid')
-        )['total'] or 0
+            given=Sum('amount_given'),
+            paid=Sum('amount_paid')
+        )
+        total_credit_owed = (_credit_agg['given'] or 0) - (_credit_agg['paid'] or 0)
 
     context = {
         'total_customers':  total_customers,
@@ -237,21 +223,35 @@ def profile_view(request):
 @login_required
 def quick_sale(request):
     if request.method == 'POST':
-        customer_id = request.POST.get('customer_id')
+        customer_phone = request.POST.get('customer_phone', '').strip()
         amount = request.POST.get('amount')
         notes = request.POST.get('notes', '')
         
         try:
-            customer = Customer.objects.get(id=customer_id, vendor=request.user)
             amount = float(amount)
             
-            # Create a purchase record
-            from customers.models import Purchase, Service
+            from customers.models import Customer, Purchase, Service
+            
+            # Auto-CRM for Cash Sales
+            if customer_phone:
+                customer = Customer.objects.filter(vendor=request.user, phone=customer_phone).first()
+                if not customer:
+                    customer = Customer.objects.create(
+                        vendor=request.user,
+                        phone=customer_phone,
+                        name="Cash Customer"
+                    )
+            else:
+                # Anonymous walk-in
+                customer, _ = Customer.objects.get_or_create(
+                    vendor=request.user,
+                    name="Walk-in Customer",
+                    defaults={'phone': ''}
+                )
             
             # Get a default service for quick sales
             default_service = Service.objects.filter(vendor=request.user).first()
             if not default_service:
-                # Create a default service if none exists
                 default_service = Service.objects.create(
                     vendor=request.user,
                     name="Quick Sale",
@@ -269,8 +269,8 @@ def quick_sale(request):
             messages.success(request, f"Sale of KES {amount:.2f} logged for {customer.name}")
             return redirect('vendors:dashboard')
             
-        except (ValueError, Customer.DoesNotExist):
-            messages.error(request, "Invalid customer or amount")
+        except ValueError:
+            messages.error(request, "Invalid amount entered.")
             return redirect('vendors:dashboard')
     
     return redirect('vendors:dashboard')

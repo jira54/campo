@@ -37,7 +37,6 @@ class RegisterForm(forms.ModelForm):
 
     def save(self, commit=True):
         vendor = super().save(commit=False)
-        vendor.username = self.cleaned_data['email']
         vendor.email    = self.cleaned_data['email']
         vendor.set_password(self.cleaned_data['password'])
         if commit:

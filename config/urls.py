@@ -34,6 +34,9 @@ urlpatterns = [
     path('billing/',    include('billing.urls')),
     path('notes/',      include('notes.urls')),
     path('credit/',     include('credit.urls')),
+    path('ngo/',        include('ngo_portal.urls')),
+    path('resort/',     include('resort_portal.urls')),
+    path('saas-admin/', include('admin_dashboard.urls')),
     path('sw.js', service_worker, name='service_worker'),
     path('offline/', offline, name='offline'),
 ]

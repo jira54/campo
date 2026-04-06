@@ -72,12 +72,13 @@ def stk_push(phone, amount, vendor_id, plan):
 def parse_callback(data):
     """
     Parse Safaricom callback POST body.
-    Returns: (success: bool, mpesa_ref: str|None, amount: float|None, phone: str|None)
+    Returns: (success: bool, mpesa_ref: str|None, amount: float|None, phone: str|None, checkout_id: str|None)
     """
     try:
         cb = data['Body']['stkCallback']
+        checkout_id = cb.get('CheckoutRequestID', '')
         if cb['ResultCode'] != 0:
-            return False, None, None, None
+            return False, None, None, None, checkout_id
 
         items = {
             item['Name']: item.get('Value')
@@ -88,6 +89,7 @@ def parse_callback(data):
             items.get('MpesaReceiptNumber'),
             items.get('Amount'),
             str(items.get('PhoneNumber', '')),
+            checkout_id,
         )
     except (KeyError, TypeError):
-        return False, None, None, None
+        return False, None, None, None, None

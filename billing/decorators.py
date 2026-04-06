@@ -22,7 +22,7 @@ def premium_required(view_func):
             messages.warning(
                 request,
                 "This feature requires a Premium plan. "
-                "Upgrade to Premium for KES 300/month for a seamless experience."
+                "Upgrade to Premium for KES 400/month to unlock all features."
             )
             return redirect('billing:upgrade')
         return view_func(request, *args, **kwargs)

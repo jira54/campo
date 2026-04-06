@@ -29,7 +29,7 @@ def promotion_list(request):
 def promotion_compose(request):
     vendor    = request.user
     form      = PromotionForm(vendor=vendor)
-    customers = Customer.objects.filter(vendor=vendor)
+    customers = Customer.objects.filter(vendor=vendor).prefetch_related('purchases')
     segment_counts = {
         'all':     customers.count(),
         'loyal':   sum(1 for c in customers if c.status == 'loyal'),
@@ -86,9 +86,7 @@ def promotion_compose(request):
                     messages.warning(request, f"SMS service currently unavailable. Promotion '{promo.title}' saved as draft. SMS feature coming soon!")
             promo.save()
             
-            # Show appropriate message based on channel
-            if promo.channel == 'whatsapp':
-                messages.success(request, f"Promotion '{promo.title}' created! Send messages via WhatsApp to complete.")
+            # WhatsApp messages handled on line 59
             # SMS messages handled above
             return redirect('promotions:promotion_list')   # ← fixed
 

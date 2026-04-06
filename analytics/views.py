@@ -121,7 +121,7 @@ def analytics_dashboard(request):
     service_sales.sort(key=lambda x: x['revenue'], reverse=True)
 
     # Segment breakdown for doughnut (all customers, not just period)
-    all_customers = list(Customer.objects.filter(vendor=vendor))
+    all_customers = list(Customer.objects.filter(vendor=vendor).prefetch_related('purchases'))
     segments = {
         'loyal': sum(1 for c in all_customers if c.status == 'loyal'),
         'regular': sum(1 for c in all_customers if c.status == 'regular'),

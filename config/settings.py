@@ -5,9 +5,19 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / '.env')
 
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-xmyxnwqvmbf_rj8sh1ziof0b117ruba8z!)y@_wvuyqjonb%#m')
+DEBUG = os.environ.get('DEBUG', 'False').lower() in ('true', '1', 'yes')
 
-DEBUG = True
+_secret_key = os.environ.get('SECRET_KEY', '')
+if not _secret_key:
+    if DEBUG:
+        # Development-only fallback — never used in production
+        _secret_key = 'django-insecure-dev-only-not-for-production-use'
+    else:
+        raise RuntimeError(
+            'SECRET_KEY environment variable must be set in production! '
+            'Add it to your .env file or platform environment variables.'
+        )
+SECRET_KEY = _secret_key
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '127.0.0.1,localhost,campo-09gm.onrender.com,campo.fly.dev').split(',')
 
@@ -18,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'admin_dashboard',
     'vendors',
     'customers',
     'promotions',
@@ -25,6 +36,8 @@ INSTALLED_APPS = [
     'billing',
     'notes',
     'credit',
+    'ngo_portal',
+    'resort_portal',
 ]
 
 MIDDLEWARE = [
@@ -122,9 +135,9 @@ LOGOUT_REDIRECT_URL = '/login/'
 
 CSRF_TRUSTED_ORIGINS = ['https://campo-09gm.onrender.com', 'https://campo.fly.dev']
 
-# Cookie settings for production
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
+# Cookie settings — secure in production (when DEBUG=False)
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
 SESSION_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SAMESITE = 'Lax'

@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.utils import timezone
 from io import BytesIO
 import csv
+import html
 from decimal import Decimal
 
 from vendors.decorators import premium_required
@@ -21,7 +22,7 @@ def customer_list(request):
     segment = request.GET.get('segment', 'all')
     query   = request.GET.get('q', '')
 
-    customers = Customer.objects.filter(vendor=vendor, is_active=True)
+    customers = Customer.objects.filter(vendor=vendor, is_active=True).prefetch_related('purchases')
 
     if query:
         customers = customers.filter(name__icontains=query) | \
@@ -274,7 +275,7 @@ def customer_export_pdf(request):
     vendor = request.user
     customers = Customer.objects.filter(vendor=vendor).order_by('name')
 
-    html = f"""
+    html_str = f"""
     <html>
     <head><style>
         body {{ font-family: Arial, sans-serif; font-size: 12px; }}
@@ -296,21 +297,23 @@ def customer_export_pdf(request):
             <tr><th>Name</th><th>Phone</th><th>Visits</th><th>Spent (KES)</th><th>Status</th></tr>
     """
     for c in customers:
-        html += f"""
+        safe_name = html.escape(c.name)
+        safe_phone = html.escape(c.phone)
+        html_str += f"""
             <tr>
-                <td>{c.name}</td>
-                <td>{c.phone}</td>
+                <td>{safe_name}</td>
+                <td>{safe_phone}</td>
                 <td>{c.total_visits}</td>
                 <td>{c.total_spent}</td>
                 <td><span class="status {c.status}">{c.status.title()}</span></td>
             </tr>
         """
-    html += "</table></body></html>"
+    html_str += "</table></body></html>"
 
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename=\"campopawa_customers_{vendor.business_name}.pdf\"'
 
-    pisa.CreatePDF(BytesIO(html.encode('utf-8')), dest=response)
+    pisa.CreatePDF(BytesIO(html_str.encode('utf-8')), dest=response)
     return response
 
 
@@ -448,6 +451,7 @@ def send_reminder(request, customer_id):
     return redirect('customers:smart_reminders')
 
 # ... (rest of the code remains the same)
+@login_required
 @premium_required
 def dismiss_reminder(request, customer_id):
     if request.method == 'POST':
@@ -644,11 +648,11 @@ def download_receipt_pdf(request, purchase_id):
             
             <div class="line">
                 <span class="line-label">Customer:</span>
-                <span class="line-value">{customer.name}</span>
+                <span class="line-value">{html.escape(customer.name)}</span>
             </div>
             <div class="line">
                 <span class="line-label">Phone:</span>
-                <span class="line-value">{customer.phone}</span>
+                <span class="line-value">{html.escape(customer.phone) if customer.phone else 'N/A'}</span>
             </div>
             <div class="line">
                 <span class="line-label">Date:</span>
@@ -867,10 +871,14 @@ def services_reorder(request):
     if request.method == 'POST':
         service_ids = request.POST.getlist('service_ids[]')
         try:
+            services_to_update = []
             for index, service_id in enumerate(service_ids):
+                # Retrieve from db and update sort_order
                 service = Service.objects.get(id=service_id, vendor=vendor)
                 service.sort_order = index
-                service.save()
+                services_to_update.append(service)
+            # Use bulk_update to perform a single query
+            Service.objects.bulk_update(services_to_update, ['sort_order'])
             return HttpResponse('OK')
         except Exception as e:
             return HttpResponse('Error', status=400)

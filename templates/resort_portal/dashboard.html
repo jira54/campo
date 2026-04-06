@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+
+{% block title %}Hospitality Dashboard - CampoPawa Enterprise{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen">
+    {% include 'resort_portal/sidebar_resort.html' %}
+
+    <div class="flex-1 overflow-auto bg-deep">
+        <div class="p-4 md:p-8">
+            <!-- Daily Greeting Section -->
+            <div class="mb-8" style="position: relative; min-height: 120px;">
+                <div class="p-4 md:p-8">
+                    <div class="flex flex-col md:flex-row items-start justify-between gap-4 md:gap-6">
+                        <div class="w-full md:flex-1" style="text-align: left; align-items: flex-start; padding-left: 0; position: absolute; top: 0; left: 0;">
+                            <p class="text-fuchsia-400 font-bold text-lg md:text-xl mb-3 md:mb-4">🏨 Welcome, {{ user.business_name }} Operations!</p>
+                            <div class="bg-gradient-to-r from-purple-500/20 via-fuchsia-500/30 to-pink-600/20 p-3 md:p-4 rounded-l-xl border-l-2 border-purple-500/50">
+                                <p class="text-purple-100 text-xs md:text-sm leading-relaxed">Centralized live intelligence. Track occupancy, monitor cross-department revenue, and log POS charges instantly.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Smart Intelligence Alert (VIP Check-ins) -->
+            {% if vip_arrivals > 0 %}
+            <div class="mb-8 bg-gradient-to-r from-orange-900/40 to-red-900/40 border border-orange-500/40 p-4 rounded-xl flex items-center gap-4 animate-pulse">
+                <div class="text-3xl">⭐</div>
+                <div>
+                    <h3 class="text-orange-400 font-bold text-sm">VIP Arrival Alert</h3>
+                    <p class="text-gray-300 text-xs">You have {{ vip_arrivals }} VIP returning guest(s) checking in today. Ensure front-desk readiness.</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Top KPIs (Aurora Design) -->
+            <div class="mb-8 p-6" style="position: relative; overflow: hidden; border-radius: 24px; background: #08111a;">
+                <!-- Aurora effect -->
+                <div class="aurora" style="position: absolute; inset: -40px; background: radial-gradient(ellipse 55% 60% at 15% 25%, rgba(147,51,234,0.55) 0%, transparent 60%), radial-gradient(ellipse 50% 55% at 85% 20%, rgba(217,70,239,0.6) 0%, transparent 58%), radial-gradient(ellipse 60% 50% at 80% 80%, rgba(236,72,153,0.45) 0%, transparent 60%), radial-gradient(ellipse 55% 50% at 20% 80%, rgba(168,85,247,0.4) 0%, transparent 58%); filter: blur(28px);"></div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-6 relative z-10">
+                    <div>
+                        <p class="text-fuchsia-200 text-xs mb-1">Live Occupancy</p>
+                        <p class="text-white font-bold text-xl">{{ occupancy_rate }}%</p>
+                        <p class="text-xs text-fuchsia-300">{{ occupied_rooms }} of {{ total_rooms }} Rooms</p>
+                    </div>
+                    <div>
+                        <p class="text-purple-200 text-xs mb-1">Total Revenue Today</p>
+                        <p class="text-white font-bold text-xl">KES {{ total_revenue_today|floatformat:0 }}</p>
+                        <p class="text-xs text-purple-300">Across all departments</p>
+                    </div>
+                    <div class="hidden md:block">
+                        <p class="text-pink-200 text-xs mb-1">Housekeeping Alert</p>
+                        <p class="text-white font-bold text-xl">
+                            {% if dirty_rooms > 0 %}
+                                <span class="text-red-400">{{ dirty_rooms }} Dirty</span>
+                            {% else %}
+                                <span class="text-emerald-400">All Clean</span>
+                            {% endif %}
+                        </p>
+                        <p class="text-xs text-pink-300">Rooms needing service</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Operations Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8 mb-8">
+                
+                <!-- Quick POS Action -->
+                <div class="bg-gradient-to-r from-gray-800/60 to-gray-800/40 backdrop-blur-sm border border-gray-600/30 p-5 rounded-2xl flex flex-col justify-center items-center text-center">
+                    <div class="text-4xl mb-4">🍹</div>
+                    <h2 class="text-white font-bold text-lg mb-2">POS Fast Charge</h2>
+                    <p class="text-gray-400 text-xs mb-6 px-4">Instantly route a bar, restaurant, or spa charge directly to a guest's room folio or take walk-in payment.</p>
+                    <button onclick="openPosModal()" class="w-full bg-gradient-to-r from-purple-600 to-fuchsia-500 text-white font-bold px-4 py-3 rounded-xl hover:scale-105 transition-all shadow-lg shadow-purple-500/30">
+                        ⚡ Log New Charge
+                    </button>
+                </div>
+
+                <!-- Live Department Revenue Breakdown -->
+                <div class="lg:col-span-2 bg-gradient-to-r from-gray-800/60 to-gray-800/40 backdrop-blur-sm border border-gray-600/30 p-5 rounded-2xl">
+                    <h2 class="text-white font-bold text-lg mb-4">Daily Department Yield</h2>
+                    <div class="space-y-4">
+                        {% if dept_revenue %}
+                            {% for dept in dept_revenue %}
+                            <div class="flex flex-col gap-1">
+                                <div class="flex justify-between items-end">
+                                    <span class="text-gray-300 text-sm font-medium">{{ dept.name }}</span>
+                                    <span class="text-white font-bold text-sm">KES {{ dept.revenue|floatformat:0 }}</span>
+                                </div>
+                                <!-- Visual Bar -->
+                                <div class="w-full bg-gray-700 rounded-full h-2">
+                                    <!-- In a real app we'd calculate width dynamically based on max revenue -->
+                                    <div class="bg-gradient-to-r from-purple-500 to-fuchsia-400 h-2 rounded-full" style="width: 70%"></div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-gray-500 text-sm italic">No department data recorded yet today.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+            
+            <!-- Active Stays Snippet -->
+            <div class="bg-gradient-to-r from-gray-800/60 to-gray-800/40 backdrop-blur-sm border border-gray-600/30 p-5 rounded-2xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-white font-bold text-lg">Live Folios (In House)</h2>
+                    <span class="text-xs text-purple-400 bg-purple-900/40 px-2 py-1 rounded border border-purple-500/30">{{ active_folios.count }} Active</span>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-xs text-gray-500 uppercase tracking-wider border-b border-gray-700">
+                                <th class="pb-2">Room</th>
+                                <th class="pb-2">Guest Name</th>
+                                <th class="pb-2">Check-in</th>
+                                <th class="pb-2">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm text-gray-300">
+                            {% for folio in active_folios|slice:":5" %}
+                            <tr class="border-b border-gray-700/50 last:border-0">
+                                <td class="py-3 font-bold text-white">{{ folio.room.room_number|default:"No Room" }}</td>
+                                <td class="py-3">
+                                    {{ folio.guest.name }}
+                                    {% if folio.guest.vip_status %}<span class="text-orange-400 text-xs ml-1">★ VIP</span>{% endif %}
+                                </td>
+                                <td class="py-3 text-gray-400">{{ folio.check_in_date|date:"M d" }}</td>
+                                <td class="py-3"><span class="text-emerald-400 bg-emerald-900/30 px-2 py-0.5 rounded text-xs">In House</span></td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="4" class="py-4 text-gray-500 text-center">No guests currently checked in.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Fast POS Charge Modal -->
+<div id="posModal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-gradient-to-br from-gray-800 to-gray-900 border border-purple-500/50 rounded-2xl p-6 max-w-md w-full shadow-2xl">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-bold text-white flex items-center gap-2">⚡ <span class="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-fuchsia-300">Fast POS Charge</span></h3>
+            <button onclick="closePosModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+        </div>
+        
+        <form method="POST" action="#">
+            {% csrf_token %}
+            
+            <!-- Type Toggle -->
+            <div class="flex gap-2 mb-6 p-1 bg-gray-800 rounded-lg">
+                <button type="button" class="flex-1 py-1.5 text-xs font-bold bg-gray-600 text-white rounded shadow" onclick="setChargeType('room')">Room Charge</button>
+                <button type="button" class="flex-1 py-1.5 text-xs font-bold text-gray-400 hover:text-white" onclick="setChargeType('walkin')">Walk-In / Cash</button>
+            </div>
+
+            <!-- Amount Input (Massive Numpad Style) -->
+            <div class="mb-6">
+                <label class="block text-xs font-medium text-purple-300 mb-2 uppercase tracking-wide">Charge Amount (KES)</label>
+                <input type="number" name="amount" min="0" step="0.01" placeholder="0" class="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-4 text-white text-4xl font-bold placeholder-gray-600 focus:outline-none focus:border-purple-500 text-center shadow-inner" required>
+            </div>
+
+            <!-- Mapping -->
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label class="block text-xs font-medium text-gray-400 mb-1">Department</label>
+                    <select name="department_id" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-purple-500 text-sm">
+                        <option>Main Restaurant</option>
+                        <option>Pool Bar</option>
+                        <option>Spa & Wellness</option>
+                    </select>
+                </div>
+                <div id="roomSelectDiv">
+                    <label class="block text-xs font-medium text-gray-400 mb-1">Charge to Room</label>
+                    <select name="folio_id" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-purple-500 text-sm">
+                        <option value="">Select Room...</option>
+                        {% for folio in active_folios %}
+                        <option value="{{ folio.id }}">Rm {{ folio.room.room_number }} ({{ folio.guest.name|truncatechars:10 }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <input type="text" name="description" placeholder="Description (e.g. 2x Signature Cocktails)" class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 text-sm">
+            </div>
+
+            <!-- Submit -->
+            <button type="button" class="w-full bg-gradient-to-r from-purple-600 to-fuchsia-500 hover:from-purple-500 hover:to-fuchsia-400 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-purple-500/30 transition-all text-lg">
+                Log Charge
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+function openPosModal() {
+    document.getElementById('posModal').classList.remove('hidden');
+}
+
+function closePosModal() {
+    document.getElementById('posModal').classList.add('hidden');
+}
+
+document.getElementById('posModal').addEventListener('click', function(e) {
+    if (e.target === this) closePosModal();
+});
+
+function setChargeType(type) {
+    const roomDiv = document.getElementById('roomSelectDiv');
+    const btns = document.querySelectorAll('.bg-gray-800 button');
+    
+    if (type === 'room') {
+        roomDiv.style.opacity = '1';
+        roomDiv.style.pointerEvents = 'auto';
+        btns[0].className = 'flex-1 py-1.5 text-xs font-bold bg-gray-600 text-white rounded shadow';
+        btns[1].className = 'flex-1 py-1.5 text-xs font-bold text-gray-400 hover:text-white';
+    } else {
+        roomDiv.style.opacity = '0.3';
+        roomDiv.style.pointerEvents = 'none';
+        btns[0].className = 'flex-1 py-1.5 text-xs font-bold text-gray-400 hover:text-white';
+        btns[1].className = 'flex-1 py-1.5 text-xs font-bold bg-gray-600 text-white rounded shadow';
+    }
+}
+</script>
+{% endblock %}

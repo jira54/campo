@@ -175,5 +175,5 @@ class Receipt(models.Model):
 
     @staticmethod
     def generate_number():
-        import random
-        return f"CP-{timezone.now().strftime('%y%m%d')}-{random.randint(1000, 9999)}"
+        import secrets
+        return f"CP-{timezone.now().strftime('%y%m%d')}-{secrets.token_hex(4).upper()}"

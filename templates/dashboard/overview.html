@@ -36,6 +36,9 @@
             </div>
             {% endif %}
 
+            <!-- C2B Live Alert Banner Container -->
+            <div id="c2b-alert-container" class="fixed top-20 right-4 z-50 flex flex-col gap-2"></div>
+
             <!-- Today's Snapshot -->
             <div class="mb-8">
                 <div class="p-6" style="position: relative; overflow: hidden; border-radius: 24px; background: #08111a;">
@@ -208,24 +211,18 @@
             {% csrf_token %}
             
             <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-300 mb-2">Select Customer</label>
-                <select name="customer_id" id="customerSelect" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-emerald-500" required>
-                    <option value="">Choose a customer...</option>
-                    {% for customer in recent_customers %}
-                    <option value="{{ customer.id }}">{{ customer.name }} - {{ customer.phone }}</option>
-                    {% endfor %}
-                </select>
-                <p class="text-xs text-gray-400 mt-1">Or <a href="{% url 'customers:customer_add' %}" class="text-emerald-400 hover:text-emerald-300">add new customer</a></p>
-            </div>
-            
-            <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-300 mb-2">Amount (KES)</label>
-                <input type="number" name="amount" min="0" step="0.01" placeholder="0.00" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-emerald-500" required>
+                <input type="number" name="amount" min="0" step="0.01" placeholder="0" class="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-4 text-white text-3xl font-bold placeholder-gray-500 focus:outline-none focus:border-emerald-500 text-center" required>
+            </div>
+
+            <div class="mb-6 p-4 bg-gray-700/50 rounded-lg border border-gray-600">
+                <label class="block text-sm font-medium text-gray-300 mb-1">Loyalty / Phone (Optional)</label>
+                <p class="text-xs text-gray-400 mb-2">Enter phone number to earn loyalty points</p>
+                <input type="tel" name="customer_phone" placeholder="e.g. 07..." class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-emerald-500">
             </div>
             
             <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-300 mb-2">Notes (optional)</label>
-                <input type="text" name="notes" placeholder="What did they buy?" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-emerald-500">
+                <input type="text" name="notes" placeholder="Notes (optional)" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-emerald-500">
             </div>
             
             <div class="flex gap-3">
@@ -286,5 +283,65 @@ document.addEventListener('DOMContentLoaded', function() {
         popup.style.display = 'none';
     }
 });
+
+// --- C2B M-Pesa Live Poller ---
+function pollLatestPayments() {
+    fetch('/billing/api/poll-latest-payments/')
+        .then(response => response.json())
+        .then(data => {
+            if (data.new_payments && data.payments.length > 0) {
+                data.payments.forEach(payment => {
+                    showC2BAlert(payment.amount, payment.customer_name, payment.phone);
+                });
+            }
+        })
+        .catch(err => console.error("Poll error:", err));
+}
+
+function showC2BAlert(amount, name, phone) {
+    const container = document.getElementById('c2b-alert-container');
+    const alertId = 'alert-' + Date.now();
+    
+    // Play a subtle ding sound (optional, assuming browser allows audio)
+    // const audio = new Audio('/static/audio/ding.mp3'); audio.play().catch(e=>console.log(e));
+    
+    // Create alert element
+    const alertEl = document.createElement('div');
+    alertEl.id = alertId;
+    alertEl.className = "bg-gradient-to-r from-emerald-500 to-green-400 text-deep p-4 rounded-lg shadow-2xl shadow-emerald-500/50 transform translate-x-full transition-transform duration-500 ease-out flex items-center gap-4 min-w-[300px]";
+    
+    let displayName = name || phone || 'Cash Customer';
+    if (!name && !phone) displayName = 'Anonymous Walk-in';
+
+    alertEl.innerHTML = `
+        <div class="text-3xl">✅</div>
+        <div>
+            <p class="font-bold text-sm">KES ${amount}</p>
+            <p class="text-xs opacity-90">Received from ${displayName}</p>
+        </div>
+    `;
+    
+    container.appendChild(alertEl);
+    
+    // Animate in
+    setTimeout(() => {
+        alertEl.classList.remove('translate-x-full');
+    }, 50);
+    
+    // Auto remove after 6 seconds
+    setTimeout(() => {
+        alertEl.classList.add('translate-x-full');
+        setTimeout(() => {
+            if(container.contains(alertEl)) {
+                container.removeChild(alertEl);
+            }
+            // Optional: reload page to update counters softly, or let them manually refresh
+        }, 500);
+    }, 6000);
+}
+
+// Start polling every 3 seconds only if we are on the dashboard
+setInterval(pollLatestPayments, 3000);
+
 </script>
 {% endblock %}

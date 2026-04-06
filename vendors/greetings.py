@@ -136,8 +136,9 @@ RANDOM_TIPS = [
     "🌟 Shine on! ✨",
 ]
 
+from django.utils import timezone
+
 def get_daily_context(user):
-    from django.utils import timezone
     today = timezone.now()
     weekday = today.weekday()
     hour = today.hour

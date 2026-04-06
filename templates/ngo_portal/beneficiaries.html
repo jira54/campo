@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Beneficiary Database - CampoPawa Enterprise{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen">
+    {% include 'ngo_portal/sidebar_ngo.html' %}
+
+    <div class="flex-1 overflow-auto bg-deep">
+        <div class="p-4 md:p-8">
+            
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-white mb-2">Beneficiary Database</h1>
+                    <p class="text-gray-400">Manage cohorts, track demographics, and ensure data compliance.</p>
+                </div>
+                <button class="bg-gradient-to-r from-teal to-cyan-500 text-deep font-bold px-6 py-3 rounded-lg hover:scale-105 transition-all shadow-lg shadow-teal/30">
+                    ➕ Add Beneficiary
+                </button>
+            </div>
+
+            <!-- Datatable Container -->
+            <div class="bg-gradient-to-r from-gray-800/20 to-gray-700/20 backdrop-blur-sm border border-gray-600/30 rounded-2xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-black/30 text-teal-300 text-sm uppercase tracking-wider">
+                                <th class="p-4 font-semibold border-b border-gray-600/30">UUID</th>
+                                <th class="p-4 font-semibold border-b border-gray-600/30">Name</th>
+                                <th class="p-4 font-semibold border-b border-gray-600/30">Sex</th>
+                                <th class="p-4 font-semibold border-b border-gray-600/30">Geography</th>
+                                <th class="p-4 font-semibold border-b border-gray-600/30">Vulnerability</th>
+                                <th class="p-4 font-semibold border-b border-gray-600/30">Added</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-gray-300 text-sm">
+                            {% for ben in beneficiaries %}
+                            <tr class="hover:bg-gray-700/20 transition-colors border-b border-gray-600/10 last:border-0">
+                                <td class="p-4 font-mono text-xs text-gray-500">{{ ben.unique_system_id }}</td>
+                                <td class="p-4">
+                                    <div class="font-bold text-white">{{ ben.name }}</div>
+                                    <div class="text-xs text-gray-500">{{ ben.phone|default:"No Phone" }}</div>
+                                </td>
+                                <td class="p-4">{{ ben.get_sex_display }}</td>
+                                <td class="p-4">
+                                    <div class="text-white">{{ ben.county|default:"Unknown" }}</div>
+                                    <div class="text-xs text-gray-500">{{ ben.sub_county }}</div>
+                                </td>
+                                <td class="p-4">
+                                    {% if ben.vulnerability_marker != 'none' %}
+                                        <span class="bg-orange-900/40 text-orange-400 px-2 py-1 rounded text-xs border border-orange-500/20">
+                                            {{ ben.get_vulnerability_marker_display }}
+                                        </span>
+                                    {% else %}
+                                        <span class="text-gray-600">-</span>
+                                    {% endif %}
+                                </td>
+                                <td class="p-4 text-xs text-gray-400">{{ ben.added_at|date:"M d, Y" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="p-8 text-center text-gray-500">
+                                    No beneficiaries registered yet.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="p-4 bg-black/20 border-t border-gray-600/30 flex justify-between items-center text-sm text-gray-400">
+                    <div>Showing {{ beneficiaries.count }} records</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

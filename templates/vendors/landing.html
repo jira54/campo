@@ -1,106 +1,164 @@
 {% extends 'base.html' %}
 
-{% block title %}Welcome to CampoPawa - Grow Your Business{% endblock %}
+{% block title %}CampoPawa - The Ultimate Operations OS for Africa{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-deep">
+<div class="min-h-screen bg-deep relative overflow-hidden">
+    <!-- Background Aurora Blurs -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] pointer-events-none opacity-40">
+        <div class="absolute inset-x-0 -top-40 h-[600px] blur-[100px] bg-gradient-to-r from-gold/30 via-teal/30 to-purple-600/30"></div>
+    </div>
+
     <!-- Navigation -->
-    <nav class="border-b border-gold border-opacity-20 py-4 px-8">
+    <nav class="relative z-10 border-b border-white/5 py-4 px-6 md:px-12 backdrop-blur-md bg-deep/80 sticky top-0">
         <div class="flex items-center justify-between max-w-7xl mx-auto">
-            <h1 class="text-2xl font-bold text-gold">CampoPawa</h1>
-            <div class="space-x-4">
-                <a href="{% url 'login' %}" class="text-gray-300 hover:text-gold">Login</a>
-                <a href="{% url 'register' %}" class="bg-gold text-deep font-bold px-6 py-2 rounded hover:bg-yellow-400">Sign Up</a>
+            <h1 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gold to-amber-500 tracking-tight">CampoPawa</h1>
+            <div class="space-x-2 md:space-x-4 flex items-center">
+                <a href="{% url 'login' %}" class="text-gray-300 font-semibold hover:text-white px-4 py-2 transition-colors">Login</a>
+                <a href="{% url 'register' %}" class="bg-gradient-to-r from-gold to-amber-500 text-deep font-bold px-6 py-2.5 rounded-xl hover:scale-105 shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all">Get Started</a>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="py-20 px-4">
-        <div class="max-w-6xl mx-auto text-center">
-            <div class="mb-12">
-                <h2 class="text-5xl font-bold text-white mb-6 leading-tight">
-                    Grow Your Campus Business &#128200;
-                </h2>
-                <p class="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-                    The all-in-one management platform for campus vendors. Track customers, manage promotions, and grow your business with powerful analytics.
-                </p>
-            </div>
-
-            <!-- Features -->
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-                <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-8 text-center">
-                    <div class="text-6xl mb-6">&#128241;&#128187;&#128200;</div>
-                    <h4 class="text-white font-bold mb-4">All in One Platform</h4>
-                    <p class="text-gray-400">Manage everything from customer relationships to sales analytics in one place.</p>
-                </div>
-
-                <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-8 text-center">
-                    <div class="text-6xl mb-6">&#128179;&#128187;</div>
-                    <h4 class="text-white font-bold mb-4">Customer Management</h4>
-                    <p class="text-gray-400">Keep track of your customers, their preferences, and purchase history.</p>
-                </div>
-
-                <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-8 text-center">
-                    <div class="text-6xl mb-6">&#128200;</div>
-                    <h4 class="text-white font-bold mb-4">Smart Analytics</h4>
-                    <p class="text-gray-400">Get insights into your business performance with detailed reports.</p>
-                </div>
-
-                <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-8 text-center">
-                    <div class="text-6xl mb-6">&#128229;&#128188;</div>
-                    <h4 class="text-white font-bold mb-4">Promotion Tools</h4>
-                    <p class="text-gray-400">Create and send targeted promotions to your customer base.</p>
-                </div>
-            </div>
-
-            <!-- CTA Section -->
-            <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-8 text-center">
-                <div class="text-6xl mb-6">&#128241;&#128187;&#128200;</div>
-                <h4 class="text-white font-bold mb-4">Affordable</h4>
-                <p class="text-gray-400 text-sm">Less than two mandazis a day! &#9749;</p>
+    <!-- Master Hero Section -->
+    <section class="relative z-10 pt-24 pb-16 px-4 md:pt-32 md:pb-24 text-center">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-5xl md:text-7xl font-black text-white mb-6 leading-tight tracking-tighter">
+                The Ultimate Operations OS <br class="hidden md:block">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400">Built for Africa.</span>
+            </h2>
+            <p class="text-xl md:text-2xl text-gray-400 mb-10 max-w-3xl mx-auto font-medium">
+                The most frictionless, zero-data-entry platform ever built. Scale your MSME, streamline your Resort PMS, or automate your NGO M&E tracking effortlessly.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="{% url 'register' %}" class="bg-white text-deep font-bold text-lg px-8 py-4 rounded-xl hover:scale-105 hover:bg-gray-100 transition-all shadow-xl">Start Free Trial →</a>
+                <a href="#solutions" class="bg-navy border border-gray-700 text-white font-bold text-lg px-8 py-4 rounded-xl hover:bg-gray-800 transition-all">Explore Solutions</a>
             </div>
         </div>
     </section>
 
-    <!-- How It Works -->
-    <section class="py-16 px-4 bg-deep">
+    <!-- Three Pillars (Verticals) -->
+    <section id="solutions" class="relative z-10 py-20 px-4 md:px-8 border-t border-white/5 bg-black/40 backdrop-blur-xl">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h3 class="text-3xl font-black text-white mb-4">Dedicated Solutions for Any Scale</h3>
+                <p class="text-gray-400 text-lg">We don't build generic software. We build bespoke portals mapped exactly to your workflow.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Retail MSME -->
+                <div class="bg-gradient-to-b from-gray-800/80 to-gray-900/80 border border-gold/30 rounded-3xl p-8 hover:-translate-y-2 transition-transform duration-300 relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-gradient-to-b from-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-gold to-orange-500 mb-6 flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(245,158,11,0.4)]">🛍️</div>
+                    <h4 class="text-2xl font-bold text-white mb-4 relative z-10">Retail & MSMEs</h4>
+                    <p class="text-gray-400 mb-6 relative z-10">
+                        Stop typing manually. Our M-Pesa C2B integration automatically logs sales and builds your Customer CRM instantly while you sleep.
+                    </p>
+                    <ul class="text-gray-300 space-y-3 mb-8 text-sm relative z-10">
+                        <li class="flex items-center gap-2">✓ Auto M-Pesa CRM Hooks</li>
+                        <li class="flex items-center gap-2">✓ Smart SMS Promotions</li>
+                        <li class="flex items-center gap-2">✓ Frictionless 2-Tap Selling</li>
+                    </ul>
+                </div>
+
+                <!-- NGO Enterprise -->
+                <div class="bg-gradient-to-b from-gray-800/80 to-gray-900/80 border border-teal-500/30 rounded-3xl p-8 hover:-translate-y-2 transition-transform duration-300 relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-gradient-to-b from-teal/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-600 mb-6 flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(20,184,166,0.4)]">🌍</div>
+                    <h4 class="text-2xl font-bold text-white mb-4 relative z-10">NGOs & Agencies</h4>
+                    <p class="text-gray-400 mb-6 relative z-10">
+                        Fully isolated USAID AMELP compliance. Ditch spreadsheets and log strict field interventions instantly via mobile.
+                    </p>
+                    <ul class="text-gray-300 space-y-3 mb-8 text-sm relative z-10">
+                        <li class="flex items-center gap-2">✓ 1-Click Donor CSV Audits</li>
+                        <li class="flex items-center gap-2">✓ PII-Stripped Security IDs</li>
+                        <li class="flex items-center gap-2">✓ Demographic Cohort Tracking</li>
+                    </ul>
+                </div>
+
+                <!-- Resort PMS -->
+                <div class="bg-gradient-to-b from-gray-800/80 to-gray-900/80 border border-purple-500/30 rounded-3xl p-8 hover:-translate-y-2 transition-transform duration-300 relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-gradient-to-b from-purple/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-fuchsia-500 mb-6 flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(168,85,247,0.4)]">🏨</div>
+                    <h4 class="text-2xl font-bold text-white mb-4 relative z-10">Resorts & Lodges</h4>
+                    <p class="text-gray-400 mb-6 relative z-10">
+                        A beautiful PMS that finally maps correctly. Route Bar, Spa, and Restaurant charges natively into a single Guest Master Folio.
+                    </p>
+                    <ul class="text-gray-300 space-y-3 mb-8 text-sm relative z-10">
+                        <li class="flex items-center gap-2">✓ Automated Housekeeping Alerts</li>
+                        <li class="flex items-center gap-2">✓ Single-Checkout Master Billing</li>
+                        <li class="flex items-center gap-2">✓ Daily Department Yield KPIs</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Table -->
+    <section class="relative z-10 py-24 px-4">
         <div class="max-w-6xl mx-auto">
-            <h2 class="text-3xl font-bold text-center text-gold mb-12">How CampoPawa Works</h2>
+            <h2 class="text-3xl md:text-5xl font-black text-center text-white mb-16">Simple, Scalable Pricing</h2>
             
             <div class="grid md:grid-cols-3 gap-8">
-                <div class="text-center">
-                    <div class="text-4xl mb-4">&#128640;</div>
-                    <h4 class="text-white font-bold mb-2">Get Started</h4>
-                    <p class="text-gray-400">Sign up in minutes and start managing your business immediately.</p>
+                <!-- Free -->
+                <div class="border border-white/10 bg-navy/50 rounded-3xl p-8 flex flex-col justify-between">
+                    <div>
+                        <h4 class="text-xl font-bold text-gray-300 mb-2">Micro Tier</h4>
+                        <div class="mb-6"><span class="text-5xl font-black text-white">KES 0</span><span class="text-gray-500 font-medium whitespace-nowrap"> / mo</span></div>
+                        <p class="text-sm text-gray-400 border-b border-gray-700 pb-6 mb-6">Perfect for testing the platform with a tiny customer base.</p>
+                        <ul class="space-y-4 text-sm text-gray-300">
+                            <li>✓ Max 20 Customer Records</li>
+                            <li>✓ Core Daily Analytics</li>
+                            <li>✓ Manual POS Logging</li>
+                        </ul>
+                    </div>
+                    <a href="{% url 'register' %}" class="mt-8 block text-center border-2 border-gray-600 text-gray-300 font-bold py-3 rounded-xl hover:bg-gray-800 transition">Get Started</a>
                 </div>
 
-                <div class="text-center">
-                    <div class="text-4xl mb-4">&#128273;</div>
-                    <h4 class="text-white font-bold mb-2">Manage Customers</h4>
-                    <p class="text-gray-400">Add customers, track purchases, and build lasting relationships.</p>
+                <!-- Retail Pro -->
+                <div class="border border-gold shadow-[0_0_30px_rgba(245,158,11,0.15)] bg-gradient-to-b from-navy to-gray-900 rounded-3xl p-8 flex flex-col justify-between relative transform md:-translate-y-4">
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gold text-deep font-black text-xs px-4 py-1 rounded-full tracking-wider uppercase">Most Popular</div>
+                    <div>
+                        <h4 class="text-xl font-bold text-gold mb-2">Retail Pro</h4>
+                        <div class="mb-6"><span class="text-5xl font-black text-white">KES 700</span><span class="text-gold opacity-70 font-medium whitespace-nowrap"> / mo</span></div>
+                        <p class="text-sm text-gray-400 border-b border-gray-700 pb-6 mb-6">The ultimate growth engine for standard MSMEs and campus vendors.</p>
+                        <ul class="space-y-4 text-sm text-gray-300">
+                            <li><span class="text-gold mr-2">✓</span> Unlimited Database & Revenue logs</li>
+                            <li><span class="text-gold mr-2">✓</span> Full M-Pesa C2B Automation</li>
+                            <li><span class="text-gold mr-2">✓</span> AI Smart SMS Blasts</li>
+                            <li><span class="text-gold mr-2">✓</span> Loyalty Campaign Management</li>
+                        </ul>
+                    </div>
+                    <a href="{% url 'register' %}" class="mt-8 block w-full text-center bg-gradient-to-r from-gold to-amber-500 text-deep font-bold py-3 rounded-xl hover:scale-105 transition-transform shadow-lg">Start 14-Day Free Trial</a>
                 </div>
 
-                <div class="text-center">
-                    <div class="text-4xl mb-4">&#128172;</div>
-                    <h4 class="text-white font-bold mb-2">Grow Revenue</h4>
-                    <p class="text-gray-400">Use analytics and promotions to increase your sales and customer loyalty.</p>
+                <!-- Enterprise -->
+                <div class="border border-cyan-500/30 bg-navy/50 overflow-hidden relative rounded-3xl p-8 flex flex-col justify-between group hover:border-cyan-500/60 transition-colors">
+                    <div class="absolute -right-16 -top-16 w-32 h-32 bg-cyan-500/20 blur-3xl"></div>
+                    <div>
+                        <h4 class="text-xl font-bold text-cyan-400 mb-2">Enterprise Portals</h4>
+                        <div class="mb-6"><span class="text-5xl font-black text-white">KES 3,500</span><span class="text-gray-500 font-medium whitespace-nowrap"> / mo</span></div>
+                        <p class="text-sm text-gray-400 border-b border-gray-700 pb-6 mb-6">Strictly isolated, highly specialized architecture for complex operations.</p>
+                        <ul class="space-y-4 text-sm text-gray-300 relative z-10">
+                            <li><span class="text-cyan-400 mr-2">✓</span> Isolated Database Schema & Storage</li>
+                            <li><span class="text-cyan-400 mr-2">✓</span> Custom NGO or Resort Decorators</li>
+                            <li><span class="text-cyan-400 mr-2">✓</span> 1-Click Secure Donor Exports</li>
+                            <li><span class="text-cyan-400 mr-2">✓</span> Hospitality Folio Syncing</li>
+                        </ul>
+                    </div>
+                    <a href="{% url 'register' %}" class="relative z-10 mt-8 block w-full text-center bg-gray-800 text-cyan-400 border border-cyan-500/30 font-bold py-3 rounded-xl hover:bg-cyan-900/40 transition-colors">Launch Portal</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Security & Trust -->
-    <section class="py-16 px-4 bg-navy">
-        <div class="max-w-6xl mx-auto text-center">
-            <h2 class="text-3xl font-bold text-center text-gold mb-12">Secure & Reliable</h2>
-            
-            <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-8">
-                <div class="text-6xl mb-6">&#128241;&#128187;&#128200;</div>
-                <h4 class="text-white font-bold mb-2">Secure & Reliable</h4>
-                <p class="text-gray-400">Built with security first. Powered by Africa&apos;s top payment systems.</p>
-            </div>
+    <!-- Trust Footer -->
+    <footer class="border-t border-white/5 py-12 text-center bg-black/60 relative z-10">
+        <div class="flex items-center justify-center gap-2 mb-4">
+            <span class="text-3xl tracking-tighter font-black text-white">Campo<span class="text-gold">Pawa</span></span>
         </div>
-    </section>
+        <p class="text-gray-500 text-sm">Secure architecture. Built for African Operations.</p>
+        <p class="text-gray-600 text-xs mt-8">&copy; {% now "Y" %} CampoPawa SaaS. All rights reserved.</p>
+    </footer>
 </div>
 {% endblock %}

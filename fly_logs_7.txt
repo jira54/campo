@@ -1,0 +1,100 @@
+﻿[2m2026-04-07T06:13:42Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][32m INFO[0m Preparing to run: `inspect_prod_db.py` as root
+[2m2026-04-07T06:13:42Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][32m INFO[0m [fly api proxy] listening at /.fly/api
+[2m2026-04-07T06:13:42Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][31mERROR[0m Error: failed to spawn command: inspect_prod_db.py: No such file or directory (os error 2)
+[2m2026-04-07T06:13:42Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]    does `inspect_prod_db.py` exist and is it executable?
+[2m2026-04-07T06:13:42Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][    0.946072] reboot: Restarting system
+[2m2026-04-07T06:13:43Z[0m app[48ed047c011198] [32mjnb[0m [[33mwarn[0m]Virtual machine exited abruptly
+[2m2026-04-07T06:13:44Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]2026-04-07T06:13:44.070011946 [01KNK9697H4EE055JBTZHJT1KN:main] Running Firecracker v1.14.2
+[2m2026-04-07T06:13:44Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]2026-04-07T06:13:44.070189030 [01KNK9697H4EE055JBTZHJT1KN:main] Listening on API socket ("/fc.sock").
+[2m2026-04-07T06:13:44Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][32m INFO[0m Starting init (commit: 350f2667)...
+[2m2026-04-07T06:13:45Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][32m INFO[0m Preparing to run: `inspect_prod_db.py` as root
+[2m2026-04-07T06:13:45Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][31mERROR[0m Error: failed to spawn command: inspect_prod_db.py: No such file or directory (os error 2)
+[2m2026-04-07T06:13:45Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]    does `inspect_prod_db.py` exist and is it executable?
+[2m2026-04-07T06:13:45Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][    0.943755] reboot: Restarting system
+[2m2026-04-07T06:13:45Z[0m app[48ed047c011198] [32mjnb[0m [[33mwarn[0m]Virtual machine exited abruptly
+[2m2026-04-07T06:13:46Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]2026-04-07T06:13:46.450369578 [01KNK9697H4EE055JBTZHJT1KN:main] Running Firecracker v1.14.2
+[2m2026-04-07T06:13:46Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]2026-04-07T06:13:46.450591743 [01KNK9697H4EE055JBTZHJT1KN:main] Listening on API socket ("/fc.sock").
+[2m2026-04-07T06:13:47Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][32m INFO[0m Starting init (commit: 350f2667)...
+[2m2026-04-07T06:13:47Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][32m INFO[0m Preparing to run: `inspect_prod_db.py` as root
+[2m2026-04-07T06:13:47Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][31mERROR[0m Error: failed to spawn command: inspect_prod_db.py: No such file or directory (os error 2)
+[2m2026-04-07T06:13:47Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]    does `inspect_prod_db.py` exist and is it executable?
+[2m2026-04-07T06:13:47Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][    0.953335] reboot: Restarting system
+[2m2026-04-07T06:13:47Z[0m app[48ed047c011198] [32mjnb[0m [[33mwarn[0m]Virtual machine exited abruptly
+[2m2026-04-07T06:13:49Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]2026-04-07T06:13:49.426974303 [01KNK9697H4EE055JBTZHJT1KN:main] Running Firecracker v1.14.2
+[2m2026-04-07T06:13:49Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]2026-04-07T06:13:49.427122336 [01KNK9697H4EE055JBTZHJT1KN:main] Listening on API socket ("/fc.sock").
+[2m2026-04-07T06:13:50Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][32m INFO[0m Starting init (commit: 350f2667)...
+[2m2026-04-07T06:13:50Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][32m INFO[0m Preparing to run: `inspect_prod_db.py` as root
+[2m2026-04-07T06:13:50Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][31mERROR[0m Error: failed to spawn command: inspect_prod_db.py: No such file or directory (os error 2)
+[2m2026-04-07T06:13:50Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]    does `inspect_prod_db.py` exist and is it executable?
+[2m2026-04-07T06:13:50Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][    0.955703] reboot: Restarting system
+[2m2026-04-07T06:13:50Z[0m app[48ed047c011198] [32mjnb[0m [[33mwarn[0m]Virtual machine exited abruptly
+[2m2026-04-07T06:13:53Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]2026-04-07T06:13:53.356124422 [01KNK9697H4EE055JBTZHJT1KN:main] Running Firecracker v1.14.2
+[2m2026-04-07T06:13:53Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]2026-04-07T06:13:53.356251325 [01KNK9697H4EE055JBTZHJT1KN:main] Listening on API socket ("/fc.sock").
+[2m2026-04-07T06:13:54Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][32m INFO[0m Starting init (commit: 350f2667)...
+[2m2026-04-07T06:13:54Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][32m INFO[0m Preparing to run: `inspect_prod_db.py` as root
+[2m2026-04-07T06:13:54Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][32m INFO[0m [fly api proxy] listening at /.fly/api
+[2m2026-04-07T06:13:54Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][31mERROR[0m Error: failed to spawn command: inspect_prod_db.py: No such file or directory (os error 2)
+[2m2026-04-07T06:13:54Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]    does `inspect_prod_db.py` exist and is it executable?
+[2m2026-04-07T06:13:54Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][    0.943815] reboot: Restarting system
+[2m2026-04-07T06:13:54Z[0m app[48ed047c011198] [32mjnb[0m [[33mwarn[0m]Virtual machine exited abruptly
+[2m2026-04-07T06:13:58Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]2026-04-07T06:13:58.943237622 [01KNK9697H4EE055JBTZHJT1KN:main] Running Firecracker v1.14.2
+[2m2026-04-07T06:13:58Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]2026-04-07T06:13:58.943402525 [01KNK9697H4EE055JBTZHJT1KN:main] Listening on API socket ("/fc.sock").
+[2m2026-04-07T06:13:59Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][32m INFO[0m Starting init (commit: 350f2667)...
+[2m2026-04-07T06:13:59Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][32m INFO[0m Preparing to run: `inspect_prod_db.py` as root
+[2m2026-04-07T06:13:59Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][31mERROR[0m Error: failed to spawn command: inspect_prod_db.py: No such file or directory (os error 2)
+[2m2026-04-07T06:13:59Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]    does `inspect_prod_db.py` exist and is it executable?
+[2m2026-04-07T06:13:59Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][    0.947359] reboot: Restarting system
+[2m2026-04-07T06:14:00Z[0m app[48ed047c011198] [32mjnb[0m [[33mwarn[0m]Virtual machine exited abruptly
+[2m2026-04-07T06:14:10Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]2026-04-07T06:14:10.365078288 [01KNK9697H4EE055JBTZHJT1KN:main] Running Firecracker v1.14.2
+[2m2026-04-07T06:14:10Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]2026-04-07T06:14:10.365224881 [01KNK9697H4EE055JBTZHJT1KN:main] Listening on API socket ("/fc.sock").
+[2m2026-04-07T06:14:11Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][32m INFO[0m Starting init (commit: 350f2667)...
+[2m2026-04-07T06:14:11Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][32m INFO[0m Preparing to run: `inspect_prod_db.py` as root
+[2m2026-04-07T06:14:11Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][31mERROR[0m Error: failed to spawn command: inspect_prod_db.py: No such file or directory (os error 2)
+[2m2026-04-07T06:14:11Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]    does `inspect_prod_db.py` exist and is it executable?
+[2m2026-04-07T06:14:11Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][    0.957204] reboot: Restarting system
+[2m2026-04-07T06:14:11Z[0m app[48ed047c011198] [32mjnb[0m [[33mwarn[0m]Virtual machine exited abruptly
+[2m2026-04-07T06:14:32Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]2026-04-07T06:14:32.117016986 [01KNK9697H4EE055JBTZHJT1KN:main] Running Firecracker v1.14.2
+[2m2026-04-07T06:14:32Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]2026-04-07T06:14:32.117168449 [01KNK9697H4EE055JBTZHJT1KN:main] Listening on API socket ("/fc.sock").
+[2m2026-04-07T06:14:33Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][32m INFO[0m Starting init (commit: 350f2667)...
+[2m2026-04-07T06:14:33Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][32m INFO[0m Preparing to run: `inspect_prod_db.py` as root
+[2m2026-04-07T06:14:33Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][31mERROR[0m Error: failed to spawn command: inspect_prod_db.py: No such file or directory (os error 2)
+[2m2026-04-07T06:14:33Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]    does `inspect_prod_db.py` exist and is it executable?
+[2m2026-04-07T06:14:33Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][    0.965670] reboot: Restarting system
+[2m2026-04-07T06:14:33Z[0m app[48ed047c011198] [32mjnb[0m [[33mwarn[0m]Virtual machine exited abruptly
+[2m2026-04-07T06:14:36Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]2026-04-07T06:14:36.661831064 [01KNK9697H4EE055JBTZHJT1KN:main] Running Firecracker v1.14.2
+[2m2026-04-07T06:14:36Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]2026-04-07T06:14:36.662010827 [01KNK9697H4EE055JBTZHJT1KN:main] Listening on API socket ("/fc.sock").
+[2m2026-04-07T06:14:37Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][32m INFO[0m Starting init (commit: 350f2667)...
+[2m2026-04-07T06:14:37Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][32m INFO[0m Preparing to run: `inspect_prod_db.py` as root
+[2m2026-04-07T06:14:37Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][31mERROR[0m Error: failed to spawn command: inspect_prod_db.py: No such file or directory (os error 2)
+[2m2026-04-07T06:14:37Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m]    does `inspect_prod_db.py` exist and is it executable?
+[2m2026-04-07T06:14:37Z[0m app[48ed047c011198] [32mjnb[0m [[34minfo[0m][    0.942536] reboot: Restarting system
+[2m2026-04-07T06:14:37Z[0m app[48ed047c011198] [32mjnb[0m [[33mwarn[0m]Virtual machine exited abruptly
+[2m2026-04-07T06:14:37Z[0m runner[48ed047c011198] [32mjnb[0m [[34minfo[0m]machine has reached its max restart count of 10
+[2m2026-04-07T06:50:49Z[0m runner[080550df274938] [32mcdg[0m [[34minfo[0m]Pulling container image registry.fly.io/campo@sha256:4021ea9b589f8a6ce3a136eca96f7c5202ecdcc8b714aba0f29e082115b91fca
+[2m2026-04-07T06:51:05Z[0m runner[080550df274938] [32mcdg[0m [[34minfo[0m]Successfully prepared image registry.fly.io/campo@sha256:4021ea9b589f8a6ce3a136eca96f7c5202ecdcc8b714aba0f29e082115b91fca (16.418634817s)
+[2m2026-04-07T06:51:06Z[0m runner[080550df274938] [32mcdg[0m [[34minfo[0m]Configuring firecracker
+[2m2026-04-07T06:51:10Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]2026-04-07T06:51:10.813814541 [01KNKBAHAF9VTXS9177B71X575:main] Running Firecracker v1.14.2
+[2m2026-04-07T06:51:10Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]2026-04-07T06:51:10.813989908 [01KNKBAHAF9VTXS9177B71X575:main] Listening on API socket ("/fc.sock").
+[2m2026-04-07T06:51:11Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m][32m INFO[0m Starting init (commit: 350f2667)...
+[2m2026-04-07T06:51:11Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m][32m INFO[0m Preparing to run: `python repair_prod_db.py` as root
+[2m2026-04-07T06:51:11Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m][32m INFO[0m [fly api proxy] listening at /.fly/api
+[2m2026-04-07T06:51:11Z[0m runner[080550df274938] [32mcdg[0m [[34minfo[0m]Machine started in 1.152s
+[2m2026-04-07T06:51:12Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]2026/04/07 06:51:12 INFO SSH listening listen_address=[fdaa:4c:2925:a7b:4e5:b698:dea9:2]:22
+[2m2026-04-07T06:51:12Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]≡ƒÜÇ Starting surgical production DB repair...
+[2m2026-04-07T06:51:13Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]Current tables: 27
+[2m2026-04-07T06:51:13Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]≡ƒÅÑ Dropping corrupted core metadata tables...
+[2m2026-04-07T06:51:13Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]  Dropping django_admin_log...
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]  Dropping auth_permission...
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]  Dropping django_content_type...
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]  Dropping django_session...
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]≡ƒº╣ Cleaning migration records for core apps...
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]  Cleared migration records for: admin, auth, contenttypes, sessions
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]≡ƒöì Vendors table found. Ensuring migrations are synced correctly...
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]  Cleared vendors migration history to allow fresh faking.
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]Γ£à Surgical DB cleanup complete.
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]≡ƒôª Running django migrations (fake-initial)...
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]Γ¥î Migration Error: Migration billing.0001_initial is applied before its dependency vendors.0001_initial on database 'default'.
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m][32m INFO[0m Main child exited normally with code: 1
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m][32m INFO[0m Starting clean up.
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m][    3.961906] reboot: Restarting system
+[2m2026-04-07T06:51:15Z[0m runner[080550df274938] [32mcdg[0m [[34minfo[0m]machine restart policy set to 'no', not restarting

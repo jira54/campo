@@ -2,6 +2,7 @@
 import os
 import django
 from django.db import connection
+from django.utils import timezone
 
 # Set up Django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
@@ -18,11 +19,11 @@ def fix_contenttypes_migration():
         count = cursor.fetchone()[0]
         
         if count == 0:
-            # Mark the migration as applied
+            # Mark the migration as applied with proper timestamp
             cursor.execute("""
-                INSERT INTO django_migrations (app, name) 
-                VALUES ('contenttypes', '0002_remove_content_type_name')
-            """)
+                INSERT INTO django_migrations (app, name, applied) 
+                VALUES ('contenttypes', '0002_remove_content_type_name', %s)
+            """, [timezone.now()])
             print("Marked contenttypes.0002_remove_content_type_name as applied")
         else:
             print("contenttypes.0002_remove_content_type_name already marked as applied")

@@ -31,7 +31,16 @@ class Command(BaseCommand):
                 )
             else:
                 self.stdout.write(
-                    self.style.SUCCESS('name column does not exist - migration should be fine')
+                    self.style.SUCCESS('name column does not exist - marking migration as applied')
+                )
+                # Mark the migration as applied since the column is already gone
+                cursor.execute("""
+                    INSERT INTO django_migrations (app, name) 
+                    VALUES ('contenttypes', '0002_remove_content_type_name')
+                    ON CONFLICT (app, name) DO NOTHING
+                """)
+                self.stdout.write(
+                    self.style.SUCCESS('Marked contenttypes.0002_remove_content_type_name as applied')
                 )
         
         # Verify contenttypes table is working

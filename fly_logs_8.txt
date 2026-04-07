@@ -1,0 +1,100 @@
+﻿[2m2026-04-07T06:51:12Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]≡ƒÜÇ Starting surgical production DB repair...
+[2m2026-04-07T06:51:13Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]Current tables: 27
+[2m2026-04-07T06:51:13Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]≡ƒÅÑ Dropping corrupted core metadata tables...
+[2m2026-04-07T06:51:13Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]  Dropping django_admin_log...
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]  Dropping auth_permission...
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]  Dropping django_content_type...
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]  Dropping django_session...
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]≡ƒº╣ Cleaning migration records for core apps...
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]  Cleared migration records for: admin, auth, contenttypes, sessions
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]≡ƒöì Vendors table found. Ensuring migrations are synced correctly...
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]  Cleared vendors migration history to allow fresh faking.
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]Γ£à Surgical DB cleanup complete.
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]≡ƒôª Running django migrations (fake-initial)...
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m]Γ¥î Migration Error: Migration billing.0001_initial is applied before its dependency vendors.0001_initial on database 'default'.
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m][32m INFO[0m Main child exited normally with code: 1
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m][32m INFO[0m Starting clean up.
+[2m2026-04-07T06:51:14Z[0m app[080550df274938] [32mcdg[0m [[34minfo[0m][    3.961906] reboot: Restarting system
+[2m2026-04-07T06:51:15Z[0m runner[080550df274938] [32mcdg[0m [[34minfo[0m]machine restart policy set to 'no', not restarting
+[2m2026-04-07T06:54:04Z[0m runner[7840161b646218] [32mcdg[0m [[34minfo[0m]Pulling container image registry.fly.io/campo@sha256:9b64283bf331de4a1de878c7f1a87f3201566ffa1c3b7caa2ef31fbb2f0be3d9
+[2m2026-04-07T06:54:19Z[0m runner[7840161b646218] [32mcdg[0m [[34minfo[0m]Successfully prepared image registry.fly.io/campo@sha256:9b64283bf331de4a1de878c7f1a87f3201566ffa1c3b7caa2ef31fbb2f0be3d9 (15.737601207s)
+[2m2026-04-07T06:54:20Z[0m runner[7840161b646218] [32mcdg[0m [[34minfo[0m]Configuring firecracker
+[2m2026-04-07T06:54:23Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]2026-04-07T06:54:23.143734123 [01KNKBGFP23VYP1E8CYAFVCDH5:main] Running Firecracker v1.14.2
+[2m2026-04-07T06:54:23Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]2026-04-07T06:54:23.143939576 [01KNKBGFP23VYP1E8CYAFVCDH5:main] Listening on API socket ("/fc.sock").
+[2m2026-04-07T06:54:24Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m][32m INFO[0m Starting init (commit: 350f2667)...
+[2m2026-04-07T06:54:24Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m][32m INFO[0m Preparing to run: `python repair_prod_db.py` as root
+[2m2026-04-07T06:54:24Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m][32m INFO[0m [fly api proxy] listening at /.fly/api
+[2m2026-04-07T06:54:24Z[0m runner[7840161b646218] [32mcdg[0m [[34minfo[0m]Machine started in 1.249s
+[2m2026-04-07T06:54:24Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]2026/04/07 06:54:24 INFO SSH listening listen_address=[fdaa:4c:2925:a7b:44f:e3b2:a5cf:2]:22
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]Starting full migration history reset...
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]Tables found: 23
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]Cleared 9 migration records.
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]Re-applying all migrations with --fake-initial...
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]Operations to perform:
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]  Apply all migrations: admin, auth, billing, contenttypes, credit, customers, ngo_portal, notes, promotions, resort_portal, sessions, vendors
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]Running migrations:
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]  Applying contenttypes.0001_initial... OK
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]  Applying contenttypes.0002_remove_content_type_name... OK
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]  Applying auth.0001_initial...Traceback (most recent call last):
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/db/backends/utils.py", line 103, in _execute
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]    return self.cursor.execute(sql)
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]           ^^^^^^^^^^^^^^^^^^^^^^^^
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]psycopg2.errors.DuplicateTable: relation "auth_group" already exists
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]The above exception was the direct cause of the following exception:
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]Traceback (most recent call last):
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]  File "/app/repair_prod_db.py", line 21, in <module>
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]    call_command("migrate", "--fake-initial", verbosity=1)
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/core/management/__init__.py", line 195, in call_command
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]    return command.execute(*args, **defaults)
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/core/management/base.py", line 464, in execute
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]    output = self.handle(*args, **options)
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/core/management/base.py", line 111, in wrapper
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]    res = handle_func(*args, **kwargs)
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/core/management/commands/migrate.py", line 354, in handle
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]    post_migrate_state = executor.migrate(
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]                         ^^^^^^^^^^^^^^^^^
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/db/migrations/executor.py", line 137, in migrate
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]    state = self._migrate_all_forwards(
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/db/migrations/executor.py", line 169, in _migrate_all_forwards
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]    state = self.apply_migration(
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]            ^^^^^^^^^^^^^^^^^^^^^
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/db/migrations/executor.py", line 257, in apply_migration
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]    state = migration.apply(state, schema_editor)
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/db/migrations/migration.py", line 132, in apply
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]    operation.database_forwards(
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/db/migrations/operations/models.py", line 100, in database_forwards
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]    schema_editor.create_model(model)
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/db/backends/base/schema.py", line 513, in create_model
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]    self.execute(sql, params or None)
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/db/backends/postgresql/schema.py", line 45, in execute
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]    return super().execute(sql, params)
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/db/backends/base/schema.py", line 205, in execute
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]    cursor.execute(sql, params)
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/db/backends/utils.py", line 122, in execute
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]    return super().execute(sql, params)
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/db/backends/utils.py", line 79, in execute
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]    return self._execute_with_wrappers(
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]    return executor(sql, params, many, context)
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/db/backends/utils.py", line 100, in _execute
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]    with self.db.wrap_database_errors:
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/db/utils.py", line 94, in __exit__
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]    raise dj_exc_value.with_traceback(traceback) from exc_value
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]  File "/usr/local/lib/python3.12/site-packages/django/db/backends/utils.py", line 103, in _execute
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]    return self.cursor.execute(sql)
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]           ^^^^^^^^^^^^^^^^^^^^^^^^
+[2m2026-04-07T06:54:25Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m]django.db.utils.ProgrammingError: relation "auth_group" already exists
+[2m2026-04-07T06:54:26Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m][32m INFO[0m Main child exited normally with code: 1
+[2m2026-04-07T06:54:26Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m][32m INFO[0m Starting clean up.
+[2m2026-04-07T06:54:26Z[0m app[7840161b646218] [32mcdg[0m [[34minfo[0m][    2.984849] reboot: Restarting system
+[2m2026-04-07T06:54:26Z[0m runner[7840161b646218] [32mcdg[0m [[34minfo[0m]machine restart policy set to 'no', not restarting

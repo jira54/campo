@@ -7,4 +7,4 @@ COPY . .
 ENV PYTHONUNBUFFERED=1
 ENV DJANGO_SETTINGS_MODULE=config.settings
 RUN python manage.py collectstatic --noinput || true
-CMD ["sh", "-c", "python manage.py migrate contenttypes.0002 --fake && python manage.py fix_migration && python manage.py migrate --fake-initial && python create_user.py || true && gunicorn config.wsgi:application --bind 0.0.0.0:8000"]
+CMD ["sh", "-c", "python fix_deploy_migration.py && python manage.py migrate --fake-initial && python create_user.py || true && gunicorn config.wsgi:application --bind 0.0.0.0:8000"]

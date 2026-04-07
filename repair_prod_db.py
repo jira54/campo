@@ -5,57 +5,61 @@ django.setup()
 from django.db import connection
 from django.core.management import call_command
 
-print("Starting targeted migration repair on Supabase...")
+print("Starting targeted migration repair...")
 
 with connection.cursor() as cursor:
-    # Get existing tables
     cursor.execute("SELECT tablename FROM pg_tables WHERE schemaname = %s", ["public"])
     tables = set(r[0] for r in cursor.fetchall())
-    print(f"Existing tables: {sorted(tables)}")
+    print(f"Tables: {sorted(tables)}")
 
-    # Clear all migration records
-    try:
-        cursor.execute("DELETE FROM django_migrations")
-        print(f"Cleared {cursor.rowcount} migration records.")
-        connection.connection.commit()
-    except Exception as e:
-        print(f"Note: {e}")
+    # Clear all migration records to start fresh
+    cursor.execute("DELETE FROM django_migrations")
+    print(f"Cleared {cursor.rowcount} migration records.")
 
-# Apps whose tables already exist in Supabase - fake these
-existing_apps = []
-missing_apps = []
+    # Drop ALL tables that might have corrupt schemas, then let migrate recreate everything
+    # Keep only the business data tables
+    business_tables = {
+        "vendors_vendor", "vendors_loginstreak",
+        "customers_customer", "customers_purchase", "customers_tag",
+        "customers_loyaltyprogram", "customers_receipt", "customers_reminder",
+        "customers_service", "customers_customer_tags",
+        "billing_subscription", "billing_payment", "billing_tillpayment",
+        "credit_credittransaction",
+        "notes_note",
+        "promotions_promotion",
+        "ngo_portal_ngoproject", "ngo_portal_projectmilestone",
+        "resort_portal_department", "resort_portal_folio",
+        "resort_portal_foliocharge", "resort_portal_resortguest",
+        "resort_portal_room",
+        "django_migrations",
+    }
 
-app_table_map = {
-    "vendors": "vendors_vendor",
-    "billing": "billing_subscription",
-    "customers": "customers_customer",
-    "promotions": "promotions_promotion",
-    "credit": "credit_credittransaction",
-    "notes": "notes_note",
-    "analytics": "analytics_salesdata",
-    "ngo_portal": "ngo_portal_ngoproject",
-    "resort_portal": "resort_portal_room",
-}
+    for t in sorted(tables):
+        if t not in business_tables:
+            print(f"  Dropping {t}...")
+            cursor.execute(f'DROP TABLE IF EXISTS "{t}" CASCADE')
 
-for app, table in app_table_map.items():
-    if table in tables:
-        existing_apps.append(app)
-    else:
-        missing_apps.append(app)
+    connection.connection.commit()
 
-core_missing = ["contenttypes", "auth", "sessions", "admin"]
-
-print(f"\nWill FAKE (tables exist): {existing_apps}")
-print(f"Will MIGRATE (create tables): {core_missing + missing_apps}")
-
-# Fake migrations for apps with existing tables
-for app in existing_apps:
-    print(f"  Faking {app}...")
+print("\nFaking business app migrations (tables exist)...")
+business_apps = ["vendors", "customers", "billing", "credit", "notes", "promotions"]
+for app in business_apps:
     call_command("migrate", app, "--fake", verbosity=0)
+    print(f"  Faked {app}")
 
-# Actually create missing tables
-for app in core_missing + missing_apps:
-    print(f"  Migrating {app}...")
-    call_command("migrate", app, verbosity=0)
+# Check if ngo/resort tables exist
+with connection.cursor() as cursor:
+    cursor.execute("SELECT tablename FROM pg_tables WHERE schemaname = %s", ["public"])
+    current = set(r[0] for r in cursor.fetchall())
 
-print("\nDone! All tables are now in sync.")
+if "ngo_portal_ngoproject" in current:
+    call_command("migrate", "ngo_portal", "--fake", verbosity=0)
+    print("  Faked ngo_portal")
+
+if "resort_portal_room" in current:
+    call_command("migrate", "resort_portal", "--fake", verbosity=0)
+    print("  Faked resort_portal")
+
+print("\nMigrating everything else (creates missing core tables)...")
+call_command("migrate", verbosity=1)
+print("\nDone!")

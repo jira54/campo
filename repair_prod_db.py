@@ -57,6 +57,10 @@ with connection.cursor() as cursor:
             print("    Adding missing column: logo_url")
             cursor.execute("ALTER TABLE vendors_vendor ADD COLUMN logo_url VARCHAR(500) DEFAULT ''")
 
+        if "physical_address" not in existing_columns:
+            print("    Adding missing column: physical_address")
+            cursor.execute("ALTER TABLE vendors_vendor ADD COLUMN physical_address TEXT DEFAULT ''")
+
     connection.connection.commit()
 
 print("\nMigrating core contenttypes and auth first to satisfy post_migrate signals...")

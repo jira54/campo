@@ -1,107 +1,125 @@
 {% extends 'base.html' %}
 
-{% block title %}Payment History - CampoPawa{% endblock %}
+{% block title %}Boutique Ledger — CampoPawa{% endblock %}
 
 {% block content %}
-<div class="flex h-screen">
+<div class="flex min-h-screen bg-deep overflow-hidden font-outfit">
     {% include 'partials/sidebar.html' %}
     
-    <div class="flex-1 overflow-auto bg-deep">
-        <div class="p-8">
-            <!-- Header -->
-            <div class="flex items-center justify-between mb-8">
+    <div class="flex-1 h-screen overflow-y-auto overflow-x-hidden relative">
+        <div class="p-6 md:p-10 pb-24">
+            
+            <!-- Header Section -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 pb-8 border-b border-white/5">
                 <div>
-                    <h1 class="text-3xl font-bold text-white">Payment History</h1>
-                    <p class="text-gray-400">Track all your subscription payments</p>
+                    <h1 class="text-white text-4xl font-black tracking-tight mb-2">Subscription <span class="text-brand">Ledger</span>.</h1>
+                    <p class="text-stone-500 font-medium">Track your platform investments and access professional tax invoices.</p>
                 </div>
-                <a href="{% url 'billing:upgrade' %}" class="bg-gold text-deep font-bold px-6 py-3 rounded hover:bg-yellow-400 transition">
-                    Upgrade Plan
+                <a href="{% url 'billing:upgrade' %}" class="bg-brand text-deep font-black px-8 py-4 rounded-2xl shadow-brand hover:scale-[1.02] active:scale-[0.98] transition-all text-sm uppercase tracking-widest">
+                    Upgrade Access
                 </a>
             </div>
 
-            <!-- Current Subscription -->
+            <!-- Dashboard Summary -->
             {% with user.subscription as sub %}
-                <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-6 mb-8">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div>
-                            <p class="text-gray-400 text-sm mb-2">Current Plan</p>
-                            <p class="text-2xl font-bold text-gold">{{ user.plan|title }}</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <!-- Status Card -->
+                <div class="bg-stone-900/50 border border-white/5 rounded-3xl p-8 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-brand/5 blur-3xl pointer-events-none"></div>
+                    <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-6">Current Standing</p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-brand/10 border border-brand/20 flex items-center justify-center text-brand">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
                         </div>
                         <div>
-                            <p class="text-gray-400 text-sm mb-2">Status</p>
-                            {% if sub.is_active %}
-                                <p class="text-2xl font-bold text-teal">✓ Active</p>
-                            {% else %}
-                                <p class="text-2xl font-bold text-red-400">✗ Inactive</p>
-                            {% endif %}
-                        </div>
-                        <div>
-                            <p class="text-gray-400 text-sm mb-2">Expires</p>
-                            {% if sub.expires_at %}
-                                <p class="text-2xl font-bold text-sea">{{ sub.days_remaining }} days</p>
-                                <p class="text-gray-400 text-xs mt-1">{{ sub.expires_at|date:"M d, Y" }}</p>
-                            {% else %}
-                                <p class="text-2xl font-bold text-gray-300">—</p>
-                            {% endif %}
+                            <p class="text-2xl font-black text-white">{{ user.plan|title }}</p>
+                            <p class="text-xs font-bold text-emerald-400 uppercase tracking-widest">{% if sub.is_active %}Active Access{% else %}Inactive{% endif %}</p>
                         </div>
                     </div>
                 </div>
+
+                <!-- Expiry Card -->
+                <div class="bg-stone-900/50 border border-white/5 rounded-3xl p-8 relative overflow-hidden">
+                    <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-6">Service Continuity</p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-black text-white">{% if sub.expires_at %}{{ sub.days_remaining }} Days{% else %}—{% endif %}</p>
+                            <p class="text-xs font-bold text-stone-500 uppercase tracking-widest">Until {{ sub.expires_at|date:"M d, Y"|default:"Renewal Required" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
             {% endwith %}
 
-            <!-- Payments Table -->
-            {% if payments %}
-                <div class="bg-navy border border-gold border-opacity-20 rounded-lg overflow-hidden">
-                    <div class="border-b border-gold border-opacity-20 p-6">
-                        <h2 class="text-gold font-bold text-lg">All Payments</h2>
-                    </div>
-                    
-                    <table class="w-full">
+            <!-- Transaction History -->
+            <div class="bg-stone-900/40 border border-white/5 rounded-3xl overflow-hidden backdrop-blur-sm shadow-2xl">
+                <div class="p-8 border-b border-white/5 flex items-center justify-between">
+                    <h2 class="text-white font-black text-lg">Transaction History</h2>
+                    <div class="text-[10px] font-black uppercase tracking-widest text-stone-500">All Confirmed Operations</div>
+                </div>
+
+                {% if payments %}
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
                         <thead>
-                            <tr class="bg-navy bg-opacity-50 border-b border-gold border-opacity-20">
-                                <th class="px-6 py-3 text-left text-gold font-bold">Date</th>
-                                <th class="px-6 py-3 text-left text-gold font-bold">Plan</th>
-                                <th class="px-6 py-3 text-right text-gold font-bold">Amount</th>
-                                <th class="px-6 py-3 text-center text-gold font-bold">Status</th>
-                                <th class="px-6 py-3 text-left text-gold font-bold">Reference</th>
+                            <tr class="bg-white/5">
+                                <th class="px-8 py-4 text-[10px] font-black text-stone-400 uppercase tracking-widest">Date & Time</th>
+                                <th class="px-8 py-4 text-[10px] font-black text-stone-400 uppercase tracking-widest">Product / Plan</th>
+                                <th class="px-8 py-4 text-[10px] font-black text-stone-400 uppercase tracking-widest text-right">Amount (KES)</th>
+                                <th class="px-8 py-4 text-[10px] font-black text-stone-400 uppercase tracking-widest text-center">Invoicing</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-white/5">
                             {% for payment in payments %}
-                                <tr class="border-b border-gold border-opacity-10 hover:bg-navy hover:bg-opacity-50 transition">
-                                    <td class="px-6 py-4 text-white">{{ payment.created_at|date:"M d, Y H:i" }}</td>
-                                    <td class="px-6 py-4 text-gray-300">{{ payment.get_plan_paid_for_display }}</td>
-                                    <td class="px-6 py-4 text-right font-bold">
-                                        <span class="text-teal">KES {{ payment.amount }}</span>
-                                    </td>
-                                    <td class="px-6 py-4 text-center">
-                                        <span class="px-3 py-1 rounded text-xs font-bold 
-                                        {% if payment.status == 'confirmed' %}bg-teal text-deep
-                                        {% elif payment.status == 'pending' %}bg-amber-600 text-white
-                                        {% else %}bg-red-600 text-white
-                                        {% endif %}">
-                                            {{ payment.get_status_display }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-gray-400 text-sm">
-                                        {{ payment.mpesa_ref|default:"—" }}
-                                    </td>
-                                </tr>
+                            <tr class="hover:bg-white/[0.02] transition-colors group">
+                                <td class="px-8 py-6">
+                                    <p class="text-white font-bold">{{ payment.created_at|date:"M d, Y" }}</p>
+                                    <p class="text-[10px] text-stone-500 font-medium">{{ payment.created_at|date:"H:i" }} — Ref: {{ payment.mpesa_ref|default:"Pending" }}</p>
+                                </td>
+                                <td class="px-8 py-6">
+                                    <span class="text-sm font-medium text-stone-300">{{ payment.get_plan_paid_for_display }}</span>
+                                </td>
+                                <td class="px-8 py-6 text-right">
+                                    <p class="text-white font-black text-lg">KES {{ payment.amount|floatformat:0 }}</p>
+                                </td>
+                                <td class="px-8 py-6 text-center">
+                                    {% if payment.status == 'confirmed' %}
+                                    <a href="{% url 'billing:view_invoice' payment.id %}" target="_blank" class="inline-flex items-center gap-2 bg-white/5 hover:bg-brand hover:text-deep text-white text-[10px] font-black px-4 py-2 rounded-xl border border-white/5 transition-all uppercase tracking-widest">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                        View Invoice
+                                    </a>
+                                    {% else %}
+                                    <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest flex items-center justify-center gap-1">
+                                        <span class="w-1 h-1 rounded-full bg-amber-500 animate-pulse"></span>
+                                        Pending Result
+                                    </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
-            {% else %}
-                <div class="text-center py-12 bg-navy border border-gold border-opacity-20 rounded-lg">
-                    <p class="text-gray-400 text-lg mb-4">No payments yet.</p>
-                    <a href="{% url 'billing:upgrade' %}" class="text-gold hover:text-yellow-300 font-bold">Upgrade to start your subscription →</a>
+                {% else %}
+                <div class="p-20 text-center">
+                    <div class="w-20 h-20 rounded-3xl bg-white/5 flex items-center justify-center text-stone-600 mx-auto mb-6">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    </div>
+                    <p class="text-stone-400 font-medium mb-8">No platform transactions recorded yet.</p>
+                    <a href="{% url 'billing:upgrade' %}" class="text-brand hover:text-white transition-all font-black uppercase tracking-[0.2em] text-xs">
+                        Initiate First Upgrade &rarr;
+                    </a>
                 </div>
-            {% endif %}
-
-            <!-- Invoice Download Info -->
-            <div class="mt-8 bg-navy border border-gold border-opacity-20 rounded-lg p-6">
-                <p class="text-gray-400 text-sm">
-                    💡 <strong>Tip:</strong> Invoices are automatically sent to your email after each payment. Check your inbox or spam folder if you don't see them.
-                </p>
+                {% endif %}
+            </div>
+            
+            <!-- Compliance Note -->
+            <div class="mt-8 flex items-center gap-3 p-6 bg-emerald-500/5 rounded-2xl border border-emerald-500/10">
+                <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <p class="text-stone-500 text-sm font-medium">All invoices provided are legally compliant for localized tax reporting in the KEN/EAF region.</p>
             </div>
         </div>
     </div>

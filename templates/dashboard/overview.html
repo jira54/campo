@@ -8,6 +8,23 @@
     {% include 'partials/sidebar.html' %}
 
     <div class="flex-1 h-screen overflow-y-auto overflow-x-hidden relative">
+        <!-- Premium Trial Status Bar -->
+        {% if user.trial_end_date and not user.subscription.plan != 'free' %}
+        <div class="bg-brand/5 border-b border-brand/10 px-6 py-3 flex items-center justify-between group overflow-hidden relative">
+            <div class="absolute inset-0 bg-brand/5 -translate-x-full group-hover:translate-x-full transition-transform duration-[2000ms] ease-in-out pointer-events-none"></div>
+            <div class="flex items-center gap-3 relative z-10">
+                <div class="w-2 h-2 rounded-full bg-brand animate-pulse"></div>
+                <p class="text-[10px] font-black uppercase tracking-widest text-brand">
+                    Premium Boutique Trial Active &mdash; 
+                    <span class="text-white">Full access granted until {{ user.trial_end_date|date:"M d, Y" }}</span>
+                </p>
+            </div>
+            <a href="{% url 'billing:pricing' %}" class="relative z-10 text-[10px] font-black uppercase tracking-widest bg-brand text-deep px-4 py-1.5 rounded-full hover:scale-105 active:scale-95 transition-all shadow-brand">
+                Upgrade to Pro
+            </a>
+        </div>
+        {% endif %}
+
         <div class="p-6 md:p-10 pb-24">
             
             <!-- Strategic Header & Pulse Engine -->

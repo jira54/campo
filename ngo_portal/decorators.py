@@ -8,7 +8,7 @@ def ngo_enterprise_required(view_func):
         if not request.user.is_authenticated:
             return view_func(request, *args, **kwargs) # letting @login_required handle redirection
             
-        if request.user.business_type != 'ngo':
+        if not request.user.is_superuser and request.user.business_type != 'ngo':
             raise PermissionDenied("This portal is restricted to Enterprise NGO accounts.")
             
         return view_func(request, *args, **kwargs)

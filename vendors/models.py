@@ -58,6 +58,7 @@ class Vendor(AbstractBaseUser, PermissionsMixin):
     logo_url          = models.URLField(max_length=500, blank=True, default='', help_text="Direct link to your business logo")
     brand_accent_color = models.CharField(max_length=7, default='#F59E0B', help_text="Hex color for your dashboard accents")
     persona_type      = models.CharField(max_length=20, choices=PERSONA_TYPES, default='msme')
+    physical_address  = models.TextField(blank=True, default='', help_text="Business physical location for tax/invoice compliance")
     
     mpesa_till_number = models.CharField(max_length=20, blank=True, default='', help_text="Used for C2B live payment tracking")
     email             = models.EmailField(unique=True)

@@ -15,7 +15,6 @@ data = {
     'business_name': 'Smoke Test Vendor',
     'business_type': 'food',
     'phone_number': '+254700000000',
-    'university': 'Test University',
     'password': 'Testpass!234',
     'password2': 'Testpass!234',
 }

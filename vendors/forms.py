@@ -72,7 +72,7 @@ class VendorProfileForm(forms.ModelForm):
 
     class Meta:
         model  = Vendor
-        fields = ['business_name', 'business_type', 'persona_type', 'phone_number', 'email', 'logo_url', 'brand_accent_color']
+        fields = ['business_name', 'business_type', 'persona_type', 'phone_number', 'email', 'logo_url', 'brand_accent_color', 'physical_address']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

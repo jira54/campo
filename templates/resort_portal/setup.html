@@ -12,9 +12,9 @@
             <!-- Header -->
             <div class="mb-12">
                 <h1 class="text-4xl md:text-6xl font-outfit font-black text-white leading-tight mb-4">
-                    Configure <span class="text-brand">Precision</span>.
+                    The Anatomy of <span class="text-brand">Hospitality</span>.
                 </h1>
-                <p class="text-stone-500 text-lg max-w-2xl">Define your revenue centers and guest inventory to enable seamless operational logging across your resort.</p>
+                <p class="text-stone-500 text-lg max-w-2xl">Shape your service outlets and guest inventory to enable seamless operational logging across your property.</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
@@ -22,7 +22,7 @@
                 <!-- Revenue Centers (Departments) -->
                 <div class="space-y-8">
                     <div class="flex justify-between items-end border-b border-white/5 pb-4">
-                        <h2 class="text-2xl font-outfit font-black text-white">Revenue Centers</h2>
+                        <h2 class="text-2xl font-outfit font-black text-white">Service Outlets</h2>
                         <span class="text-[10px] text-stone-500 font-bold uppercase tracking-widest">{{ departments.count }} Active</span>
                     </div>
 
@@ -31,7 +31,7 @@
                             {% csrf_token %}
                             <input type="hidden" name="action" value="add_dept">
                             <input type="text" name="name" placeholder="e.g. Pool Bar" class="flex-1 bg-stone-800 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all" required>
-                            <button type="submit" class="bg-brand text-deep font-outfit font-black px-6 py-4 rounded-xl shadow-brand hover:scale-[1.02] transition-all">Add Center</button>
+                            <button type="submit" class="bg-brand text-deep font-outfit font-black px-6 py-4 rounded-xl shadow-brand hover:scale-[1.02] transition-all">Add Outlet</button>
                         </form>
 
                         <div class="space-y-3">
@@ -46,7 +46,7 @@
                                 </form>
                             </div>
                             {% empty %}
-                            <p class="text-stone-600 italic text-center py-6">No revenue centers defined.</p>
+                            <p class="text-stone-600 italic text-center py-6">No service outlets defined yet.</p>
                             {% endfor %}
                         </div>
                     </div>
@@ -55,7 +55,7 @@
                 <!-- Room Inventory -->
                 <div class="space-y-8">
                     <div class="flex justify-between items-end border-b border-white/5 pb-4">
-                        <h2 class="text-2xl font-outfit font-black text-white">Guest Inventory</h2>
+                        <h2 class="text-2xl font-outfit font-black text-white">Room Management</h2>
                         <span class="text-[10px] text-stone-500 font-bold uppercase tracking-widest">{{ rooms.count }} Rooms</span>
                     </div>
 
@@ -72,7 +72,7 @@
                                 <input type="number" name="rate" placeholder="5000" class="w-full bg-stone-800 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all">
                             </div>
                             <div class="col-span-2">
-                                <button type="submit" class="w-full bg-white text-deep font-outfit font-black py-4 rounded-xl hover:scale-[1.02] transition-all">Register Room</button>
+                                <button type="submit" class="w-full bg-white text-deep font-outfit font-black py-4 rounded-xl hover:scale-[1.02] transition-all">Add New Room</button>
                             </div>
                         </form>
 

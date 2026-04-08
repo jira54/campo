@@ -26,7 +26,6 @@ try:
         'owner_name': 'Smoke Owner',
         'business_type': 'food',
         'phone_number': '+254700000000',
-        'university': 'Test University',
         'password': password,
         'password2': password,
         'csrfmiddlewaretoken': csrf,

@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Revenue Hub — Platform Control{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen bg-deep overflow-hidden font-outfit">
+    <!-- Sidebar Navigation -->
+    <div class="w-80 bg-stone-900 border-r border-white/5 p-8 flex flex-col justify-between">
+        <div>
+            <div class="flex items-center gap-4 mb-12">
+                <div class="w-12 h-12 rounded-2xl bg-brand flex items-center justify-center text-deep font-black text-2xl shadow-brand">
+                    CP
+                </div>
+                <div>
+                    <h2 class="text-white font-black tracking-tight leading-none">Control</h2>
+                    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-brand">Admin Center</p>
+                </div>
+            </div>
+
+            <nav class="space-y-2">
+                <a href="{% url 'admin_dashboard:saas_overview' %}" class="flex items-center gap-4 px-6 py-4 rounded-xl text-stone-500 hover:bg-white/5 transition-all group">
+                    <svg class="w-5 h-5 group-hover:text-brand transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                    <span class="font-bold text-sm">SaaS Overview</span>
+                </a>
+                <a href="{% url 'admin_dashboard:user_management' %}" class="flex items-center gap-4 px-6 py-4 rounded-xl text-stone-500 hover:bg-white/5 transition-all group">
+                    <svg class="w-5 h-5 group-hover:text-brand transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <span class="font-bold text-sm">User Gate</span>
+                </a>
+                <a href="{% url 'admin_dashboard:revenue_tracking' %}" class="flex items-center gap-4 px-6 py-4 rounded-xl bg-white/5 text-brand shadow-xl">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span class="font-bold text-sm">Revenue Hub</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="px-6 py-4 rounded-2xl bg-stone-800 border border-white/5">
+            <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-1">Total Lifetime Yield</p>
+            <p class="text-xl font-black text-white">KES {{ total_revenue|floatformat:0 }}</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 h-screen overflow-y-auto overflow-x-hidden p-10">
+        <div class="max-w-6xl mx-auto">
+            
+            <header class="mb-12">
+                <h1 class="text-white text-5xl font-black tracking-tighter mb-4">Financial <span class="text-brand">Oversight</span>.</h1>
+                <p class="text-stone-500 text-lg font-medium">Monitoring platform liquidity and individual vendor investments.</p>
+            </header>
+
+            <!-- Stats Bar -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+                <div class="bg-stone-900 border border-white/5 rounded-3xl p-8">
+                    <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-4">Confirmed Transactions</p>
+                    <p class="text-4xl font-black text-white">{{ payments.count }}</p>
+                </div>
+                <div class="bg-stone-900 border border-white/5 rounded-3xl p-8">
+                    <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-4">Avg Transaction</p>
+                    <p class="text-4xl font-black text-white">KES 1,420</p>
+                </div>
+            </div>
+
+            <!-- Ledger Table -->
+            <div class="bg-stone-900/40 border border-white/5 rounded-3xl overflow-hidden backdrop-blur-sm shadow-2xl">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="bg-white/5">
+                            <th class="px-8 py-4 text-[10px] font-black text-stone-400 uppercase tracking-widest">Confirmation Time</th>
+                            <th class="px-8 py-4 text-[10px] font-black text-stone-400 uppercase tracking-widest">Vendor / Business</th>
+                            <th class="px-8 py-4 text-[10px] font-black text-stone-400 uppercase tracking-widest">Plan Acquired</th>
+                            <th class="px-8 py-4 text-[10px] font-black text-stone-400 uppercase tracking-widest text-right">Yield (KES)</th>
+                            <th class="px-8 py-4 text-[10px] font-black text-stone-400 uppercase tracking-widest text-center">Protocol</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5">
+                        {% for payment in payments %}
+                        <tr class="hover:bg-white/[0.02] transition-colors group">
+                            <td class="px-8 py-6">
+                                <p class="text-white font-bold">{{ payment.confirmed_at|date:"M d, Y" }}</p>
+                                <p class="text-[10px] text-stone-500 font-medium">{{ payment.confirmed_at|date:"H:i" }}</p>
+                            </td>
+                            <td class="px-8 py-6">
+                                <p class="text-white font-black">{{ payment.vendor.business_name }}</p>
+                                <p class="text-[10px] text-stone-500 font-medium uppercase tracking-widest">{{ payment.vendor.get_persona_type_display }}</p>
+                            </td>
+                            <td class="px-8 py-6">
+                                <span class="bg-white/5 text-stone-300 text-[10px] font-black px-3 py-1.5 rounded-lg border border-white/5 uppercase tracking-widest">
+                                    {{ payment.get_plan_paid_for_display }}
+                                </span>
+                            </td>
+                            <td class="px-8 py-6 text-right">
+                                <p class="text-emerald-400 font-black text-lg">+ {{ payment.amount|floatformat:0 }}</p>
+                            </td>
+                            <td class="px-8 py-6 text-center">
+                                <a href="{% url 'billing:view_invoice' payment.id %}" target="_blank" class="text-stone-500 hover:text-brand transition-all text-[10px] font-black uppercase tracking-widest">
+                                    Audit Invoice
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}SaaS God Mode - CampoPawa Enterprise{% endblock %}
+{% block title %}SaaS Management - CampoPawa Enterprise{% endblock %}
 
 {% block content %}
 <div class="flex min-h-screen bg-black">
@@ -13,20 +13,30 @@
                 </div>
                 <div>
                     <p class="text-white font-bold tracking-widest text-sm">CAMPOPAWA</p>
-                    <p class="text-red-400 text-xs font-mono uppercase tracking-[0.2em]">God Mode</p>
+                    <p class="text-red-400 text-xs font-mono uppercase tracking-[0.2em]">Platform Control</p>
                 </div>
             </div>
         </div>
 
         <nav class="flex-1 space-y-2">
-            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-red-900/40 text-red-100 border border-red-500/30 shadow-[0_0_10px_rgba(220,38,38,0.2)]">
+            <a href="{% url 'admin_dashboard:saas_overview' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg {% if request.resolver_match.url_name == 'saas_overview' %}bg-red-900/40 text-red-100 border border-red-500/30 shadow-[0_0_10px_rgba(220,38,38,0.2)]{% else %}text-gray-400 hover:text-white hover:bg-gray-800{% endif %} transition">
                 <span class="text-lg">🌍</span>
                 <span class="font-bold tracking-wide">SaaS Health</span>
             </a>
-            <a href="{% url 'vendors:root_redirect' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition">
-                <span class="text-lg">🔙</span>
-                <span>Exit to System</span>
+            <a href="{% url 'admin_dashboard:user_management' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg {% if request.resolver_match.url_name == 'user_management' %}bg-red-900/40 text-red-100 border border-red-500/30 shadow-[0_0_10px_rgba(220,38,38,0.2)]{% else %}text-gray-400 hover:text-white hover:bg-gray-800{% endif %} transition">
+                <span class="text-lg">👥</span>
+                <span class="font-bold tracking-wide">User Management</span>
             </a>
+            <a href="{% url 'admin_dashboard:revenue_tracking' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg {% if request.resolver_match.url_name == 'revenue_tracking' %}bg-red-900/40 text-red-100 border border-red-500/30 shadow-[0_0_10px_rgba(220,38,38,0.2)]{% else %}text-gray-400 hover:text-white hover:bg-gray-800{% endif %} transition">
+                <span class="text-lg">💰</span>
+                <span class="font-bold tracking-wide">Revenue Hub</span>
+            </a>
+            <div class="pt-10">
+                <a href="{% url 'vendors:root_redirect' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition">
+                    <span class="text-lg">🔙</span>
+                    <span>Exit to System</span>
+                </a>
+            </div>
         </nav>
     </div>
 

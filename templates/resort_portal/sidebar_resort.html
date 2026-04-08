@@ -42,12 +42,17 @@
         
         <a href="{% url 'resort_portal:dashboard' %}" class="flex items-center gap-4 px-4 py-4 rounded-2xl transition-all group {% if request.resolver_match.url_name == 'dashboard' %}bg-brand text-deep shadow-brand{% else %}text-stone-400 hover:bg-white/[0.03] hover:text-white{% endif %}">
             <svg class="w-5 h-5 {% if request.resolver_match.url_name == 'dashboard' %}text-deep{% else %}text-brand group-hover:scale-110 transition-transform{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
-            <span class="font-outfit font-bold text-sm tracking-tight">Executive Dashboard</span>
+            <span class="font-outfit font-bold text-sm tracking-tight">Concierge Dashboard</span>
         </a>
 
         <div class="pt-6">
-            <p class="px-4 text-[10px] font-black text-stone-600 uppercase tracking-[0.2em] mb-4">Operations</p>
+            <p class="px-4 text-[10px] font-black text-stone-600 uppercase tracking-[0.2em] mb-4">Property Management</p>
             
+            <a href="{% url 'resort_portal:guest_index' %}" class="flex items-center gap-4 px-4 py-4 rounded-2xl transition-all group {% if 'guests' in request.path %}bg-brand text-deep shadow-brand{% else %}text-stone-400 hover:bg-white/[0.03] hover:text-white{% endif %}">
+                <svg class="w-5 h-5 {% if 'guests' in request.path %}text-deep{% else %}text-stone-600 group-hover:text-brand transition-colors{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                <span class="font-outfit font-bold text-sm tracking-tight">Guest Directory</span>
+            </a>
+
             <a href="#" class="flex items-center gap-4 px-4 py-4 rounded-2xl text-stone-400 hover:bg-white/[0.03] hover:text-white transition-all group">
                 <svg class="w-5 h-5 text-stone-600 group-hover:text-brand transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 <span class="font-outfit font-bold text-sm tracking-tight">Front Desk (Folios)</span>
@@ -55,7 +60,7 @@
 
             <a href="{% url 'resort_portal:setup' %}" class="flex items-center gap-4 px-4 py-4 rounded-2xl transition-all group {% if request.resolver_match.url_name == 'setup' %}bg-brand text-deep shadow-brand{% else %}text-stone-400 hover:bg-white/[0.03] hover:text-white{% endif %}">
                 <svg class="w-5 h-5 {% if request.resolver_match.url_name == 'setup' %}text-deep{% else %}text-stone-600 group-hover:text-brand transition-colors{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
-                <span class="font-outfit font-bold text-sm tracking-tight">Service Configuration</span>
+                <span class="font-outfit font-bold text-sm tracking-tight">Property Setup</span>
             </a>
         </div>
     </nav>

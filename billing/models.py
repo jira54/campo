@@ -56,12 +56,29 @@ class Payment(models.Model):
     phone_used           = models.CharField(max_length=20, blank=True)
     checkout_request_id  = models.CharField(max_length=100, blank=True, default='',
                                help_text='Safaricom CheckoutRequestID — used to match callbacks')
+    invoice_number       = models.CharField(max_length=50, blank=True, unique=True)
     status               = models.CharField(max_length=15, choices=STATUS, default='pending')
     created_at    = models.DateTimeField(auto_now_add=True)
     confirmed_at  = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ['-created_at']
+
+    def save(self, *args, **kwargs):
+        # Generate Invoice Number for confirmed payments if it doesn't exist
+        if self.status == 'confirmed' and not self.invoice_number:
+            year = timezone.now().year
+            last_payment = Payment.objects.filter(invoice_number__contains=f"CP-INV-{year}").order_by('-invoice_number').first()
+            
+            if last_payment:
+                last_num = int(last_payment.invoice_number.split('-')[-1])
+                new_num = last_num + 1
+            else:
+                new_num = 1
+                
+            self.invoice_number = f"CP-INV-{year}-{new_num:04d}"
+            
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.vendor.business_name} — KES {self.amount} [{self.status}]"

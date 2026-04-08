@@ -18,7 +18,6 @@ data = {
     'owner_name': 'Client Owner',
     'business_type': 'food',
     'phone_number': '+254700000001',
-    'university': 'CU',
     'password': 'ClientPass!1',
     'password2': 'ClientPass!1',
 }

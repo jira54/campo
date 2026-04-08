@@ -3,16 +3,27 @@ from django.utils import timezone
 from vendors.models import Vendor
 
 class ResortGuest(models.Model):
+    GUEST_TYPES = [
+        ('overnight', 'Overnight Guest'),
+        ('day_visitor', 'Day Visitor (Picnic/Event/Dining)'),
+    ]
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='resort_guests')
     name = models.CharField(max_length=255)
     phone = models.CharField(max_length=50, blank=True)
+    email = models.EmailField(blank=True, default='')
+    
+    # Compliance & CRM
+    passport_id = models.CharField(max_length=100, blank=True, help_text="ID or Passport Number")
+    nationality = models.CharField(max_length=100, blank=True, default='Kenyan')
+    guest_type = models.CharField(max_length=20, choices=GUEST_TYPES, default='overnight')
+    
     vip_status = models.BooleanField(default=False)
-    preferences = models.TextField(blank=True, help_text="e.g. Allergic to peanuts, prefers ground floor")
+    preferences = models.TextField(blank=True, help_text="Flexible staff notes on guest preferences")
     total_stays = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"{self.name}{' (VIP)' if self.vip_status else ''}"
+        return f"{self.name} ({self.get_guest_type_display()})"
 
 class Room(models.Model):
     STATUS_CHOICES = [
@@ -60,8 +71,10 @@ class Folio(models.Model):
 class FolioCharge(models.Model):
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='resort_charges')
     
-    # If folio is null, it means it's a Walk-In customer paying directly at the POS
+    # If folio is null, it might be a Day Visitor or direct POS charge
     folio = models.ForeignKey(Folio, on_delete=models.CASCADE, null=True, blank=True, related_name='charges')
+    guest = models.ForeignKey(ResortGuest, on_delete=models.SET_NULL, null=True, blank=True, related_name='all_charges')
+    
     department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, related_name='charges')
     
     description = models.CharField(max_length=255) # e.g., "2x Mojitos" or "Room Rate Night 1"
@@ -69,6 +82,12 @@ class FolioCharge(models.Model):
     is_paid = models.BooleanField(default=False) # True if paid instantly (walk-in), False if charged to Room
     
     logged_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        # Auto-link guest if Folio is present
+        if self.folio and not self.guest:
+            self.guest = self.folio.guest
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.amount} ({self.department.name if self.department else 'General'})"

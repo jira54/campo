@@ -7,7 +7,7 @@ def resort_enterprise_required(view_func):
         if not request.user.is_authenticated:
             return view_func(request, *args, **kwargs)
             
-        if request.user.business_type != 'resort':
+        if not request.user.is_superuser and request.user.business_type != 'resort':
             raise PermissionDenied("This portal is restricted to Enterprise Resort accounts.")
             
         return view_func(request, *args, **kwargs)

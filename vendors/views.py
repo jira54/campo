@@ -7,6 +7,9 @@ from django.db.models import Sum, Count, Q
 from django.utils import timezone
 from datetime import timedelta
 from django.urls import reverse_lazy
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 from .forms import RegisterForm, VendorProfileForm
 from .greetings import get_daily_context
@@ -278,9 +281,34 @@ def quick_sale(request):
 class CustomPasswordResetView(PasswordResetView):
     template_name = 'vendors/password_reset.html'
     email_template_name = 'vendors/password_reset_email.html'
+    html_email_template_name = 'vendors/password_reset_email_html.html'
     success_url = reverse_lazy('password_reset_done')
 
 
 class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     template_name = 'vendors/password_reset_confirm.html'
     success_url = reverse_lazy('password_reset_complete')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        # Send security notification email after successful password change
+        user = self.user
+        subject = "Security Alert: Password Successfully Updated"
+        html_message = render_to_string('vendors/password_reset_success_email.html', {
+            'user': user,
+        })
+        plain_message = strip_tags(html_message)
+        
+        try:
+            send_mail(
+                subject,
+                plain_message,
+                None,  # Uses DEFAULT_FROM_EMAIL
+                [user.email],
+                html_message=html_message,
+                fail_silently=True
+            )
+        except Exception:
+            pass
+            
+        return response

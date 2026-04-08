@@ -120,6 +120,23 @@ def payment_history(request):
 
 
 @login_required
+def view_invoice(request, payment_id):
+    """
+    Renders the professional tax invoice for a specific payment.
+    Access is restricted to the payment owner or superusers.
+    """
+    from django.shortcuts import get_object_or_404
+    payment = get_object_or_404(Payment, id=payment_id)
+    
+    # Security check: only the vendor who made the payment or a superuser can view it
+    if payment.vendor != request.user and not request.user.is_superuser:
+        from django.core.exceptions import PermissionDenied
+        raise PermissionDenied
+
+    return render(request, 'billing/invoice_detail.html', {'payment': payment})
+
+
+@login_required
 def billing_success(request):
     return render(request, 'billing/success.html', {
         'plan': getattr(request.user, 'plan', 'free'),

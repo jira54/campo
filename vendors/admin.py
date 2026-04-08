@@ -6,7 +6,7 @@ from .models import Vendor
 class VendorAdmin(BaseUserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Business Info', {'fields': ('business_name', 'business_type', 'phone', 'university')}),
+        ('Business Info', {'fields': ('business_name', 'business_type', 'phone_number', 'phone')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser')}),
     )
     add_fieldsets = (

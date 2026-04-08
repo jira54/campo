@@ -9,16 +9,44 @@ from .models import Beneficiary, Program, Intervention
 @login_required
 @ngo_enterprise_required
 def ngo_dashboard(request):
+    """Boutique Impact Dashboard with M&E Intelligence."""
+    from django.db.models import Count
     vendor = request.user
+    
+    # Core Volume
     total_beneficiaries = Beneficiary.objects.filter(vendor=vendor).count()
     active_programs = Program.objects.filter(vendor=vendor, is_active=True).count()
     total_interventions = Intervention.objects.filter(vendor=vendor).count()
+    
+    # 1. Demographics: Gender Diversity Index
+    gender_stats = Beneficiary.objects.filter(vendor=vendor).values('sex').annotate(count=Count('sex'))
+    
+    # 2. Resilience: Vulnerability Heatmap
+    vulnerability_stats = Beneficiary.objects.filter(vendor=vendor).values('vulnerability_marker').annotate(count=Count('vulnerability_marker'))
+    
+    # 3. Reach: Regional Top 5 (Counties)
+    regional_stats = Beneficiary.objects.filter(vendor=vendor).values('county').annotate(count=Count('county')).order_by('-count')[:5]
+    
+    # 4. Program Impact: Actual Reach vs Target
+    programs = Program.objects.filter(vendor=vendor).annotate(actual_reach=Count('interventions__beneficiary', distinct=True))
+    program_data = []
+    for p in programs:
+        progress = round((p.actual_reach / p.target_beneficiaries_count * 100)) if p.target_beneficiaries_count > 0 else 0
+        program_data.append({
+            'name': p.name,
+            'target': p.target_beneficiaries_count,
+            'actual': p.actual_reach,
+            'progress': progress
+        })
 
     context = {
         'total_beneficiaries': total_beneficiaries,
         'active_programs': active_programs,
         'total_interventions': total_interventions,
-        # add more M&E metrics here later
+        'gender_stats': gender_stats,
+        'vulnerability_stats': vulnerability_stats,
+        'regional_stats': regional_stats,
+        'program_data': program_data,
     }
     return render(request, 'ngo_portal/dashboard.html', context)
 

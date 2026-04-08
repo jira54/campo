@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}System Maintenance - CampoPawa Boutique{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-deep flex items-center justify-center p-6 font-outfit text-center">
+    <div class="w-full max-w-2xl">
+        <div class="inline-flex w-32 h-32 rounded-3xl bg-amber-500/10 border border-amber-500/20 items-center justify-center text-amber-500 text-7xl mb-12 shadow-2xl">
+            <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        </div>
+
+        <h2 class="text-white text-4xl md:text-5xl font-black tracking-tight mb-6">Internal <span class="text-brand">Refinement</span> Required.</h2>
+        <p class="text-stone-400 text-xl font-medium mb-12 max-w-lg mx-auto">The system has encountered a rare logical friction. Our engineers are currently polishing the gears to restore your experience.</p>
+
+        <div class="bg-stone-900 border border-white/5 rounded-3xl p-10 shadow-2xl">
+            <p class="text-stone-500 text-sm mb-8 font-black uppercase tracking-widest">Error Code: System Friction 500</p>
+            <a href="{% url 'vendors:root_redirect' %}" class="w-full md:w-auto bg-white text-deep font-black px-12 py-5 rounded-2xl shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all text-xl inline-block">
+                Refresh Platform
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

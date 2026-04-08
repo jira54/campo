@@ -9,9 +9,9 @@
         <a href="{% url 'landing' %}" class="text-gray-400 hover:text-gold hover:scale-105 text-sm mb-6 inline-block transition-all duration-200">&larr; Back to CampoPawa</a>
 
         <!-- Form Card -->
-        <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-6 sm:p-8">
-            <h1 class="text-2xl sm:text-3xl font-bold text-white mb-2">Sign In</h1>
-            <p class="text-gray-400 mb-6 sm:mb-8">Welcome back to your CampoPawa dashboard</p>
+        <div class="bg-stone-900/80 border border-stone-800 rounded-3xl p-8 backdrop-blur-xl shadow-2xl">
+            <h1 class="text-3xl font-black text-white mb-2 font-outfit uppercase tracking-tight">Sign In</h1>
+            <p class="text-stone-400 mb-8 text-sm">Welcome back to your CampoPawa dashboard</p>
 
             <!-- Error Message -->
             {% if error %}
@@ -26,29 +26,29 @@
 
                 <!-- Email -->
                 <div>
-                    <label class="block text-gold font-bold mb-2">Email Address</label>
+                    <label class="block text-stone-400 font-bold text-[10px] uppercase tracking-[0.2em] mb-2 font-outfit">Email Address</label>
                     <input 
                         type="email" 
                         name="email" 
                         value="{{ initial_email|default:'' }}"
                         placeholder="your@email.com"
                         required
-                        class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold"
+                        class="w-full bg-black/40 border border-stone-800 text-white placeholder-stone-500 px-4 py-3 rounded-xl focus:outline-none focus:border-gold transition-all"
                     >
                 </div>
 
                 <!-- Password -->
                 <div>
-                    <label class="block text-gold font-bold mb-2">Password</label>
+                    <label class="block text-stone-400 font-bold text-[10px] uppercase tracking-[0.2em] mb-2 font-outfit">Password</label>
                     <div class="relative">
                         <input 
                             type="password" 
                             name="password" 
                             placeholder="•••••••"
                             required
-                            class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold"
+                            class="w-full bg-black/40 border border-stone-800 text-white placeholder-stone-500 px-4 py-3 rounded-xl focus:outline-none focus:border-gold transition-all"
                         >
-                        <button type="button" id="togglePassword" class="absolute right-2 top-2 text-gray-300" aria-label="Toggle password visibility">Show</button>
+                        <button type="button" id="togglePassword" class="absolute right-4 top-3 text-stone-600 hover:text-gold transition-colors font-bold text-xs uppercase tracking-widest" aria-label="Toggle password visibility">Show</button>
                     </div>
                     <p class="text-right mt-2">
                         <a href="{% url 'password_reset' %}" class="text-gold hover:text-yellow-300 text-sm">Forgot your password?</a>
@@ -56,18 +56,18 @@
                 </div>
 
                 <!-- Submit -->
-                <button type="submit" class="w-full bg-gradient-to-r from-gold to-amber-400 text-deep font-bold px-4 py-3 rounded-lg hover:from-amber-400 hover:to-yellow-300 hover:scale-105 hover:shadow-lg hover:shadow-gold/30 transition-all duration-300 ease-out mt-6">
+                <button type="submit" class="w-full bg-gradient-to-r from-gold to-amber-500 text-deep font-black py-4 rounded-xl hover:shadow-xl hover:shadow-gold/20 transition-all font-outfit uppercase tracking-widest mt-8">
                     Sign In
                 </button>
             </form>
 
             <!-- Divider -->
-            <hr class="border-gold border-opacity-20 my-6">
+            <hr class="border-stone-800 my-8">
 
             <!-- Sign Up Link -->
-            <p class="text-gray-400 text-center">
+            <p class="text-stone-400 text-center text-sm">
                 Don&apos;t have an account? 
-                <a href="{% url 'register' %}" class="text-gold hover:text-yellow-300 hover:underline font-bold transition-all duration-200">Sign up here</a>
+                <a href="{% url 'register' %}" class="text-gold hover:text-yellow-300 font-bold transition-all duration-200">Sign up here</a>
             </p>
         </div>
     </div>

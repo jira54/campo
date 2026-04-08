@@ -4,9 +4,9 @@
 
 {% block content %}
 <div class="min-h-screen bg-deep relative overflow-hidden">
-    <!-- Background Aurora Blurs -->
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] pointer-events-none opacity-40">
-        <div class="absolute inset-x-0 -top-40 h-[600px] blur-[100px] bg-gradient-to-r from-gold/30 via-teal/30 to-purple-600/30"></div>
+    <!-- Subtle Texture Overlays -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[800px] pointer-events-none opacity-20">
+        <div class="absolute inset-x-0 -top-40 h-[600px] blur-[120px] bg-gradient-to-r from-gold/20 via-amber-200/10 to-stone-500/10"></div>
     </div>
 
     <!-- Navigation -->
@@ -14,7 +14,7 @@
         <div class="flex items-center justify-between max-w-7xl mx-auto">
             <h1 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gold to-amber-500 tracking-tight">CampoPawa</h1>
             <div class="space-x-2 md:space-x-4 flex items-center">
-                <a href="{% url 'login' %}" class="text-gray-300 font-semibold hover:text-white px-4 py-2 transition-colors">Login</a>
+                <a href="{% url 'login' %}" class="text-stone-400 font-black hover:text-gold hover:underline underline-offset-8 transition-all duration-300 px-4 py-2 uppercase tracking-widest text-[10px]">Login</a>
                 <a href="{% url 'register' %}" class="bg-gradient-to-r from-gold to-amber-500 text-deep font-bold px-6 py-2.5 rounded-xl hover:scale-105 shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all">Get Started</a>
             </div>
         </div>
@@ -23,12 +23,12 @@
     <!-- Master Hero Section -->
     <section class="relative z-10 pt-24 pb-16 px-4 md:pt-32 md:pb-24 text-center">
         <div class="max-w-5xl mx-auto">
-            <h2 class="text-5xl md:text-7xl font-black text-white mb-6 leading-tight tracking-tighter">
-                The Ultimate Operations OS <br class="hidden md:block">
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400">Built for Africa.</span>
+            <h2 class="text-5xl md:text-7xl font-black text-white mb-6 leading-tight tracking-tighter font-outfit">
+                Operational Control <br class="hidden md:block">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold to-amber-400">Built for Growing Ventures.</span>
             </h2>
-            <p class="text-xl md:text-2xl text-gray-400 mb-10 max-w-3xl mx-auto font-medium">
-                The most frictionless, zero-data-entry platform ever built. Scale your MSME, streamline your Resort PMS, or automate your NGO M&E tracking effortlessly.
+            <p class="text-xl md:text-2xl text-stone-400 mb-10 max-w-3xl mx-auto font-medium">
+                The centralized operating system for African MSMEs, NGOs, and the Hospitality sector. Build your business one record at a time.
             </p>
             <div class="flex flex-col sm:flex-row justify-center gap-4">
                 <a href="{% url 'register' %}" class="bg-white text-deep font-bold text-lg px-8 py-4 rounded-xl hover:scale-105 hover:bg-gray-100 transition-all shadow-xl">Start Free Trial →</a>
@@ -41,124 +41,132 @@
     <section id="solutions" class="relative z-10 py-20 px-4 md:px-8 border-t border-white/5 bg-black/40 backdrop-blur-xl">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16">
-                <h3 class="text-3xl font-black text-white mb-4">Dedicated Solutions for Any Scale</h3>
-                <p class="text-gray-400 text-lg">We don't build generic software. We build bespoke portals mapped exactly to your workflow.</p>
+                <h3 class="text-3xl font-black text-white mb-2 uppercase tracking-tight font-outfit">Dedicated Solutions for Any Scale</h3>
             </div>
 
             <div class="grid md:grid-cols-3 gap-8">
                 <!-- Retail MSME -->
-                <div class="bg-gradient-to-b from-gray-800/80 to-gray-900/80 border border-gold/30 rounded-3xl p-8 hover:-translate-y-2 transition-transform duration-300 relative overflow-hidden group">
-                    <div class="absolute inset-0 bg-gradient-to-b from-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-gold to-orange-500 mb-6 flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(245,158,11,0.4)]">🛍️</div>
-                    <h4 class="text-2xl font-bold text-white mb-4 relative z-10">Retail & MSMEs</h4>
-                    <p class="text-gray-400 mb-6 relative z-10">
-                        Stop typing manually. Our M-Pesa C2B integration automatically logs sales and builds your Customer CRM instantly while you sleep.
-                    </p>
-                    <ul class="text-gray-300 space-y-3 mb-8 text-sm relative z-10">
-                        <li class="flex items-center gap-2">✓ Auto M-Pesa CRM Hooks</li>
-                        <li class="flex items-center gap-2">✓ Smart SMS Promotions</li>
-                        <li class="flex items-center gap-2">✓ Frictionless 2-Tap Selling</li>
-                    </ul>
+                <div class="bg-stone-900/40 border border-stone-800/50 border-l-4 border-l-gold rounded-3xl p-8 hover:bg-stone-900/60 transition-all duration-500 relative overflow-hidden group shadow-2xl hover:border-gold/30">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-accent/10 border border-gold/30 mb-6 flex items-center justify-center text-gold">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                    </div>
+                    <h4 class="text-2xl font-bold text-white mb-2 font-outfit">MSME Operations</h4>
+                    
+                    <div class="opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 ease-out">
+                        <p class="text-stone-400 mb-6 text-sm leading-relaxed mt-4">
+                            Direct customer relationship management. Our M-Pesa integration logs sales automatically while you focus on providing excellence.
+                        </p>
+                        <ul class="text-stone-300 space-y-3 mb-4 text-xs font-medium uppercase tracking-wider">
+                            <li class="flex items-center gap-2"><span class="text-gold">●</span> Auto M-Pesa CRM Hooks</li>
+                            <li class="flex items-center gap-2"><span class="text-gold">●</span> Smart SMS Promotions</li>
+                            <li class="flex items-center gap-2"><span class="text-gold">●</span> High-Velocity Selling</li>
+                        </ul>
+                    </div>
                 </div>
 
                 <!-- NGO Enterprise -->
-                <div class="bg-gradient-to-b from-gray-800/80 to-gray-900/80 border border-teal-500/30 rounded-3xl p-8 hover:-translate-y-2 transition-transform duration-300 relative overflow-hidden group">
-                    <div class="absolute inset-0 bg-gradient-to-b from-teal/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-600 mb-6 flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(20,184,166,0.4)]">🌍</div>
-                    <h4 class="text-2xl font-bold text-white mb-4 relative z-10">NGOs & Agencies</h4>
-                    <p class="text-gray-400 mb-6 relative z-10">
-                        Fully isolated USAID AMELP compliance. Ditch spreadsheets and log strict field interventions instantly via mobile.
-                    </p>
-                    <ul class="text-gray-300 space-y-3 mb-8 text-sm relative z-10">
-                        <li class="flex items-center gap-2">✓ 1-Click Donor CSV Audits</li>
-                        <li class="flex items-center gap-2">✓ PII-Stripped Security IDs</li>
-                        <li class="flex items-center gap-2">✓ Demographic Cohort Tracking</li>
-                    </ul>
+                <div class="bg-stone-900/40 border border-stone-800/50 border-l-4 border-l-teal rounded-3xl p-8 hover:bg-stone-900/60 transition-all duration-500 relative overflow-hidden group shadow-2xl hover:border-teal/30">
+                    <div class="w-14 h-14 rounded-2xl bg-teal/10 border border-teal/30 mb-6 flex items-center justify-center text-teal-400">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2 2 2 0 012 2v.653m-7-10.411a9 9 0 1111.986 0m-12.142 0A9 9 0 003.338 11h2.162M11 21.945V19a2 2 0 00-2-2h-1a2 2 0 01-2-2v-1a2 2 0 00-2-2H3.055m15.5 0h-1.944a2 2 0 00-2 2v1a2 2 0 01-2 2v2.945M18 3.935V5.5A2.5 2.5 0 0115.5 8h-.5a2 2 0 00-2 2 2 2 0 01-2 2 2 2 0 00-2 2v.653"/></svg>
+                    </div>
+                    <h4 class="text-2xl font-bold text-white mb-2 font-outfit">Program Impact & M&E</h4>
+
+                    <div class="opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 ease-out">
+                        <p class="text-stone-400 mb-6 text-sm leading-relaxed mt-4">
+                            Data-driven donor compliance. Ditch spreadsheets and log field interventions securely with isolated architecture.
+                        </p>
+                        <ul class="text-stone-300 space-y-3 mb-4 text-xs font-medium uppercase tracking-wider">
+                            <li class="flex items-center gap-2"><span class="text-teal-400">●</span> 1-Click Donor CSV Audits</li>
+                            <li class="flex items-center gap-2"><span class="text-teal-400">●</span> PII-Stripped Security IDs</li>
+                            <li class="flex items-center gap-2"><span class="text-teal-400">●</span> Impact Analytics Suite</li>
+                        </ul>
+                    </div>
                 </div>
 
                 <!-- Resort PMS -->
-                <div class="bg-gradient-to-b from-gray-800/80 to-gray-900/80 border border-purple-500/30 rounded-3xl p-8 hover:-translate-y-2 transition-transform duration-300 relative overflow-hidden group">
-                    <div class="absolute inset-0 bg-gradient-to-b from-purple/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-fuchsia-500 mb-6 flex items-center justify-center text-3xl shadow-[0_0_20px_rgba(168,85,247,0.4)]">🏨</div>
-                    <h4 class="text-2xl font-bold text-white mb-4 relative z-10">Resorts & Lodges</h4>
-                    <p class="text-gray-400 mb-6 relative z-10">
-                        A beautiful PMS that finally maps correctly. Route Bar, Spa, and Restaurant charges natively into a single Guest Master Folio.
-                    </p>
-                    <ul class="text-gray-300 space-y-3 mb-8 text-sm relative z-10">
-                        <li class="flex items-center gap-2">✓ Automated Housekeeping Alerts</li>
-                        <li class="flex items-center gap-2">✓ Single-Checkout Master Billing</li>
-                        <li class="flex items-center gap-2">✓ Daily Department Yield KPIs</li>
-                    </ul>
+                <div class="bg-stone-900/40 border border-stone-800/50 border-l-4 border-l-purple-500 rounded-3xl p-8 hover:bg-stone-900/60 transition-all duration-500 relative overflow-hidden group shadow-2xl hover:border-purple-500/30">
+                    <div class="w-14 h-14 rounded-2xl bg-purple-500/10 border border-purple-500/30 mb-6 flex items-center justify-center text-purple-400">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                    </div>
+                    <h4 class="text-2xl font-bold text-white mb-2 font-outfit">Hospitality Management</h4>
+
+                    <div class="opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 ease-out">
+                        <p class="text-stone-400 mb-6 text-sm leading-relaxed mt-4">
+                            A beautiful PMS that finally maps correctly. Direct folio management for bars, restaurants, and resort activities.
+                        </p>
+                        <ul class="text-stone-300 space-y-3 mb-4 text-xs font-medium uppercase tracking-wider">
+                            <li class="flex items-center gap-2"><span class="text-purple-400">●</span> Automated Activity Alerts</li>
+                            <li class="flex items-center gap-2"><span class="text-purple-400">●</span> Master Folio Auditing</li>
+                            <li class="flex items-center gap-2"><span class="text-purple-400">●</span> Real-time Yield Trends</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Pricing Table -->
-    <section class="relative z-10 py-24 px-4">
+    <section class="relative z-10 py-24 px-4 bg-stone-900/20">
         <div class="max-w-6xl mx-auto">
-            <h2 class="text-3xl md:text-5xl font-black text-center text-white mb-16">Simple, Scalable Pricing</h2>
+            <h2 class="text-3xl md:text-5xl font-black text-center text-white mb-16 font-outfit">Straightforward Pricing</h2>
             
             <div class="grid md:grid-cols-3 gap-8">
                 <!-- Free -->
-                <div class="border border-white/10 bg-navy/50 rounded-3xl p-8 flex flex-col justify-between">
+                <div class="border border-stone-800 bg-black/40 rounded-3xl p-8 flex flex-col justify-between hover:border-stone-700 transition-colors">
                     <div>
-                        <h4 class="text-xl font-bold text-gray-300 mb-2">Micro Tier</h4>
-                        <div class="mb-6"><span class="text-5xl font-black text-white">KES 0</span><span class="text-gray-500 font-medium whitespace-nowrap"> / mo</span></div>
-                        <p class="text-sm text-gray-400 border-b border-gray-700 pb-6 mb-6">Perfect for testing the platform with a tiny customer base.</p>
-                        <ul class="space-y-4 text-sm text-gray-300">
-                            <li>✓ Max 20 Customer Records</li>
-                            <li>✓ Core Daily Analytics</li>
-                            <li>✓ Manual POS Logging</li>
+                        <h4 class="text-xl font-bold text-stone-400 mb-2 font-outfit uppercase tracking-wider">Micro Tier</h4>
+                        <div class="mb-6"><span class="text-5xl font-black text-white">KES 0</span><span class="text-stone-600 font-medium whitespace-nowrap"> / mo</span></div>
+                        <p class="text-sm text-stone-500 border-b border-stone-800 pb-6 mb-6">Perfect for testing the platform with a small customer base.</p>
+                        <ul class="space-y-4 text-sm text-stone-300">
+                            <li>● Max 20 Customer Records</li>
+                            <li>● Core Daily Analytics</li>
+                            <li>● Manual POS Logging</li>
                         </ul>
                     </div>
-                    <a href="{% url 'register' %}" class="mt-8 block text-center border-2 border-gray-600 text-gray-300 font-bold py-3 rounded-xl hover:bg-gray-800 transition">Get Started</a>
+                    <a href="{% url 'register' %}" class="mt-8 block text-center border border-stone-700 text-stone-300 font-bold py-3 rounded-xl hover:bg-stone-800 transition">Get Started</a>
                 </div>
 
                 <!-- Retail Pro -->
-                <div class="border border-gold shadow-[0_0_30px_rgba(245,158,11,0.15)] bg-gradient-to-b from-navy to-gray-900 rounded-3xl p-8 flex flex-col justify-between relative transform md:-translate-y-4">
-                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-gold text-deep font-black text-xs px-4 py-1 rounded-full tracking-wider uppercase">Most Popular</div>
+                <div class="border border-gold/50 shadow-2xl bg-gradient-to-b from-stone-900 to-black rounded-3xl p-8 flex flex-col justify-between relative shadow-gold/5">
                     <div>
-                        <h4 class="text-xl font-bold text-gold mb-2">Retail Pro</h4>
-                        <div class="mb-6"><span class="text-5xl font-black text-white">KES 700</span><span class="text-gold opacity-70 font-medium whitespace-nowrap"> / mo</span></div>
-                        <p class="text-sm text-gray-400 border-b border-gray-700 pb-6 mb-6">The ultimate growth engine for standard MSMEs and campus vendors.</p>
-                        <ul class="space-y-4 text-sm text-gray-300">
-                            <li><span class="text-gold mr-2">✓</span> Unlimited Database & Revenue logs</li>
-                            <li><span class="text-gold mr-2">✓</span> Full M-Pesa C2B Automation</li>
-                            <li><span class="text-gold mr-2">✓</span> AI Smart SMS Blasts</li>
-                            <li><span class="text-gold mr-2">✓</span> Loyalty Campaign Management</li>
+                        <h4 class="text-xl font-bold text-gold mb-2 font-outfit uppercase tracking-wider">Retail Pro</h4>
+                        <div class="mb-6"><span class="text-5xl font-black text-white">KES 700</span><span class="text-gold/50 font-medium whitespace-nowrap"> / mo</span></div>
+                        <p class="text-sm text-stone-400 border-b border-stone-800 pb-6 mb-6">The primary growth engine for standard MSMEs and vendors.</p>
+                        <ul class="space-y-4 text-sm text-stone-300">
+                            <li><span class="text-gold mr-2">●</span> Unlimited Database & Revenue logs</li>
+                            <li><span class="text-gold mr-2">●</span> Full M-Pesa C2B Automation</li>
+                            <li><span class="text-gold mr-2">●</span> Smart SMS Outreach</li>
+                            <li><span class="text-gold mr-2">●</span> Loyalty Campaign Management</li>
                         </ul>
                     </div>
-                    <a href="{% url 'register' %}" class="mt-8 block w-full text-center bg-gradient-to-r from-gold to-amber-500 text-deep font-bold py-3 rounded-xl hover:scale-105 transition-transform shadow-lg">Start 14-Day Free Trial</a>
+                    <a href="{% url 'register' %}" class="mt-8 block w-full text-center bg-gradient-to-r from-gold to-amber-500 text-deep font-bold py-3 rounded-xl hover:shadow-xl hover:shadow-gold/20 transition-all">Start 14-Day Free Trial</a>
                 </div>
 
                 <!-- Enterprise -->
-                <div class="border border-cyan-500/30 bg-navy/50 overflow-hidden relative rounded-3xl p-8 flex flex-col justify-between group hover:border-cyan-500/60 transition-colors">
-                    <div class="absolute -right-16 -top-16 w-32 h-32 bg-cyan-500/20 blur-3xl"></div>
+                <div class="border border-stone-800 bg-black/40 rounded-3xl p-8 flex flex-col justify-between hover:border-stone-700 transition-colors group">
                     <div>
-                        <h4 class="text-xl font-bold text-cyan-400 mb-2">Enterprise Portals</h4>
-                        <div class="mb-6"><span class="text-5xl font-black text-white">KES 3,500</span><span class="text-gray-500 font-medium whitespace-nowrap"> / mo</span></div>
-                        <p class="text-sm text-gray-400 border-b border-gray-700 pb-6 mb-6">Strictly isolated, highly specialized architecture for complex operations.</p>
-                        <ul class="space-y-4 text-sm text-gray-300 relative z-10">
-                            <li><span class="text-cyan-400 mr-2">✓</span> Isolated Database Schema & Storage</li>
-                            <li><span class="text-cyan-400 mr-2">✓</span> Custom NGO or Resort Decorators</li>
-                            <li><span class="text-cyan-400 mr-2">✓</span> 1-Click Secure Donor Exports</li>
-                            <li><span class="text-cyan-400 mr-2">✓</span> Hospitality Folio Syncing</li>
+                        <h4 class="text-xl font-bold text-stone-400 mb-2 font-outfit uppercase tracking-wider">Enterprise Portals</h4>
+                        <div class="mb-6"><span class="text-5xl font-black text-white">KES 3,500</span><span class="text-stone-600 font-medium whitespace-nowrap"> / mo</span></div>
+                        <p class="text-sm text-stone-500 border-b border-stone-800 pb-6 mb-6">Isolated and specialized architecture for complex operations.</p>
+                        <ul class="space-y-4 text-sm text-stone-300 relative z-10">
+                            <li><span class="text-stone-500 mr-2">●</span> Isolated Database Schema</li>
+                            <li><span class="text-stone-500 mr-2">●</span> NGO or Resort Logic Wrappers</li>
+                            <li><span class="text-stone-500 mr-2">●</span> Secure Donor Metadata Exports</li>
+                            <li><span class="text-stone-500 mr-2">●</span> Full Activity Log Syncing</li>
                         </ul>
                     </div>
-                    <a href="{% url 'register' %}" class="relative z-10 mt-8 block w-full text-center bg-gray-800 text-cyan-400 border border-cyan-500/30 font-bold py-3 rounded-xl hover:bg-cyan-900/40 transition-colors">Launch Portal</a>
+                    <a href="{% url 'register' %}" class="relative z-10 mt-8 block w-full text-center bg-stone-800 text-white font-bold py-3 rounded-xl hover:bg-stone-700 transition-colors">Launch Portal</a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Trust Footer -->
-    <footer class="border-t border-white/5 py-12 text-center bg-black/60 relative z-10">
-        <div class="flex items-center justify-center gap-2 mb-4">
-            <span class="text-3xl tracking-tighter font-black text-white">Campo<span class="text-gold">Pawa</span></span>
+    <footer class="border-t border-stone-800 py-16 text-center bg-black/80 relative z-10">
+        <div class="flex items-center justify-center gap-2 mb-6">
+            <span class="text-3xl tracking-tighter font-black text-white font-outfit">Campo<span class="text-gold">Pawa</span></span>
         </div>
-        <p class="text-gray-500 text-sm">Secure architecture. Built for African Operations.</p>
-        <p class="text-gray-600 text-xs mt-8">&copy; {% now "Y" %} CampoPawa SaaS. All rights reserved.</p>
+        <p class="text-stone-500 text-sm max-w-md mx-auto leading-relaxed">Stable, localized architecture built for the reality of African operations. Data-first. Result-first.</p>
+        <p class="text-stone-700 text-xs mt-10 font-medium tracking-widest uppercase">&copy; {% now "Y" %} CampoPawa. Established for Growth.</p>
     </footer>
 </div>
 {% endblock %}

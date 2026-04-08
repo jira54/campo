@@ -1,35 +1,89 @@
 {% extends 'base.html' %}
-{% block title %}Profile - CampoPawa{% endblock %}
+{% block title %}Business Profile - CampoPawa{% endblock %}
 {% block content %}
-<div class="min-h-screen bg-deep flex items-center justify-center p-8">
-    <div class="w-full max-w-3xl">
+<div class="min-h-screen bg-deep flex items-center justify-center p-6 md:p-12">
+    <div class="w-full max-w-4xl">
 
-        <div class="flex justify-start mb-6">
+        <!-- Navigation -->
+        <div class="flex justify-between items-center mb-10">
             <a href="{% url 'vendors:dashboard' %}" 
-               class="inline-flex items-center gap-2 px-4 py-2 bg-navy border border-gold border-opacity-40 
-                      text-gold text-sm font-semibold rounded-lg 
-                      hover:bg-gold hover:text-deep transition-all duration-200">
-                ← Back to Dashboard
+               class="inline-flex items-center gap-2 text-stone-400 hover:text-white transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                <span class="font-medium">Back to Operations</span>
             </a>
+            
+            <div class="flex items-center gap-3">
+                {% if user.logo_url %}
+                    <img src="{{ user.logo_url }}" alt="Logo" class="w-10 h-10 rounded-lg object-cover border border-white/10 shadow-lg">
+                {% else %}
+                    <div class="w-10 h-10 rounded-lg bg-brand flex items-center justify-center text-deep font-bold text-lg shadow-brand">
+                        {{ user.business_name|first|upper }}
+                    </div>
+                {% endif %}
+                <div>
+                   <h2 class="text-white font-outfit font-bold text-lg leading-none">{{ user.business_name }}</h2>
+                   <p class="text-xs text-stone-500 mt-1 uppercase tracking-widest">{{ user.get_persona_type_display }}</p>
+                </div>
+            </div>
         </div>
 
-        <div class="bg-navy border border-gold border-opacity-20 rounded-lg p-8">
-            <h1 class="text-2xl font-bold text-white mb-4">Business Profile</h1>
-            <form method="post" class="space-y-4">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <div class="flex gap-4 pt-4">
-                    <button type="submit" 
-                            class="flex-1 bg-gold text-deep font-bold px-6 py-3 rounded hover:bg-yellow-400 transition">
-                        Save
-                    </button>
-                    <a href="{% url 'vendors:dashboard' %}" 
-                       class="flex-1 bg-navy border border-gold text-gold font-bold px-6 py-3 rounded text-center 
-                              hover:bg-gold hover:text-deep transition-all duration-200">
-                        Cancel
-                    </a>
+        <!-- Profile Card -->
+        <div class="bg-stone-900/50 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+            <div class="p-8 md:p-12">
+                <div class="mb-10 text-center md:text-left">
+                    <h1 class="text-3xl md:text-4xl font-outfit font-black text-white mb-2">Refine Your Identity</h1>
+                    <p class="text-stone-400">Manage your business profile, branding, and operational persona.</p>
                 </div>
-            </form>
+
+                <form method="post" class="space-y-8" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {% for field in form %}
+                        <div class="space-y-2">
+                            <label for="{{ field.id_for_label }}" class="block text-sm font-semibold text-stone-300 uppercase tracking-wider">
+                                {{ field.label }}
+                            </label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <p class="text-red-400 text-xs mt-1">{{ field.errors.as_text }}</p>
+                            {% endif %}
+                            {% if field.help_text %}
+                                <p class="text-stone-500 text-[10px] mt-1 italic">{{ field.help_text }}</p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="flex flex-col md:flex-row gap-4 pt-8">
+                        <button type="submit" 
+                                class="flex-1 bg-brand text-deep font-outfit font-black text-lg px-8 py-4 rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-brand">
+                            Sync Business Identity
+                        </button>
+                        <a href="{% url 'vendors:dashboard' %}" 
+                           class="flex-1 bg-stone-800 text-stone-300 font-outfit font-bold text-lg px-8 py-4 rounded-xl text-center hover:bg-stone-700 transition-all border border-white/5">
+                            Discard Changes
+                        </a>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Strategic Tip Footer -->
+            <div class="bg-stone-950/80 p-6 border-t border-white/5 flex items-center gap-4">
+                <div class="w-10 h-10 rounded-full bg-stone-800 flex items-center justify-center text-brand flex-shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div>
+                   <p class="text-xs font-bold text-white uppercase tracking-widest mb-1">Behavioral Tip</p>
+                   <p class="text-xs text-stone-500 leading-relaxed">
+                       Businesses with a clear logo and consistent brand color see a <span class="text-brand font-bold">24% increase</span> in customer trust and return visits.
+                   </p>
+                </div>
+            </div>
         </div>
 
     </div>

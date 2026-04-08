@@ -11,25 +11,59 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="CampoPawa">
     <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        outfit: ['"Outfit"', 'sans-serif'],
+                    },
                     colors: {
                         'deep': '#07111E',
                         'navy': '#0C2340',
-                        'teal': '#0D9488',
-                        'sea': '#14B8A6',
+                        'coffee': '#292524',
+                        'heading': '#1c1917',
+                        'stone-light': '#fafaf8',
                         'gold': '#F59E0B',
+                        'amber-accent': '#fef3c7',
+                        'amber-thick': '#92400e',
                     }
                 }
             }
         }
     </script>
+    <style>
+        :root {
+            --brand-accent: {% if user.is_authenticated %}{{ user.brand_accent_color|default:'#F59E0B' }}{% else %}#F59E0B{% endif %};
+        }
+        .noise-bg::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 50;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; letter-spacing: -0.02em; }
+        
+        /* Premium Customizations */
+        .text-brand { color: var(--brand-accent); }
+        .bg-brand { background-color: var(--brand-accent); }
+        .border-brand { border-color: var(--brand-accent); }
+        .shadow-brand { box-shadow: 0 0 20px rgba(0, 0, 0, 0.1), 0 0 10px var(--brand-accent); }
+    </style>
     {% block extra_head %}{% endblock %}
 </head>
-<body class="bg-deep text-gray-100 pt-16 md:pt-0">
+<body class="bg-deep text-gray-100 pt-16 md:pt-0 noise-bg">
 
     {% if messages %}
         <div class="fixed top-20 md:top-4 left-4 right-4 md:left-auto md:right-4 z-50 space-y-2 max-w-sm md:max-w-md mx-auto md:mx-0" id="message-container">

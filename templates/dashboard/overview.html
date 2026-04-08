@@ -1,188 +1,225 @@
 {% extends 'base.html' %}
+{% load motivation_tags %}
 
-{% block title %}Dashboard - CampoPawa{% endblock %}
+{% block title %}Operations Center - CampoPawa{% endblock %}
 
 {% block content %}
-<div class="flex min-h-screen">
+<div class="flex min-h-screen bg-deep overflow-hidden">
     {% include 'partials/sidebar.html' %}
 
-    <div class="flex-1 overflow-auto bg-deep">
-        <div class="p-4 md:p-8">
-            <!-- Daily Greeting Section -->
-            <div class="mb-8" style="position: relative; min-height: 120px;">
-                <div class="p-4 md:p-8">
-                    <div class="flex flex-col md:flex-row items-start justify-between gap-4 md:gap-6">
-                        <div class="w-full md:flex-1" style="text-align: left; align-items: flex-start; padding-left: 0; position: absolute; top: 0; left: 0;">
-                            <p class="text-gold font-bold text-lg md:text-xl mb-3 md:mb-4">{{ greeting_emoji }} {{ greeting }}, {{ first_name }}!</p>
-                            <div class="bg-gradient-to-r from-amber-500/20 via-gold/30 to-amber-600/20 p-3 md:p-4 rounded-l-xl border-l-2 border-gold/50">
-                                <p class="text-amber-100 text-xs md:text-sm leading-relaxed">{{ daily_tip }}</p>
+    <div class="flex-1 h-screen overflow-y-auto overflow-x-hidden relative">
+        <div class="p-6 md:p-10 pb-24">
+            
+            <!-- Strategic Header & Pulse Engine -->
+            <div class="mb-10 md:mb-14">
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-white/5">
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-3 mb-4">
+                            {% if user.logo_url %}
+                                <img src="{{ user.logo_url }}" alt="Logo" class="w-12 h-12 rounded-xl object-cover border border-white/10 shadow-2xl">
+                            {% else %}
+                                <div class="w-12 h-12 rounded-xl bg-brand flex items-center justify-center text-deep font-outfit font-black text-xl shadow-brand">
+                                    {{ user.business_name|first|upper }}
+                                </div>
+                            {% endif %}
+                            <div>
+                                <h1 class="text-white font-outfit font-black text-2xl md:text-3xl tracking-tight">{{ user.business_name }}</h1>
+                                <p class="text-stone-500 text-xs uppercase tracking-[0.2em] font-bold">{{ user.get_persona_type_display }}</p>
                             </div>
+                        </div>
+                        <h2 class="text-3xl md:text-5xl font-outfit font-black text-white leading-tight">
+                            {{ greeting }}, <span class="text-brand">{{ first_name }}</span>.
+                        </h2>
+                    </div>
+                    
+                    <!-- The Pulse Engine -->
+                    <div class="max-w-md bg-stone-900/40 backdrop-blur-md border border-white/5 p-5 rounded-2xl relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-brand/10 blur-3xl -mr-12 -mt-12 group-hover:bg-brand/20 transition-all"></div>
+                        <div class="relative z-10">
+                            <h4 class="text-[10px] font-black text-brand uppercase tracking-widest mb-2 flex items-center gap-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand animate-pulse"></span>
+                                The Pulse strategy
+                            </h4>
+                            <p class="text-stone-300 text-sm italic font-medium leading-relaxed">
+                                "{% get_pulse_quote user.persona_type %}"
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Login Streak Celebration Popup -->
+            <!-- Login Streak -->
             {% if current_streak > 0 %}
-            <div id="streak-popup" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-                <div class="bg-gradient-to-br from-gold to-amber-400 text-deep rounded-2xl p-8 max-w-sm w-full text-center transform scale-0 animate-bounce-in">
-                    <div class="text-6xl mb-4">🔥</div>
-                    <h2 class="text-2xl font-bold mb-2">{{ current_streak }} Day Streak!</h2>
-                    <p class="text-sm mb-6">You're on fire! Keep up the consistency!</p>
-                    <button onclick="closeStreakPopup()" class="bg-deep text-gold font-bold px-6 py-2 rounded-lg hover:bg-navy transition">
-                        Let's Go! 💪
+            <div id="streak-popup" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                <div class="bg-stone-900 border border-white/10 shadow-brand rounded-2xl p-10 max-w-sm w-full text-center relative overflow-hidden">
+                    <div class="absolute inset-0 bg-brand/5 pointer-events-none"></div>
+                    <div class="text-7xl mb-6 drop-shadow-lg">🔥</div>
+                    <h2 class="text-3xl font-outfit font-black text-white mb-2">{{ current_streak }} Day Streak</h2>
+                    <p class="text-stone-400 mb-8 text-sm">Your operational consistency is unmatched. Excellence is built day by day.</p>
+                    <button onclick="closeStreakPopup()" class="w-full bg-brand text-deep font-outfit font-black py-4 rounded-xl shadow-brand hover:scale-[1.02] active:scale-[0.98] transition-all">
+                        Maintain Momentum
                     </button>
                 </div>
             </div>
             {% endif %}
 
-            <!-- C2B Live Alert Banner Container -->
-            <div id="c2b-alert-container" class="fixed top-20 right-4 z-50 flex flex-col gap-2"></div>
-
-            <!-- Today's Snapshot -->
-            <div class="mb-8">
-                <div class="p-6" style="position: relative; overflow: hidden; border-radius: 24px; background: #08111a;">
-                    <div class="aurora" style="position: absolute; inset: -40px; background: radial-gradient(ellipse 55% 60% at 15% 25%, rgba(0,200,83,0.55) 0%, transparent 60%), radial-gradient(ellipse 50% 55% at 85% 20%, rgba(124,77,255,0.6) 0%, transparent 58%), radial-gradient(ellipse 60% 50% at 80% 80%, rgba(245,166,35,0.45) 0%, transparent 60%), radial-gradient(ellipse 55% 50% at 20% 80%, rgba(29,233,182,0.4) 0%, transparent 58%); filter: blur(28px);"></div>
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
-                        <div style="border: none; background: transparent; position: relative; z-index: 2;">
-                            <p class="text-amber-200 text-xs mb-1">Today's Revenue</p>
-                            <p class="text-white font-bold text-xl">KES {{ today_revenue|floatformat:0 }}</p>
-                            <p class="text-xs {% if revenue_up %}text-emerald-400{% else %}text-red-400{% endif %}">
-                                {% if revenue_up %}▲{% else %}▼{% endif %}
-                                KES {{ revenue_change|floatformat:0 }} vs yesterday
-                            </p>
-                        </div>
-                        <div style="border: none; background: transparent; position: relative; z-index: 2;">
-                            <p class="text-cyan-200 text-xs mb-1">Customers Today</p>
-                            <p class="text-white font-bold text-xl">{{ today_customers }}</p>
-                            <p class="text-cyan-300 text-xs">served today</p>
-                        </div>
-                        <div class="hidden md:block" style="border: none; background: transparent; position: relative; z-index: 2;">
-                            <p class="text-violet-200 text-xs mb-1">Date</p>
-                            <p class="text-white font-bold text-xl">{{ today_date|date:"d M" }}</p>
-                            <p class="text-violet-300 text-xs">{{ today_date|date:"l" }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Free Plan Warning -->
-            {% if not user.is_premium and total_customers >= customer_limit %}
-                <div class="mb-6 md:mb-8 bg-amber-900 bg-opacity-40 border-l-4 border-gold p-4 rounded-lg">
-                    <p class="text-gold font-bold text-sm md:text-base">⚠️ Customer Limit Reached</p>
-                    <p class="text-gray-300 text-xs md:text-sm mt-1">You've reached {{ customer_limit }} customers. Upgrade to Premium to add more.</p>
-                    <a href="{% url 'billing:upgrade' %}" class="text-gold hover:text-yellow-300 text-sm mt-2 inline-block font-bold">Upgrade Now →</a>
-                </div>
-            {% endif %}
-
-            <!-- Overdue Credits Alert -->
-            {% if overdue_credits %}
-            <div class="mb-6 bg-orange-950 border border-orange-500 border-opacity-40 rounded-lg p-4 flex items-center justify-between flex-wrap gap-3">
-                <div class="flex items-center gap-3">
-                    <span class="text-2xl">💳</span>
+            <!-- Today's Revenue Snapshot (Boutique Revision) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div class="md:col-span-2 bg-stone-900/50 border border-white/5 rounded-3xl p-8 relative overflow-hidden flex flex-col justify-between min-h-[240px]">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-brand/5 blur-[100px] pointer-events-none"></div>
+                    
                     <div>
-                        <p class="text-orange-300 font-bold text-sm">{{ overdue_credits }} overdue credit{{ overdue_credits|pluralize }}!</p>
-                        <p class="text-gray-400 text-xs">Total owed: KES {{ total_credit_owed|floatformat:0 }}</p>
+                        <p class="text-stone-500 text-xs uppercase tracking-widest font-bold mb-4">Real-time Revenue</p>
+                        <h3 class="text-5xl md:text-7xl font-outfit font-black text-white tracking-tighter">
+                            <span class="text-2xl align-top mr-1 font-bold text-brand">KES</span>{{ today_revenue|floatformat:0 }}
+                        </h3>
                     </div>
-                </div>
-                <a href="{% url 'credit:credit_list' %}?status=overdue"
-                   class="bg-orange-600 hover:bg-orange-500 text-white font-bold px-4 py-2 rounded text-sm transition">
-                    View Credits →
-                </a>
-            </div>
-            {% endif %}
-
-            <!-- KPI Cards -->
-            <div style="position: relative; overflow: hidden; border-radius: 24px; background: #08111a; margin-bottom: 24px 32px;">
-                <div class="aurora" style="position: absolute; inset: -40px; background: radial-gradient(ellipse 55% 60% at 15% 25%, rgba(0,200,83,0.55) 0%, transparent 60%), radial-gradient(ellipse 50% 55% at 85% 20%, rgba(124,77,255,0.6) 0%, transparent 58%), radial-gradient(ellipse 60% 50% at 80% 80%, rgba(245,166,35,0.45) 0%, transparent 60%), radial-gradient(ellipse 55% 50% at 20% 80%, rgba(29,233,182,0.4) 0%, transparent 58%); filter: blur(28px);"></div>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                    <!-- Total Customers -->
-                    <div style="border: none; background: transparent; position: relative; z-index: 2; padding: 16px 12px;">
-                        <p class="text-amber-200 text-xs mb-1 md:mb-2">Total Customers</p>
-                        <p class="text-2xl md:text-3xl font-bold text-amber-100">{{ total_customers }}</p>
-                        {% if not user.is_premium %}
-                            <p class="text-amber-300 text-xs mt-1 md:mt-2">{{ total_customers }}/{{ customer_limit }} Free</p>
-                        {% endif %}
-                    </div>
-
-                    <!-- Repeat Rate -->
-                    <div style="border: none; background: transparent; position: relative; z-index: 2; padding: 16px 12px;">
-                        <p class="text-cyan-200 text-xs mb-1 md:mb-2">Repeat Rate</p>
-                        <p class="text-2xl md:text-3xl font-bold text-cyan-100">{{ repeat_rate }}%</p>
-                        <p class="text-cyan-300 text-xs mt-1 md:mt-2 hidden sm:block">Returning customers</p>
-                    </div>
-
-                    <!-- Week Revenue -->
-                    <div style="border: none; background: transparent; position: relative; z-index: 2; padding: 16px 12px;">
-                        <p class="text-emerald-200 text-xs mb-1 md:mb-2">Week Revenue</p>
-                        <p class="text-2xl md:text-3xl font-bold text-emerald-100">KES {{ week_revenue|floatformat:0 }}</p>
-                        <p class="text-emerald-300 text-xs mt-1 md:mt-2 hidden sm:block">Last 7 days</p>
-                    </div>
-
-                    <!-- Promo Responses -->
-                    <div style="border: none; background: transparent; position: relative; z-index: 2; padding: 16px 12px;">
-                        <p class="text-violet-200 text-xs mb-1 md:mb-2">Promos Sent</p>
-                        <p class="text-2xl md:text-3xl font-bold text-violet-100">{{ promo_responses }}</p>
-                        <p class="text-violet-300 text-xs mt-1 md:mt-2 hidden sm:block">This week</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Main Content Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
-                <!-- Recent Customers -->
-                <div class="lg:col-span-2 bg-gradient-to-r from-gray-800/20 to-gray-700/20 p-4 md:p-6 rounded-l-xl">
-                    <h2 class="text-white font-bold text-base md:text-lg mb-4">Recent Customers</h2>
-                    {% if recent_customers %}
-                        <div class="space-y-3">
-                            {% for customer in recent_customers %}
-                                <div class="flex items-center justify-between py-3 border-b border-gray-600/30 last:border-0">
-                                    <div class="min-w-0 flex-1">
-                                        <p class="text-white font-semibold text-sm md:text-base truncate">{{ customer.name }}</p>
-                                        <p class="text-gray-400 text-xs md:text-sm">{{ customer.phone }}</p>
-                                    </div>
-                                    <div class="text-right ml-3 shrink-0">
-                                        <p class="text-teal font-bold text-sm">{{ customer.total_visits }} visits</p>
-                                        <p class="text-gray-400 text-xs">KES {{ customer.total_spent|floatformat:0 }}</p>
-                                    </div>
-                                </div>
-                            {% endfor %}
+                    
+                    <div class="flex items-center gap-6 mt-8">
+                        <div class="flex items-center gap-2">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+                                {% if revenue_up %}
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                                {% else %}
+                                    <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6"/></svg>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-stone-500 uppercase font-black tracking-tighter">vs Yesterday</p>
+                                <p class="text-sm font-bold {% if revenue_up %}text-emerald-400{% else %}text-red-400{% endif %}">
+                                    {{ revenue_up|yesno:"+,-" }}KES {{ revenue_change|floatformat:0 }}
+                                </p>
+                            </div>
                         </div>
-                    {% else %}
-                        <p class="text-gray-400 text-center py-6 text-sm">No customers yet. Add your first customer to get started!</p>
-                        <a href="{% url 'customers:customer_add' %}" class="block text-left bg-gradient-to-r from-gold to-amber-400 text-deep font-bold px-6 py-3 rounded-lg hover:from-amber-400 hover:to-yellow-300 hover:scale-105 hover:shadow-lg hover:shadow-gold/30 transition-all duration-300 ease-out">
-                            Add First Customer
+                        <div class="w-px h-8 bg-white/10"></div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-12 h-12 rounded-xl bg-brand/10 flex items-center justify-center text-brand">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-stone-500 uppercase font-black tracking-tighter">Volume</p>
+                                <p class="text-sm text-white font-bold">{{ today_customers }} Customers</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Action Hub -->
+                <div class="bg-stone-900 border border-white/10 rounded-3xl p-8 flex flex-col justify-between overflow-hidden relative">
+                    <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-brand/10 to-transparent pointer-events-none"></div>
+                    <p class="text-stone-500 text-xs uppercase tracking-widest font-bold mb-6">Operations Hub</p>
+                    <div class="space-y-4 relative z-10">
+                        <button onclick="openQuickSaleModal()" class="w-full bg-brand text-deep font-outfit font-black text-lg py-4 rounded-2xl shadow-brand hover:scale-[1.02] transition-transform flex items-center justify-center gap-3">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            New Sale
+                        </button>
+                        <a href="{% url 'customers:customer_add' %}" class="block w-full bg-stone-800 text-white font-outfit font-bold text-center py-4 rounded-2xl border border-white/5 hover:bg-stone-700 transition-colors">
+                            Add Customer
                         </a>
+                        <a href="{% url 'analytics:analytics' %}" class="block w-full bg-stone-800/50 text-stone-400 font-outfit font-bold text-center py-4 rounded-2xl border border-white/5 hover:text-white transition-colors">
+                            View Analytics
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI & Analytics Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-12">
+                <div class="bg-stone-900/40 border border-white/5 p-6 rounded-2xl group flex flex-col justify-between">
+                    <p class="text-stone-500 text-[10px] uppercase tracking-widest font-black mb-1">Retention</p>
+                    <div class="flex items-baseline gap-2">
+                        <h4 class="text-4xl font-outfit font-black text-white">{{ repeat_rate }}%</h4>
+                        <span class="text-[10px] text-emerald-400 font-bold uppercase">Steady</span>
+                    </div>
+                    {% if not user.is_premium %}
+                        <div class="mt-4 pt-4 border-t border-white/5">
+                           <p class="text-[10px] text-stone-500">Free Tier: {{ total_customers }}/{{ customer_limit }} seats</p>
+                        </div>
                     {% endif %}
                 </div>
+                
+                <div class="bg-stone-900/40 border border-white/5 p-6 rounded-2xl group flex flex-col justify-between">
+                    <p class="text-stone-500 text-[10px] uppercase tracking-widest font-black mb-1">This Week</p>
+                    <div class="flex items-baseline gap-2">
+                        <h4 class="text-4xl font-outfit font-black text-white"><span class="text-lg">KES</span>{{ week_revenue|floatformat:0 }}</h4>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/5">
+                        <p class="text-[10px] text-emerald-400">Net Growth</p>
+                    </div>
+                </div>
 
-                <!-- Quick Actions -->
-                <div class="bg-gradient-to-r from-gray-800/20 to-gray-700/20 p-4 md:p-5 rounded-l-xl" style="margin-left: -8px;">
-                    <h2 class="text-white font-bold text-base md:text-lg mb-4 text-center">Quick Actions</h2>
-                    <div class="space-y-3">
-                        <button onclick="openQuickSaleModal()" class="block w-full bg-gradient-to-r from-emerald-500 to-green-400 text-deep font-bold px-4 py-3 rounded-lg text-left hover:from-emerald-400 hover:to-green-300 hover:scale-105 hover:shadow-lg hover:shadow-emerald/30 transition-all duration-300 ease-out text-sm md:text-base">
-                            💰 Quick Sale
-                        </button>
-                        <a href="{% url 'customers:customer_add' %}" class="block bg-gradient-to-r from-gold to-amber-400 text-deep font-bold px-4 py-3 rounded-lg text-left hover:from-amber-400 hover:to-yellow-300 hover:scale-105 hover:shadow-lg hover:shadow-gold/30 transition-all duration-300 ease-out text-sm md:text-base">
-                            ➕ Add Customer
-                        </a>
-                        {% if user.is_premium %}
-                            <a href="{% url 'promotions:promotion_compose' %}" class="block bg-gradient-to-r from-teal to-cyan-400 text-deep font-bold px-4 py-3 rounded-lg text-left hover:from-cyan-400 hover:to-cyan-300 hover:scale-105 hover:shadow-lg hover:shadow-teal/30 transition-all duration-300 ease-out text-sm md:text-base">
-                                📢 Send Promo
-                            </a>
-                        {% else %}
-                            <button disabled class="block w-full bg-gradient-to-r from-gray-600 to-gray-500 text-gray-300 font-bold px-4 py-3 rounded-lg text-left cursor-not-allowed text-sm md:text-base opacity-60">
-                                📢 Promo (PRO)
-                            </button>
-                        {% endif %}
-                        <a href="{% url 'analytics:analytics' %}" class="block bg-gradient-to-r from-navy to-deep border border-sea text-sea font-bold px-4 py-3 rounded-lg text-left hover:border-cyan-300 hover:text-cyan-300 hover:scale-105 hover:shadow-lg hover:shadow-sea/20 transition-all duration-300 ease-out text-sm md:text-base">
-                            📈 Analytics
-                        </a>
-                        {% if at_risk_count %}
-                            <a href="{% url 'customers:customer_list' %}" class="block bg-gradient-to-r from-red-900 to-red-800 text-red-200 font-bold px-4 py-3 rounded-lg text-left hover:from-red-800 hover:to-red-700 hover:text-red-100 hover:scale-105 hover:shadow-lg hover:shadow-red/30 transition-all duration-300 ease-out text-sm md:text-base">
-                                ⚠️ At-Risk ({{ at_risk_count }})
-                            </a>
-                        {% endif %}
+                <div class="bg-stone-900/40 border border-white/5 p-6 rounded-2xl group flex flex-col justify-between">
+                    <p class="text-stone-500 text-[10px] uppercase tracking-widest font-black mb-1">Promos</p>
+                    <div class="flex items-baseline gap-2">
+                        <h4 class="text-4xl font-outfit font-black text-white">{{ promo_responses }}</h4>
+                        <span class="text-[10px] text-stone-500 font-bold uppercase">Sent</span>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/5">
+                        <a href="{% url 'promotions:promotion_compose' %}" class="text-[10px] text-brand font-black hover:underline uppercase">Broadcast →</a>
+                    </div>
+                </div>
+
+                <div class="bg-stone-900/40 border border-white/5 p-6 rounded-2xl flex flex-col justify-between {% if at_risk_count %}border-red-900/30 bg-red-900/5{% endif %}">
+                    <p class="text-stone-500 text-[10px] uppercase tracking-widest font-black mb-1">At Risk</p>
+                    <div class="flex items-baseline gap-2">
+                        <h4 class="text-4xl font-outfit font-black {% if at_risk_count %}text-red-400{% else %}text-white{% endif %}">{{ at_risk_count }}</h4>
+                        <span class="text-[10px] text-stone-500 font-bold uppercase">Alerts</span>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/5">
+                        <a href="{% url 'customers:customer_list' %}" class="text-[10px] {% if at_risk_count %}text-red-400{% else %}text-stone-500{% endif %} font-black uppercase">Review Hub →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Interactions & Transaction Feed -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                <div class="lg:col-span-2 space-y-6">
+                    <h3 class="text-xl font-outfit font-black text-white mb-6 flex items-center gap-3">
+                        Recent Interactions
+                        <span class="px-2 py-0.5 bg-white/5 rounded text-[10px] text-stone-500 font-bold">Latest 5</span>
+                    </h3>
+                    
+                    <div class="space-y-4">
+                        {% for customer in recent_customers %}
+                        <div class="bg-stone-900/30 border border-white/5 p-5 rounded-2xl hover:bg-stone-900/50 transition-all flex items-center justify-between group">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-xl bg-stone-800 flex items-center justify-center font-outfit font-black text-lg text-brand group-hover:bg-brand group-hover:text-deep transition-all">
+                                    {{ customer.name|first|upper }}
+                                </div>
+                                <div>
+                                    <p class="text-white font-bold leading-none mb-1">{{ customer.name }}</p>
+                                    <p class="text-xs text-stone-500">{{ customer.phone }}</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-white font-outfit font-black text-lg leading-none mb-1">KES {{ customer.total_spent|floatformat:0 }}</p>
+                                <p class="text-[10px] text-brand uppercase font-bold tracking-widest">{{ customer.total_visits }} Purchases</p>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-20 bg-stone-900/20 border border-dashed border-white/10 rounded-3xl">
+                            <p class="text-stone-500 italic mb-6">No interactions recorded yet.</p>
+                            <a href="{% url 'customers:customer_add' %}" class="inline-block bg-brand text-deep font-outfit font-black px-8 py-4 rounded-xl shadow-brand">Initiate First Interaction</a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Strategic Column / Credit Health -->
+                <div class="space-y-8">
+                    {% if overdue_credits %}
+                    <div class="bg-red-950/20 border border-red-500/20 p-6 rounded-3xl relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 text-6xl opacity-10">💳</div>
+                        <h4 class="text-red-400 font-outfit font-black text-lg mb-2">Credit Alerts</h4>
+                        <p class="text-red-200/60 text-xs mb-6 font-medium">{{ overdue_credits }} accounts are currently overdue. Proactive follow-up is recommended.</p>
+                        <a href="{% url 'credit:credit_list' %}?status=overdue" class="inline-block w-full bg-red-500 text-white font-bold text-center py-3 rounded-xl hover:bg-red-400 transition-colors">Resolve Credits</a>
+                    </div>
+                    {% endif %}
+
+                    <!-- Coffee Facts / Culture Section (Human Element) -->
+                    <div class="bg-stone-900/40 p-6 border border-white/5 rounded-3xl">
+                        <p class="text-brand font-black text-[10px] uppercase tracking-widest mb-4">Did You Know?</p>
+                        <p class="text-stone-400 text-xs italic leading-relaxed">{{ coffee_fact }}</p>
                     </div>
                 </div>
             </div>
@@ -190,47 +227,37 @@
     </div>
 </div>
 
-<!-- Coffee Footer -->
-<div class="bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800 border-t border-gray-600 mt-8">
-    <div class="max-w-7xl mx-auto px-4 md:px-8 py-6">
-        <div class="text-center">
-            <p class="text-gray-300 text-sm font-medium">{{ coffee_fact }}</p>
-        </div>
-    </div>
-</div>
-
-<!-- Quick Sale Modal -->
-<div id="quickSaleModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-600 rounded-2xl p-6 max-w-md w-full">
-        <div class="flex justify-between items-center mb-6">
-            <h3 class="text-xl font-bold text-white">💰 Quick Sale</h3>
-            <button onclick="closeQuickSaleModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+<!-- Quick Sale Modal (Redesigned) -->
+<div id="quickSaleModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[100] flex items-center justify-center p-4 hidden">
+    <div class="bg-stone-900 border border-white/10 rounded-3xl p-8 max-w-md w-full shadow-2xl shadow-brand/20">
+        <div class="flex justify-between items-center mb-8">
+            <h3 class="text-2xl font-outfit font-black text-white">Log Sale</h3>
+            <button onclick="closeQuickSaleModal()" class="w-10 h-10 rounded-full bg-stone-800 text-stone-400 hover:text-white flex items-center justify-center transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l18 18"/></svg>
+            </button>
         </div>
         
-        <form method="POST" action="{% url 'vendors:quick_sale' %}">
+        <form method="POST" action="{% url 'vendors:quick_sale' %}" class="space-y-6">
             {% csrf_token %}
             
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-300 mb-2">Amount (KES)</label>
-                <input type="number" name="amount" min="0" step="0.01" placeholder="0" class="w-full bg-gray-700 border border-gray-600 rounded-xl px-4 py-4 text-white text-3xl font-bold placeholder-gray-500 focus:outline-none focus:border-emerald-500 text-center" required>
-            </div>
+            <div class="space-y-4">
+                <div class="bg-stone-800/50 p-6 rounded-2xl border border-white/5">
+                    <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest mb-4 text-center">Amount (KES)</label>
+                    <input type="number" name="amount" min="0" step="0.01" placeholder="0" class="w-full bg-transparent text-white text-6xl font-outfit font-black placeholder-white/5 focus:outline-none text-center" required autofocus>
+                </div>
 
-            <div class="mb-6 p-4 bg-gray-700/50 rounded-lg border border-gray-600">
-                <label class="block text-sm font-medium text-gray-300 mb-1">Loyalty / Phone (Optional)</label>
-                <p class="text-xs text-gray-400 mb-2">Enter phone number to earn loyalty points</p>
-                <input type="tel" name="customer_phone" placeholder="e.g. 07..." class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-emerald-500">
+                <div class="bg-stone-800/50 p-5 rounded-2xl border border-white/5">
+                    <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest mb-3">Customer (Phone)</label>
+                    <input type="tel" name="customer_phone" placeholder="e.g. 07..." class="w-full bg-transparent text-white font-bold placeholder-white/10 focus:outline-none border-b border-white/10 py-2">
+                </div>
+                
+                <input type="text" name="notes" placeholder="Optional notes..." class="w-full bg-transparent text-stone-500 text-sm focus:outline-none px-2 border-l-2 border-brand/30">
             </div>
             
-            <div class="mb-6">
-                <input type="text" name="notes" placeholder="Notes (optional)" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-emerald-500">
-            </div>
-            
-            <div class="flex gap-3">
-                <button type="button" onclick="closeQuickSaleModal()" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-lg transition">
-                    Cancel
-                </button>
-                <button type="submit" class="flex-1 bg-gradient-to-r from-emerald-500 to-green-400 hover:from-emerald-600 hover:to-green-500 text-deep font-bold py-2 px-4 rounded-lg transition">
-                    Log Sale →
+            <div class="flex gap-4 pt-4">
+                <button type="submit" class="flex-2 bg-brand text-deep font-outfit font-black text-xl py-5 px-8 rounded-2xl shadow-brand hover:scale-[1.02] flex items-center justify-center gap-2">
+                    Verify & Log
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                 </button>
             </div>
         </form>
@@ -238,110 +265,73 @@
 </div>
 
 <script>
-// Streak popup functionality
 function closeStreakPopup() {
     const popup = document.getElementById('streak-popup');
     if (popup) {
         popup.style.display = 'none';
-        // Store that popup was shown this session
         localStorage.setItem('streakPopupShown', 'true');
     }
 }
 
-// Quick Sale modal functionality
 function openQuickSaleModal() {
-    document.getElementById('quickSaleModal').classList.remove('hidden');
+    const modal = document.getElementById('quickSaleModal');
+    modal.classList.remove('hidden');
+    modal.querySelector('input[name="amount"]').focus();
 }
 
 function closeQuickSaleModal() {
     document.getElementById('quickSaleModal').classList.add('hidden');
 }
 
-// Close modal when clicking outside
 document.getElementById('quickSaleModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeQuickSaleModal();
-    }
+    if (e.target === this) closeQuickSaleModal();
 });
 
-// Auto-close streak popup after 5 seconds
 document.addEventListener('DOMContentLoaded', function() {
     const popup = document.getElementById('streak-popup');
     const popupShown = localStorage.getItem('streakPopupShown');
-    
-    // Only show popup if it hasn't been shown this session
     if (popup && !popupShown) {
-        // Add bounce animation
-        popup.querySelector('div').style.transform = 'scale(1)';
-        
-        // Auto-close after 5 seconds
-        setTimeout(() => {
-            closeStreakPopup();
-        }, 5000);
-    } else if (popup && popupShown) {
-        // Hide popup immediately if already shown this session
+        setTimeout(() => closeStreakPopup(), 8000);
+    } else if (popup) {
         popup.style.display = 'none';
     }
 });
 
-// --- C2B M-Pesa Live Poller ---
-function pollLatestPayments() {
+// Start M-Pesa Poller
+setInterval(() => {
     fetch('/billing/api/poll-latest-payments/')
-        .then(response => response.json())
+        .then(r => r.json())
         .then(data => {
-            if (data.new_payments && data.payments.length > 0) {
-                data.payments.forEach(payment => {
-                    showC2BAlert(payment.amount, payment.customer_name, payment.phone);
-                });
+            if (data.new_payments) {
+                data.payments.forEach(p => showC2BAlert(p.amount, p.customer_name, p.phone));
             }
-        })
-        .catch(err => console.error("Poll error:", err));
-}
+        });
+}, 3000);
 
 function showC2BAlert(amount, name, phone) {
-    const container = document.getElementById('c2b-alert-container');
-    const alertId = 'alert-' + Date.now();
-    
-    // Play a subtle ding sound (optional, assuming browser allows audio)
-    // const audio = new Audio('/static/audio/ding.mp3'); audio.play().catch(e=>console.log(e));
-    
-    // Create alert element
+    const container = document.getElementById('c2b-alert-container') || document.body;
     const alertEl = document.createElement('div');
-    alertEl.id = alertId;
-    alertEl.className = "bg-gradient-to-r from-emerald-500 to-green-400 text-deep p-4 rounded-lg shadow-2xl shadow-emerald-500/50 transform translate-x-full transition-transform duration-500 ease-out flex items-center gap-4 min-w-[300px]";
-    
-    let displayName = name || phone || 'Cash Customer';
-    if (!name && !phone) displayName = 'Anonymous Walk-in';
-
+    alertEl.className = "fixed top-24 right-6 bg-brand text-deep p-6 rounded-2xl shadow-brand animate-fade-in-right z-[200] flex items-center gap-6";
     alertEl.innerHTML = `
-        <div class="text-3xl">✅</div>
+        <div class="text-4xl animate-bounce">⚡</div>
         <div>
-            <p class="font-bold text-sm">KES ${amount}</p>
-            <p class="text-xs opacity-90">Received from ${displayName}</p>
+            <p class="font-outfit font-black text-2xl tracking-tighter">+ KES ${amount}</p>
+            <p class="text-[10px] font-bold uppercase tracking-widest opacity-80">${name || phone || 'Payment Received'}</p>
         </div>
     `;
-    
     container.appendChild(alertEl);
-    
-    // Animate in
     setTimeout(() => {
-        alertEl.classList.remove('translate-x-full');
-    }, 50);
-    
-    // Auto remove after 6 seconds
-    setTimeout(() => {
-        alertEl.classList.add('translate-x-full');
-        setTimeout(() => {
-            if(container.contains(alertEl)) {
-                container.removeChild(alertEl);
-            }
-            // Optional: reload page to update counters softly, or let them manually refresh
-        }, 500);
-    }, 6000);
+        alertEl.classList.add('opacity-0', 'translate-x-full');
+        setTimeout(() => alertEl.remove(), 500);
+    }, 7000);
 }
-
-// Start polling every 3 seconds only if we are on the dashboard
-setInterval(pollLatestPayments, 3000);
-
 </script>
+
+<style>
+@keyframes fade-in-right {
+    from { opacity: 0; transform: translateX(100px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+.animate-fade-in-right { animation: fade-in-right 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
+</style>
 {% endblock %}

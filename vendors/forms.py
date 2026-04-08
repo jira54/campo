@@ -27,7 +27,7 @@ class RegisterForm(forms.ModelForm):
 
     class Meta:
         model  = Vendor
-        fields = ['email', 'business_name', 'owner_name', 'business_type', 'phone_number', 'university']
+        fields = ['email', 'business_name', 'owner_name', 'business_type', 'phone_number', 'persona_type']
 
     def clean(self):
         cleaned = super().clean()
@@ -57,7 +57,6 @@ class RegisterForm(forms.ModelForm):
         self.fields['business_name'].widget.attrs.update({'placeholder': "e.g., John's Kitchen"})
         self.fields['owner_name'].widget.attrs.update({'placeholder': 'e.g., John Doe'})
         self.fields['phone_number'].widget.attrs.update({'placeholder': '+254712345678'})
-        self.fields['university'].widget.attrs.update({'placeholder': 'e.g., Nairobi University'})
         self.fields['password'].widget.attrs.update({'placeholder': '••••••••'})
         self.fields['password2'].widget.attrs.update({'placeholder': '••••••••'})
 
@@ -73,7 +72,7 @@ class VendorProfileForm(forms.ModelForm):
 
     class Meta:
         model  = Vendor
-        fields = ['business_name', 'business_type', 'phone_number', 'university', 'email']
+        fields = ['business_name', 'business_type', 'persona_type', 'phone_number', 'email', 'logo_url', 'brand_accent_color']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -39,7 +39,29 @@ with connection.cursor() as cursor:
             print(f"  Dropping {t}...")
             cursor.execute(f'DROP TABLE IF EXISTS "{t}" CASCADE')
 
+    # Ensure crucial business columns exist if tables already exist
+    if "vendors_vendor" in tables:
+        print("  Checking vendors_vendor for new columns...")
+        cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'vendors_vendor'")
+        existing_columns = {r[0] for r in cursor.fetchall()}
+        
+        if "brand_accent_color" not in existing_columns:
+            print("    Adding missing column: brand_accent_color")
+            cursor.execute("ALTER TABLE vendors_vendor ADD COLUMN brand_accent_color VARCHAR(7) DEFAULT '#F59E0B'")
+
+        if "persona_type" not in existing_columns:
+            print("    Adding missing column: persona_type")
+            cursor.execute("ALTER TABLE vendors_vendor ADD COLUMN persona_type VARCHAR(20) DEFAULT 'msme'")
+
+        if "logo_url" not in existing_columns:
+            print("    Adding missing column: logo_url")
+            cursor.execute("ALTER TABLE vendors_vendor ADD COLUMN logo_url VARCHAR(500) DEFAULT ''")
+
     connection.connection.commit()
+
+print("\nMigrating core contenttypes and auth first to satisfy post_migrate signals...")
+call_command("migrate", "contenttypes", verbosity=0)
+call_command("migrate", "auth", verbosity=0)
 
 print("\nFaking business app migrations (tables exist)...")
 business_apps = ["vendors", "customers", "billing", "credit", "notes", "promotions"]

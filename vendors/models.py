@@ -17,6 +17,12 @@ BUSINESS_TYPES = [
     ('other',    'Other (specify)')
 ]
 
+PERSONA_TYPES = [
+    ('msme', 'Growth Hustler (MSME)'),
+    ('ngo', 'Impact Maker (NGO)'),
+    ('resort', 'Luxury Concierge (Resort)'),
+]
+
 
 class VendorManager(BaseUserManager):
     def create_user(self, email, business_name, owner_name, phone_number, password=None, **extra_fields):
@@ -46,8 +52,13 @@ class Vendor(AbstractBaseUser, PermissionsMixin):
     owner_name        = models.CharField(max_length=255)
     phone_number      = models.CharField(max_length=50)
     phone             = models.CharField(max_length=20, default='')
-    university        = models.CharField(max_length=120, default='')
     business_type_custom = models.CharField(max_length=120, blank=True, default='')
+    
+    # --- Branding & Persona ---
+    logo_url          = models.URLField(max_length=500, blank=True, default='', help_text="Direct link to your business logo")
+    brand_accent_color = models.CharField(max_length=7, default='#F59E0B', help_text="Hex color for your dashboard accents")
+    persona_type      = models.CharField(max_length=20, choices=PERSONA_TYPES, default='msme')
+    
     mpesa_till_number = models.CharField(max_length=20, blank=True, default='', help_text="Used for C2B live payment tracking")
     email             = models.EmailField(unique=True)
     is_active         = models.BooleanField(default=True)

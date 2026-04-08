@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Operational Setup - CampoPawa Concierge{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen bg-deep overflow-hidden">
+    {% include 'resort_portal/sidebar_resort.html' %}
+
+    <div class="flex-1 h-screen overflow-y-auto overflow-x-hidden relative">
+        <div class="p-6 md:p-10 pb-24">
+            
+            <!-- Header -->
+            <div class="mb-12">
+                <h1 class="text-4xl md:text-6xl font-outfit font-black text-white leading-tight mb-4">
+                    Configure <span class="text-brand">Precision</span>.
+                </h1>
+                <p class="text-stone-500 text-lg max-w-2xl">Define your revenue centers and guest inventory to enable seamless operational logging across your resort.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                
+                <!-- Revenue Centers (Departments) -->
+                <div class="space-y-8">
+                    <div class="flex justify-between items-end border-b border-white/5 pb-4">
+                        <h2 class="text-2xl font-outfit font-black text-white">Revenue Centers</h2>
+                        <span class="text-[10px] text-stone-500 font-bold uppercase tracking-widest">{{ departments.count }} Active</span>
+                    </div>
+
+                    <div class="bg-stone-900/50 border border-white/5 rounded-3xl p-8">
+                        <form method="POST" class="flex gap-4 mb-8">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="add_dept">
+                            <input type="text" name="name" placeholder="e.g. Pool Bar" class="flex-1 bg-stone-800 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all" required>
+                            <button type="submit" class="bg-brand text-deep font-outfit font-black px-6 py-4 rounded-xl shadow-brand hover:scale-[1.02] transition-all">Add Center</button>
+                        </form>
+
+                        <div class="space-y-3">
+                            {% for dept in departments %}
+                            <div class="flex justify-between items-center p-4 bg-stone-950/20 rounded-2xl border border-white/5 hover:border-brand/30 transition-all group">
+                                <span class="text-white font-bold">{{ dept.name }}</span>
+                                <form method="POST" class="opacity-0 group-hover:opacity-100 transition-opacity">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="delete_dept">
+                                    <input type="hidden" name="id" value="{{ dept.id }}">
+                                    <button type="submit" class="text-red-400 hover:text-red-300 text-xs font-black uppercase tracking-widest">Remove</button>
+                                </form>
+                            </div>
+                            {% empty %}
+                            <p class="text-stone-600 italic text-center py-6">No revenue centers defined.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Room Inventory -->
+                <div class="space-y-8">
+                    <div class="flex justify-between items-end border-b border-white/5 pb-4">
+                        <h2 class="text-2xl font-outfit font-black text-white">Guest Inventory</h2>
+                        <span class="text-[10px] text-stone-500 font-bold uppercase tracking-widest">{{ rooms.count }} Rooms</span>
+                    </div>
+
+                    <div class="bg-stone-900/50 border border-white/5 rounded-3xl p-8">
+                        <form method="POST" class="grid grid-cols-2 gap-4 mb-8">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="add_room">
+                            <div class="col-span-1">
+                                <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest mb-2">Room #</label>
+                                <input type="text" name="room_number" placeholder="101" class="w-full bg-stone-800 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all" required>
+                            </div>
+                            <div class="col-span-1">
+                                <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest mb-2">Base Rate</label>
+                                <input type="number" name="rate" placeholder="5000" class="w-full bg-stone-800 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all">
+                            </div>
+                            <div class="col-span-2">
+                                <button type="submit" class="w-full bg-white text-deep font-outfit font-black py-4 rounded-xl hover:scale-[1.02] transition-all">Register Room</button>
+                            </div>
+                        </form>
+
+                        <div class="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                            {% for room in rooms %}
+                            <div class="flex justify-between items-center p-4 bg-stone-950/20 rounded-2xl border border-white/5 hover:border-brand/30 transition-all group">
+                                <div class="flex items-center gap-4">
+                                    <span class="w-10 h-10 rounded-lg bg-stone-800 flex items-center justify-center text-brand font-black">{{ room.room_number }}</span>
+                                    <span class="text-stone-400 text-xs font-bold uppercase tracking-widest">{{ room.room_type }}</span>
+                                </div>
+                                <form method="POST" class="opacity-0 group-hover:opacity-100 transition-opacity">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="delete_room">
+                                    <input type="hidden" name="id" value="{{ room.id }}">
+                                    <button type="submit" class="text-red-400 hover:text-red-300 text-xs font-black uppercase tracking-widest">Delete</button>
+                                </form>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+}
+</style>
+{% endblock %}

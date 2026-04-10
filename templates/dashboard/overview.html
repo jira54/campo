@@ -15,11 +15,11 @@
             <div class="flex items-center gap-3 relative z-10">
                 <div class="w-2 h-2 rounded-full bg-brand animate-pulse"></div>
                 <p class="text-[10px] font-black uppercase tracking-widest text-brand">
-                    Premium Boutique Trial Active &mdash; 
+                Retail Pro Trial Active &mdash; 
                     <span class="text-white">Full access granted until {{ user.trial_end_date|date:"M d, Y" }}</span>
                 </p>
             </div>
-            <a href="{% url 'billing:pricing' %}" class="relative z-10 text-[10px] font-black uppercase tracking-widest bg-brand text-deep px-4 py-1.5 rounded-full hover:scale-105 active:scale-95 transition-all shadow-brand">
+            <a href="{% url 'billing:upgrade' %}" class="relative z-10 text-[10px] font-black uppercase tracking-widest bg-brand text-deep px-4 py-1.5 rounded-full hover:scale-105 active:scale-95 transition-all shadow-brand">
                 Upgrade to Pro
             </a>
         </div>
@@ -50,7 +50,7 @@
                     </div>
                     
                     <!-- The Pulse Engine -->
-                    <div class="max-w-md bg-stone-900/40 backdrop-blur-md border border-white/5 p-5 rounded-2xl relative overflow-hidden group">
+                    <div class="max-w-md glass-box premium-border p-5 rounded-2xl relative overflow-hidden group">
                         <div class="absolute top-0 right-0 w-24 h-24 bg-brand/10 blur-3xl -mr-12 -mt-12 group-hover:bg-brand/20 transition-all"></div>
                         <div class="relative z-10">
                             <h4 class="text-[10px] font-black text-brand uppercase tracking-widest mb-2 flex items-center gap-2">
@@ -78,15 +78,13 @@
                     </button>
                 </div>
             </div>
-            {% endif %}
-
-            <!-- Today's Revenue Snapshot (Boutique Revision) -->
+            {% endif %}            <!-- Today's Revenue Snapshot (Premium Boxed Revision) -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                <div class="md:col-span-2 bg-stone-900/50 border border-white/5 rounded-3xl p-8 relative overflow-hidden flex flex-col justify-between min-h-[240px]">
+                <div class="md:col-span-2 glass-box premium-border border-brand/20 rounded-3xl p-8 relative overflow-hidden flex flex-col justify-between min-h-[240px]">
                     <div class="absolute top-0 right-0 w-64 h-64 bg-brand/5 blur-[100px] pointer-events-none"></div>
                     
                     <div>
-                        <p class="text-stone-500 text-xs uppercase tracking-widest font-bold mb-4">Real-time Revenue</p>
+                        <p class="text-stone-500 text-xs uppercase tracking-widest font-black mb-4">Real-time Revenue</p>
                         <h3 class="text-5xl md:text-7xl font-outfit font-black text-white tracking-tighter">
                             <span class="text-2xl align-top mr-1 font-bold text-brand">KES</span>{{ today_revenue|floatformat:0 }}
                         </h3>
@@ -94,7 +92,7 @@
                     
                     <div class="flex items-center gap-6 mt-8">
                         <div class="flex items-center gap-2">
-                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20">
                                 {% if revenue_up %}
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
                                 {% else %}
@@ -110,7 +108,7 @@
                         </div>
                         <div class="w-px h-8 bg-white/10"></div>
                         <div class="flex items-center gap-2">
-                            <div class="w-12 h-12 rounded-xl bg-brand/10 flex items-center justify-center text-brand">
+                            <div class="w-12 h-12 rounded-xl bg-brand/10 flex items-center justify-center text-brand border border-brand/20">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                             </div>
                             <div>
@@ -122,7 +120,7 @@
                 </div>
 
                 <!-- Quick Action Hub -->
-                <div class="bg-stone-900 border border-white/10 rounded-3xl p-8 flex flex-col justify-between overflow-hidden relative">
+                <div class="glass-box premium-border border-white/10 rounded-3xl p-8 flex flex-col justify-between overflow-hidden relative">
                     <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-brand/10 to-transparent pointer-events-none"></div>
                     <p class="text-stone-500 text-xs uppercase tracking-widest font-bold mb-6">Operations Hub</p>
                     <div class="space-y-4 relative z-10">
@@ -139,10 +137,7 @@
                     </div>
                 </div>
             </div>
-
-            <!-- KPI & Analytics Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-12">
-                <div class="bg-stone-900/40 border border-white/5 p-6 rounded-2xl group flex flex-col justify-between">
+                <div class="glass-box premium-border p-6 rounded-2xl group flex flex-col justify-between">
                     <p class="text-stone-500 text-[10px] uppercase tracking-widest font-black mb-1">Retention</p>
                     <div class="flex items-baseline gap-2">
                         <h4 class="text-4xl font-outfit font-black text-white">{{ repeat_rate }}%</h4>
@@ -155,7 +150,7 @@
                     {% endif %}
                 </div>
                 
-                <div class="bg-stone-900/40 border border-white/5 p-6 rounded-2xl group flex flex-col justify-between">
+                <div class="glass-box premium-border p-6 rounded-2xl group flex flex-col justify-between">
                     <p class="text-stone-500 text-[10px] uppercase tracking-widest font-black mb-1">This Week</p>
                     <div class="flex items-baseline gap-2">
                         <h4 class="text-4xl font-outfit font-black text-white"><span class="text-lg">KES</span>{{ week_revenue|floatformat:0 }}</h4>
@@ -165,7 +160,7 @@
                     </div>
                 </div>
 
-                <div class="bg-stone-900/40 border border-white/5 p-6 rounded-2xl group flex flex-col justify-between">
+                <div class="glass-box premium-border p-6 rounded-2xl group flex flex-col justify-between">
                     <p class="text-stone-500 text-[10px] uppercase tracking-widest font-black mb-1">Promos</p>
                     <div class="flex items-baseline gap-2">
                         <h4 class="text-4xl font-outfit font-black text-white">{{ promo_responses }}</h4>
@@ -176,7 +171,7 @@
                     </div>
                 </div>
 
-                <div class="bg-stone-900/40 border border-white/5 p-6 rounded-2xl flex flex-col justify-between {% if at_risk_count %}border-red-900/30 bg-red-900/5{% endif %}">
+                <div class="glass-box premium-border p-6 rounded-2xl flex flex-col justify-between {% if at_risk_count %}glow-purple bg-red-950/10{% endif %}">
                     <p class="text-stone-500 text-[10px] uppercase tracking-widest font-black mb-1">At Risk</p>
                     <div class="flex items-baseline gap-2">
                         <h4 class="text-4xl font-outfit font-black {% if at_risk_count %}text-red-400{% else %}text-white{% endif %}">{{ at_risk_count }}</h4>
@@ -198,7 +193,7 @@
                     
                     <div class="space-y-4">
                         {% for customer in recent_customers %}
-                        <div class="bg-stone-900/30 border border-white/5 p-5 rounded-2xl hover:bg-stone-900/50 transition-all flex items-center justify-between group">
+                        <div class="glass-box premium-border border-white/5 p-5 rounded-2xl hover:bg-stone-800/40 transition-all flex items-center justify-between group">
                             <div class="flex items-center gap-4">
                                 <div class="w-12 h-12 rounded-xl bg-stone-800 flex items-center justify-center font-outfit font-black text-lg text-brand group-hover:bg-brand group-hover:text-deep transition-all">
                                     {{ customer.name|first|upper }}
@@ -214,7 +209,7 @@
                             </div>
                         </div>
                         {% empty %}
-                        <div class="text-center py-20 bg-stone-900/20 border border-dashed border-white/10 rounded-3xl">
+                        <div class="text-center py-20 glass-box premium-border border-dashed border-white/10 rounded-3xl">
                             <p class="text-stone-500 italic mb-6">No interactions recorded yet.</p>
                             <a href="{% url 'customers:customer_add' %}" class="inline-block bg-brand text-deep font-outfit font-black px-8 py-4 rounded-xl shadow-brand">Initiate First Interaction</a>
                         </div>
@@ -234,7 +229,7 @@
                     {% endif %}
 
                     <!-- Coffee Facts / Culture Section (Human Element) -->
-                    <div class="bg-stone-900/40 p-6 border border-white/5 rounded-3xl">
+                    <div class="glass-box premium-border p-6 rounded-3xl border-brand/10">
                         <p class="text-brand font-black text-[10px] uppercase tracking-widest mb-4">Did You Know?</p>
                         <p class="text-stone-400 text-xs italic leading-relaxed">{{ coffee_fact }}</p>
                     </div>

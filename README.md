@@ -1,49 +1,53 @@
-# CampoPawa (MVP)
+# CampoPawa Unified SaaS Ecosystem
 
-Lightweight customer retention and loyalty tracking for campus vendors.
+A high-performance, multi-tenant enterprise operating system designed for **MSMEs (Retail Pro)**, **NGOs (Impact Ops)**, and **Resorts (Hospitality OS)**.
 
-Quick start (local development)
+## 🚀 Core Verticals
 
-1. Activate virtualenv
+- **MSME Retail Pro**: Intelligent sales logging, auto-CRM, and customer engagement.
+- **NGO Impact Ops**: USAID AMELP-compliant beneficiary tracking and statistical reporting.
+- **Resort Hospitality OS**: Professional Property Management System (PMS) with folio tracking and department-based yield analysis.
 
-Windows (PowerShell):
+## 🛠️ Internal Tech Stack
 
-```powershell
-& D:\campo\venv\Scripts\Activate.ps1
-```
+- **Backend**: Django 5.x / Python 3.12
+- **Frontend**: Vanilla HTML5, TailwindCSS, Inter & Outfit Typography
+- **UI Architecture**: Glassmorphic "Boxed" UI with premium dark-themed accents.
+- **Database**: PostgreSQL (Production) / SQLite (Local)
+- **Deployment**: Fly.io (Platform) / Supabase (Database)
 
-2. Run migrations
+## 🏗️ Quick Start (Local Development)
 
-```powershell
-D:/campo/venv/Scripts/python.exe manage.py migrate
-```
+1. **Activate Virtual Environment**
+   ```powershell
+   & ./venv/Scripts/Activate.ps1
+   ```
 
-3. Seed sample data (creates superuser and a test vendor)
+2. **Run Migrations**
+   ```powershell
+   python manage.py migrate
+   ```
 
-```powershell
-D:/campo/venv/Scripts/python.exe scripts/seed_sample_data.py
-```
+3. **Seed System Archetypes**
+   ```powershell
+   python scripts/seed_sample_data.py
+   ```
+   *Creates superuser and base vertical profiles.*
 
-4. Start dev server
+4. **Launch Platform**
+   ```powershell
+   python manage.py runserver
+   ```
+   *Access at http://127.0.0.1:8000/*
 
-```powershell
-D:/campo/venv/Scripts/python.exe manage.py runserver
-```
+---
 
-Open http://127.0.0.1:8000/ to view the app and http://127.0.0.1:8000/admin/ for admin.
+## 🔐 Security & Permissions
 
-Credentials created by seeder
+All enterprise features are gated by vertical-specific decorators (`@ngo_enterprise_required`, `@resort_enterprise_required`) and tier-based billing logic.
 
-- Superuser: `admin@campopawa.test` / `adminpass`
-- Vendor: `vendor@campopawa.test` / `vendorpass`
+## 💰 Billing Structure
 
-Notes
-
-- The project expects PostgreSQL for production. For local dev we use your configured DB.
-- If you see a warning about `D:\campo\static` not existing, create a `static/` directory at project root or update `STATICFILES_DIRS` in `config/settings.py`.
-
-Next steps
-
-- Improve mobile UI and progress bars
-- Add search on `Customers` page
-- Add small chart for weekly revenue
+- **Standard (Free)**: 20 Customer Seats, Basic Analytics.
+- **Retail Pro (KES 700/mo)**: Unlimited CRM, Marketing Automations.
+- **Enterprise (KES 3,500/mo)**: Multi-tenant Portals, Advanced Reporting, Priority Support.

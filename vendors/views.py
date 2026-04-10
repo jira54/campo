@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.contrib import messages
-from django.db.models import Sum, Count, Q
+from django.db.models import Sum, Count, Q, Max
 from django.utils import timezone
 from datetime import timedelta
 from django.urls import reverse_lazy
@@ -160,7 +160,7 @@ def dashboard(request):
     recent_customers = customers.order_by('-added_at')[:5]
 
     at_risk_count = customers.annotate(
-        last_purchase_date=models.Max('purchases__purchased_at')
+        last_purchase_date=Max('purchases__purchased_at')
     ).filter(
         last_purchase_date__lt=now - timedelta(days=14),
         last_purchase_date__isnull=False,

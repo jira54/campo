@@ -32,7 +32,7 @@
                 <span class="font-bold tracking-wide">Revenue Hub</span>
             </a>
             <div class="pt-10">
-                <a href="{% url 'vendors:root_redirect' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition">
+                <a href="{% url 'root_redirect' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition">
                     <span class="text-lg">🔙</span>
                     <span>Exit to System</span>
                 </a>
@@ -61,7 +61,7 @@
                 <div class="md:col-span-2 bg-gradient-to-br from-gray-900 to-black border-2 border-red-900/50 rounded-2xl p-6 relative overflow-hidden shadow-[0_0_30px_rgba(220,38,38,0.1)]">
                     <div class="absolute -right-10 -top-10 w-40 h-40 bg-red-600/10 rounded-full blur-3xl"></div>
                     <p class="text-gray-400 font-mono text-sm mb-2 relative z-10">MONTHLY RECURRING REVENUE</p>
-                    <h2 class="text-white text-5xl font-black tracking-tighter relative z-10 mb-2">KES {{ total_mrr|make_list|join:""|default:"0" }}</h2>
+                    <h2 class="text-white text-5xl font-black tracking-tighter relative z-10 mb-2">KES {{ total_mrr|default:"0" }}</h2>
                     <p class="text-emerald-400 text-xs font-bold font-mono">↑ MRR ENGINE ACTIVE</p>
                 </div>
 

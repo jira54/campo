@@ -1,17 +1,17 @@
-<!-- Mobile Top Bar (Boutique) -->
+<!-- Mobile Top Bar (Resort) -->
 <div class="md:hidden fixed top-0 left-0 right-0 z-[60] bg-deep border-b border-white/5 px-6 py-4 flex items-center justify-between backdrop-blur-xl">
     <div class="flex items-center gap-3">
         <button id="menu-toggle" class="text-white text-2xl leading-none">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/></svg>
         </button>
-        <span class="text-brand font-outfit font-black text-sm uppercase tracking-widest">Resort Portal</span>
+        <span class="text-brand font-outfit font-black text-sm uppercase tracking-widest">CampoPawa</span>
     </div>
     <div class="w-10 h-10 rounded-xl bg-brand flex items-center justify-center text-deep font-black text-xs shadow-brand">
         {{ user.business_name|first|upper }}
     </div>
 </div>
 
-<!-- Sidebar (Boutique) -->
+<!-- Sidebar (Resort) -->
 <div id="sidebar" class="w-72 bg-deep border-r border-white/5 h-screen flex flex-col fixed top-0 left-0 z-[70] -translate-x-full md:translate-x-0 md:shrink-0 md:sticky md:top-0 transition-all duration-500 ease-in-out">
 
     <!-- Close button (mobile) -->
@@ -42,7 +42,7 @@
         
         <a href="{% url 'resort_portal:dashboard' %}" class="flex items-center gap-4 px-4 py-4 rounded-2xl transition-all group {% if request.resolver_match.url_name == 'dashboard' %}bg-brand text-deep shadow-brand{% else %}text-stone-400 hover:bg-white/[0.03] hover:text-white{% endif %}">
             <svg class="w-5 h-5 {% if request.resolver_match.url_name == 'dashboard' %}text-deep{% else %}text-brand group-hover:scale-110 transition-transform{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
-            <span class="font-outfit font-bold text-sm tracking-tight">Concierge Dashboard</span>
+            <span class="font-outfit font-bold text-sm tracking-tight">Resort Dashboard</span>
         </a>
 
         <div class="pt-6">
@@ -63,6 +63,29 @@
                 <span class="font-outfit font-bold text-sm tracking-tight">Property Setup</span>
             </a>
         </div>
+        {% if user.is_superuser %}
+        <div class="pt-6">
+            <p class="px-4 text-[10px] font-black text-rose-500 uppercase tracking-[0.2em] mb-4">SaaS Control</p>
+            
+            <a href="{% url 'admin_dashboard:saas_overview' %}" class="flex items-center gap-4 px-4 py-4 rounded-2xl transition-all group {% if request.resolver_match.app_name == 'admin_dashboard' %}bg-rose-500 text-white shadow-[0_0_20px_rgba(244,63,94,0.3)]{% else %}text-stone-400 hover:bg-rose-500/5 hover:text-white{% endif %}">
+                <svg class="w-5 h-5 {% if request.resolver_match.app_name == 'admin_dashboard' %}text-white{% else %}text-rose-500 group-hover:scale-110 transition-transform{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
+                <span class="font-outfit font-bold text-sm tracking-tight text-white">Enterprise Hub</span>
+            </a>
+
+            <div class="mt-4 px-4 py-3 bg-stone-900/50 border border-white/5 rounded-2xl space-y-2">
+                <p class="text-[9px] font-black text-stone-600 uppercase tracking-widest mb-2">Vertical Switcher</p>
+                <a href="{% url 'vendors:dashboard' %}" class="flex items-center gap-2 text-[11px] font-bold text-amber-500 hover:text-white transition-colors">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Retail Pro
+                </a>
+                <a href="{% url 'ngo_portal:dashboard' %}" class="flex items-center gap-2 text-[11px] font-bold text-teal-500 hover:text-white transition-colors">
+                    <span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span> Impact Ops
+                </a>
+                <a href="{% url 'resort_portal:dashboard' %}" class="flex items-center gap-2 text-[11px] font-bold text-fuchsia-500 hover:text-white transition-colors">
+                    <span class="w-1.5 h-1.5 rounded-full bg-fuchsia-500"></span> Resort OS
+                </a>
+            </div>
+        </div>
+        {% endif %}
     </nav>
 
     <!-- User & Exit -->

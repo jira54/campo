@@ -15,11 +15,11 @@
             <div class="flex items-center gap-3 relative z-10">
                 <div class="w-2 h-2 rounded-full bg-brand animate-pulse"></div>
                 <p class="text-[10px] font-black uppercase tracking-widest text-brand">
-                    Luxury Concierge Trial Active &mdash; 
+                Resort OS Trial Active &mdash; 
                     <span class="text-white">Full access granted until {{ user.trial_end_date|date:"M d, Y" }}</span>
                 </p>
             </div>
-            <a href="{% url 'billing:pricing' %}" class="relative z-10 text-[10px] font-black uppercase tracking-widest bg-brand text-deep px-4 py-1.5 rounded-full hover:scale-105 active:scale-95 transition-all shadow-brand">
+            <a href="{% url 'billing:upgrade' %}" class="relative z-10 text-[10px] font-black uppercase tracking-widest bg-brand text-deep px-4 py-1.5 rounded-full hover:scale-105 active:scale-95 transition-all shadow-brand">
                 Upgrade to Pro
             </a>
         </div>
@@ -213,7 +213,7 @@
                 </div>
             </div>
 
-            <!-- Operational Readiness: Housekeeping Hub (Boutique) -->
+            <!-- Operational Readiness: Housekeeping Hub (Enterprise) -->
             <div class="mb-12">
                 <div class="flex items-center justify-between mb-8">
                     <div>
@@ -302,8 +302,8 @@
             </div>
 
             <div class="space-y-2">
-                <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest">Boutique Notes (Preferences)</label>
-                <textarea name="preferences" rows="3" class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all" placeholder="Any special white-glove details..."></textarea>
+                <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest">Guest Preferences</label>
+                <textarea name="preferences" rows="3" class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all" placeholder="Any special service details..."></textarea>
             </div>
 
             <div class="flex items-center gap-4">
@@ -363,7 +363,7 @@ function confirmCheckOut(folioId, guestName, roomNumber) {
     document.getElementById('coGuestName').innerText = guestName;
     document.getElementById('coRoomNumber').innerText = roomNumber;
     // Construct the URL directly
-    document.getElementById('coConfirmBtn').href = `/resort-portal/folio/check-out/${folioId}/`;
+    document.getElementById('coConfirmBtn').href = `/resort/folio/check-out/${folioId}/`;
     openCheckOutModal();
 }
 

@@ -6,7 +6,7 @@ This document serves as the true north for the CampoPawa backend architecture fo
 Instead of building a massive, tightly coupled monolith, the SaaS platform is segregated into loosely coupled, highly secure Django applications based on vertical workflows.
 
 ### A. The Core Monolith (`vendors`, `customers`, `billing`)
-- **Tier:** MSME Retail / Campus Users
+- **Tier:** MSME Retail / Standard
 - **Price:** KES 700 / month (Retail Pro)
 - **Workflow:** 
   - Frictionless "2-Tap Numpad" Quick Sale logging.

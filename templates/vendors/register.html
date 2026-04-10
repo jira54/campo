@@ -3,13 +3,20 @@
 {% block title %}Sign Up - CampoPawa{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-deep flex items-start justify-center pt-12 px-4 sm:pt-16 sm:px-6 lg:pt-20 lg:px-8">
-    <div class="w-full max-w-md">
-        <a href="{% url 'landing' %}" class="text-gray-400 hover:text-gold hover:scale-105 text-sm mb-6 inline-block transition-all duration-200">&larr; Back to CampoPawa</a>
+<div class="min-h-screen bg-deep flex items-start justify-center pt-12 px-4 sm:pt-16 sm:px-6 lg:pt-20 lg:px-8 relative overflow-hidden">
+    <!-- Premium Background Effects -->
+    <div class="absolute inset-0 pointer-events-none">
+        <div class="absolute top-1/4 -right-20 w-80 h-80 bg-brand/5 blur-[100px] rounded-full"></div>
+        <div class="absolute bottom-1/4 -left-20 w-96 h-96 bg-amber-500/5 blur-[120px] rounded-full"></div>
+    </div>
 
-        <div class="bg-stone-900/80 border border-stone-800 rounded-3xl p-8 backdrop-blur-xl shadow-2xl">
-            <h1 class="text-3xl font-black text-white mb-2 font-outfit uppercase tracking-tight">Create Account</h1>
-            <p class="text-stone-400 mb-8 text-sm">Join thousands of growing ventures across Africa.</p>
+    <div class="w-full max-w-md relative z-10">
+        <a href="{% url 'landing' %}" class="text-stone-500 hover:text-brand hover:scale-105 text-[10px] font-black uppercase tracking-widest mb-8 inline-block transition-all duration-300">&larr; Back to Network</a>
+
+        <div class="glass-box premium-border rounded-[2.5rem] p-10 backdrop-blur-xl shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-brand/5 blur-3xl pointer-events-none"></div>
+            <h1 class="text-3xl font-black text-white mb-2 font-outfit uppercase tracking-tight">Deployment Hub</h1>
+            <p class="text-stone-500 mb-10 text-xs font-medium">Join the elite network of operational intelligence.</p>
 
             {% if form.non_field_errors %}
                 <div class="bg-red-900 bg-opacity-40 border-l-4 border-red-500 p-4 rounded-lg mb-6">

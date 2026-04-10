@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}CampoPawa — Boutique Business OS{% endblock %}</title>
+    <title>{% block title %}CampoPawa — Unified Business OS{% endblock %}</title>
     
     <!-- Professional Metadata -->
-    <meta name="description" content="CampoPawa: The integrated Boutique OS for Resorts, NGOs, and MSMEs. Empowering businesses through premium, human-centric management technology.">
-    <meta property="og:title" content="CampoPawa — Boutique Business OS">
-    <meta property="og:description" content="Elevate your hospitality, impact, or retail operations with the world's most intuitive management platform.">
+    <meta name="description" content="CampoPawa: The integrated SaaS Ecosystem for MSMEs, NGOs, and Resorts. Empowering global operations through premium, human-centric technology.">
+    <meta property="og:title" content="CampoPawa — Unified SaaS Business OS">
+    <meta property="og:description" content="Elevate your growth with the world's most intuitive management platform for retailers, NGOs, and hospitality.">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://campopawa.fly.dev/static/meta/og-image.jpg">
     <meta name="twitter:card" content="summary_large_image">
 
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23F59E0B'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='60' font-weight='900' fill='%230c0a09' font-family='Outfit'>C</text></svg>" type="image/svg+xml">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23C5A059'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-size='60' font-weight='900' fill='%230c0a09' font-family='Outfit'>C</text></svg>" type="image/svg+xml">
     <link rel="manifest" href="/static/manifest.json">
     <meta name="theme-color" content="#0c0a09">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -38,8 +38,10 @@
                         'coffee': '#292524',
                         'heading': '#1c1917',
                         'stone-light': '#fafaf8',
-                        'brand': '#F59E0B',
-                        'gold': '#F59E0B',
+                        'brand': '#C5A059',
+                        'gold': '#C5A059',
+                        'sparkle-blue': '#1e40af', // Deep blue
+                        'magic-blue': '#3b82f6',   // Bright blue
                         'amber-accent': '#fef3c7',
                         'amber-thick': '#92400e',
                     }
@@ -49,7 +51,7 @@
     </script>
     <style>
         :root {
-            --brand-accent: {% if user.is_authenticated %}{{ user.brand_accent_color|default:'#F59E0B' }}{% else %}#F59E0B{% endif %};
+            --brand-accent: {% if user.is_authenticated %}{{ user.brand_accent_color|default:'#C5A059' }}{% else %}#C5A059{% endif %};
         }
         .noise-bg::before {
             content: "";
@@ -64,14 +66,71 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
         h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; letter-spacing: -0.02em; }
-        
+
         /* Premium Customizations */
         .text-brand { color: var(--brand-accent); }
         .bg-brand { background-color: var(--brand-accent); }
         .border-brand { border-color: var(--brand-accent); }
         .shadow-brand { box-shadow: 0 0 20px rgba(0, 0, 0, 0.1), 0 0 10px var(--brand-accent); }
+
+        /* Premium Boxed UI Utilities */
+        .glass-box {
+            background: rgba(28, 25, 23, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-box:hover {
+            border-color: rgba(197, 160, 89, 0.3);
+            background: rgba(41, 37, 36, 0.7);
+        }
+        .glow-gold { border-color: rgba(197, 160, 89, 0.5); box-shadow: 0 0 15px rgba(197, 160, 89, 0.15); }
+        .glow-cyan { border-color: rgba(34, 211, 238, 0.5); box-shadow: 0 0 15px rgba(34, 211, 238, 0.15); }
+        .glow-purple { border-color: rgba(168, 85, 247, 0.5); box-shadow: 0 0 15px rgba(168, 85, 247, 0.15); }
+        
+        .premium-border {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+        }
+        .premium-border::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(to bottom right, rgba(255,255,255,0.1), transparent, rgba(255,255,255,0.05));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        /* Magic Sparkling Effects */
+        .magic-glow {
+            box-shadow: 0 0 20px rgba(30, 64, 175, 0.3), 0 0 40px rgba(59, 130, 246, 0.1);
+        }
+        .sparkle-particles {
+            background-image: radial-gradient(circle, #3b82f6 1px, transparent 1px);
+            background-size: 20px 20px;
+            animation: sparkle-move 4s linear infinite;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .group:hover .sparkle-particles { opacity: 0.15; }
+        
+        @keyframes sparkle-move {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+
+        /* Global Spacing Compaction */
+        .section-compact { padding-top: 5rem; padding-bottom: 5rem; }
+        @media (max-width: 768px) {
+            .section-compact { padding-top: 3rem; padding-bottom: 3rem; }
+        }
+        {% block extra_head %}{% endblock %}
     </style>
-    {% block extra_head %}{% endblock %}
 </head>
 <body class="bg-deep text-gray-100 pt-16 md:pt-0 noise-bg">
 

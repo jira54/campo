@@ -132,6 +132,7 @@ LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/login/'
 
 CSRF_TRUSTED_ORIGINS = ['https://campo-09gm.onrender.com', 'https://campo.fly.dev']
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Cookie settings — secure in production (when DEBUG=False)
 SESSION_COOKIE_SECURE = not DEBUG

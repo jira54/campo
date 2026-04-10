@@ -129,10 +129,22 @@
         @media (max-width: 768px) {
             .section-compact { padding-top: 3rem; padding-bottom: 3rem; }
         }
+        
+        /* Edge Aura Vignette - Intensified (+1) */
+        .edge-aura {
+            box-shadow: inset 0 0 200px rgba(30, 64, 175, 0.2), inset 0 0 400px rgba(59, 130, 246, 0.15);
+            pointer-events: none;
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            display: block !important;
+        }
         {% block extra_head %}{% endblock %}
     </style>
 </head>
 <body class="bg-deep text-gray-100 pt-16 md:pt-0 noise-bg">
+    <!-- Global Magic Aura -->
+    <div class="edge-aura"></div>
 
     {% if messages %}
         <div class="fixed top-20 md:top-4 left-4 right-4 md:left-auto md:right-4 z-50 space-y-2 max-w-sm md:max-w-md mx-auto md:mx-0" id="message-container">

@@ -26,112 +26,104 @@
         </div>
     </nav>
 
-    <!-- Master Hero (Compacted) -->
-    <section class="relative z-10 pt-16 pb-12 px-4 md:pt-24 md:pb-16 text-center">
+    <!-- Master Hero (Spaced and Comfortable) -->
+    <section class="relative z-10 pt-20 pb-16 px-4 md:pt-32 md:pb-24 text-center">
         <div class="max-w-5xl mx-auto">
-            <div class="inline-flex items-center gap-2 px-4 py-2 bg-magic-blue/10 border border-magic-blue/20 rounded-full mb-6 animate-fade-in shadow-[0_0_15px_rgba(59,130,246,0.1)]">
-                <span class="w-1.5 h-1.5 rounded-full bg-magic-blue animate-pulse"></span>
-                <span class="text-[10px] font-black uppercase tracking-[0.2em] text-magic-blue">The Unified Business Architecture</span>
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 px-6 py-2 bg-brand/10 border border-brand/20 rounded-full mb-8 animate-fade-in shadow-[0_0_20px_rgba(197,160,89,0.1)]">
+                <span class="w-1.5 h-1.5 rounded-full bg-brand animate-pulse"></span>
+                <span class="text-[10px] font-black uppercase tracking-[0.3em] text-brand">The Unified Business Architecture</span>
             </div>
-            <h2 class="text-4xl md:text-6xl font-black text-white mb-6 leading-[0.9] tracking-tighter font-outfit">
+            <!-- Heading -->
+            <h2 class="text-5xl md:text-6xl font-black text-white mb-8 leading-[0.9] tracking-tighter font-outfit">
                 Scale Your Enterprise. <br class="hidden md:block">
                 <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand via-magic-blue to-white">Bila Worry.</span>
             </h2>
-            <p class="text-lg md:text-xl text-stone-400 mb-10 max-w-3xl mx-auto font-medium leading-relaxed">
+            <!-- Subtext -->
+            <p class="text-xl md:text-2xl text-stone-400 mb-12 max-w-3xl mx-auto font-medium leading-relaxed">
                 One Platform. Absolute Control. Total Growth.
             </p>
-            <div class="flex flex-col sm:flex-row justify-center gap-4">
-                <a href="{% url 'register' %}" class="bg-brand text-deep font-black text-lg px-10 py-5 rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-brand uppercase tracking-tighter">Start Free</a>
-                <a href="#solutions" class="bg-white/5 border border-white/10 text-white font-bold text-lg px-10 py-5 rounded-2xl hover:bg-white/10 transition-all backdrop-blur-md">See the Magic</a>
+            <!-- CTA Buttons -->
+            <div class="flex flex-col sm:flex-row justify-center gap-6">
+                <a href="{% url 'register' %}" class="bg-brand text-deep font-black text-lg px-12 py-5 rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-brand uppercase tracking-tighter">Start Free</a>
+                <a href="#solutions" class="bg-white/5 border border-white/10 text-white font-bold text-lg px-12 py-5 rounded-2xl hover:bg-white/10 transition-all backdrop-blur-md">See the Magic</a>
             </div>
         </div>
     </section>
 
-    <!-- Dedicated Vertical Solutions (Now "Daily Business Magic") -->
+    <!-- Daily Business Magic -->
     <section id="solutions" class="relative z-10 section-compact px-4 md:px-8">
         <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-12">
-                <p class="text-[10px] font-black text-magic-blue/60 uppercase tracking-[0.4em] mb-3">Ready-made for you</p>
-                <h3 class="text-3xl md:text-5xl font-black text-white mb-4 uppercase tracking-tight font-outfit text-glow">Daily Business <span class="text-brand">Magic</span></h3>
+            <div class="text-center mb-16">
+                <p class="text-[10px] font-black text-magic-blue/60 uppercase tracking-[0.4em] mb-4">Ready-made for you</p>
+                <h3 class="text-4xl md:text-5xl font-black text-white mb-6 uppercase tracking-tight font-outfit text-glow text-center">Daily Business <span class="text-brand">Magic</span></h3>
             </div>
 
             <div class="grid md:grid-cols-3 gap-8">
                 <!-- Retail Pro -->
-                <div class="glass-box premium-border rounded-[3rem] p-10 group cursor-pointer relative overflow-hidden h-[420px] flex flex-col justify-start transition-all duration-700 hover:magic-glow">
-                    <!-- Sparkle Overlay -->
+                <div class="glass-box premium-border rounded-[3rem] p-10 group cursor-pointer relative overflow-hidden h-[450px] flex flex-col justify-start transition-all duration-700 hover:magic-glow">
                     <div class="sparkle-particles absolute inset-0 pointer-events-none"></div>
-                    
                     <div class="absolute top-0 right-0 w-32 h-32 bg-magic-blue/5 blur-3xl pointer-events-none transition-all group-hover:bg-magic-blue/10"></div>
-                    <div class="w-14 h-14 rounded-2xl bg-brand/10 border border-brand/20 mb-6 flex items-center justify-center text-brand glow-gold">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                    <div class="w-16 h-16 rounded-2xl bg-brand/10 border border-brand/20 mb-8 flex items-center justify-center text-brand glow-gold text-center mx-auto md:mx-0">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                     </div>
-                    <h4 class="text-3xl font-black text-white mb-3 font-outfit tracking-tight">Retail Pro</h4>
-                    
+                    <h4 class="text-3xl font-black text-white mb-4 font-outfit tracking-tight text-center md:text-left">Retail Pro</h4>
                     <div class="opacity-0 translate-y-8 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 delay-75">
-                        <p class="text-stone-400 mb-6 text-sm leading-relaxed">
+                        <p class="text-stone-400 mb-8 text-base leading-relaxed text-center md:text-left">
                             The ultimate setup for shops. M-Pesa hooks, customer loyalty, and fast sales.
                         </p>
-                        <ul class="text-stone-300 space-y-3 text-[10px] font-black uppercase tracking-widest">
-                            <li class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-brand"></span> Automatic CRM</li>
-                            <li class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-brand"></span> SMS Reminders</li>
-                            <li class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-brand"></span> Inventory Alert</li>
+                        <ul class="text-stone-300 space-y-4 text-[11px] font-black uppercase tracking-widest">
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-brand"></span> Automatic CRM</li>
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-brand"></span> SMS Reminders</li>
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-brand"></span> Inventory Alert</li>
                         </ul>
                     </div>
-                    
                     <div class="absolute bottom-10 left-10 group-hover:opacity-0 transition-opacity flex items-center gap-2">
                         <span class="text-brand text-[10px] font-black uppercase tracking-widest">Tap to see magic ✨</span>
                     </div>
                 </div>
 
                 <!-- Impact Ops -->
-                <div class="glass-box premium-border rounded-[3rem] p-10 group cursor-pointer relative overflow-hidden h-[420px] flex flex-col justify-start transition-all duration-700 hover:magic-glow">
-                    <!-- Sparkle Overlay -->
+                <div class="glass-box premium-border rounded-[3rem] p-10 group cursor-pointer relative overflow-hidden h-[450px] flex flex-col justify-start transition-all duration-700 hover:magic-glow">
                     <div class="sparkle-particles absolute inset-0 pointer-events-none"></div>
-
                     <div class="absolute top-0 right-0 w-32 h-32 bg-teal-400/5 blur-3xl pointer-events-none transition-all group-hover:bg-teal-400/10"></div>
-                    <div class="w-14 h-14 rounded-2xl bg-teal-400/10 border border-teal-400/20 mb-6 flex items-center justify-center text-teal-400 glow-cyan">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2 2 2 0 012 2v.653"/></svg>
+                    <div class="w-16 h-16 rounded-2xl bg-teal-400/10 border border-teal-400/20 mb-8 flex items-center justify-center text-teal-400 glow-cyan mx-auto md:mx-0">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2 2 2 0 012 2v.653"/></svg>
                     </div>
-                    <h4 class="text-3xl font-black text-white mb-3 font-outfit tracking-tight">Impact Ops</h4>
-                    
+                    <h4 class="text-3xl font-black text-white mb-4 font-outfit tracking-tight text-center md:text-left">Impact Ops</h4>
                     <div class="opacity-0 translate-y-8 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 delay-75">
-                        <p class="text-stone-400 mb-6 text-sm leading-relaxed">
+                        <p class="text-stone-400 mb-8 text-base leading-relaxed text-center md:text-left">
                             Perfect for project tracking. Clean reports and secure data for your mission.
                         </p>
-                        <ul class="text-stone-300 space-y-3 text-[10px] font-black uppercase tracking-widest">
-                            <li class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-teal-400"></span> Instant Audits</li>
-                            <li class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-teal-400"></span> Safe Data Layers</li>
-                            <li class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-teal-400"></span> Impact Maps</li>
+                        <ul class="text-stone-300 space-y-4 text-[11px] font-black uppercase tracking-widest">
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span> Instant Audits</li>
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span> Safe Data Layers</li>
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span> Impact Maps</li>
                         </ul>
                     </div>
-
                     <div class="absolute bottom-10 left-10 group-hover:opacity-0 transition-opacity flex items-center gap-2">
                         <span class="text-teal-400 text-[10px] font-black uppercase tracking-widest">Tap to see magic ✨</span>
                     </div>
                 </div>
 
                 <!-- Resort OS -->
-                <div class="glass-box premium-border rounded-[3rem] p-10 group cursor-pointer relative overflow-hidden h-[420px] flex flex-col justify-start transition-all duration-700 hover:magic-glow">
-                    <!-- Sparkle Overlay -->
+                <div class="glass-box premium-border rounded-[3rem] p-10 group cursor-pointer relative overflow-hidden h-[450px] flex flex-col justify-start transition-all duration-700 hover:magic-glow">
                     <div class="sparkle-particles absolute inset-0 pointer-events-none"></div>
-
                     <div class="absolute top-0 right-0 w-32 h-32 bg-fuchsia-500/5 blur-3xl pointer-events-none transition-all group-hover:bg-fuchsia-500/10"></div>
-                    <div class="w-14 h-14 rounded-2xl bg-fuchsia-500/10 border border-fuchsia-500/20 mb-6 flex items-center justify-center text-fuchsia-400 glow-purple">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                    <div class="w-16 h-16 rounded-2xl bg-fuchsia-500/10 border border-fuchsia-500/20 mb-8 flex items-center justify-center text-fuchsia-400 glow-purple mx-auto md:mx-0">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                     </div>
-                    <h4 class="text-3xl font-black text-white mb-3 font-outfit tracking-tight">Resort OS</h4>
-                    
+                    <h4 class="text-3xl font-black text-white mb-4 font-outfit tracking-tight text-center md:text-left">Resort OS</h4>
                     <div class="opacity-0 translate-y-8 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 delay-75">
-                        <p class="text-stone-400 mb-6 text-sm leading-relaxed">
+                        <p class="text-stone-400 mb-8 text-base leading-relaxed text-center md:text-left">
                             Beautiful tools for resorts. Room status, guest bills, and easy management.
                         </p>
-                        <ul class="text-stone-300 space-y-3 text-[10px] font-black uppercase tracking-widest">
-                            <li class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-fuchsia-500"></span> Live Folios</li>
-                            <li class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-fuchsia-500"></span> Room Logic</li>
-                            <li class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-fuchsia-500"></span> Staff Care</li>
+                        <ul class="text-stone-300 space-y-4 text-[11px] font-black uppercase tracking-widest">
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-fuchsia-500"></span> Live Folios</li>
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-fuchsia-500"></span> Room Logic</li>
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-fuchsia-500"></span> Staff Care</li>
                         </ul>
                     </div>
-
                     <div class="absolute bottom-10 left-10 group-hover:opacity-0 transition-opacity flex items-center gap-2">
                         <span class="text-fuchsia-400 text-[10px] font-black uppercase tracking-widest">Tap to see magic ✨</span>
                     </div>
@@ -140,110 +132,97 @@
         </div>
     </section>
 
-    <!-- Pricing (Compacted) -->
+    <!-- Pricing (Spacious) -->
     <section class="relative z-10 section-compact bg-black/20 border-y border-white/5 mx-4 md:mx-0 rounded-[3rem] md:rounded-none">
         <div class="max-w-6xl mx-auto">
             <p class="text-center text-[10px] font-black text-magic-blue uppercase tracking-[0.5em] mb-4">Investment Roadmap</p>
-            <h2 class="text-4xl md:text-5xl font-black text-center text-white mb-16 font-outfit uppercase tracking-tighter">Enterprise <span class="text-brand">Access</span></h2>
-            
-            <div class="grid md:grid-cols-3 gap-8 items-end">
+            <h2 class="text-5xl md:text-6xl font-black text-center text-white mb-20 font-outfit uppercase tracking-tighter">Enterprise <span class="text-brand">Access</span></h2>
+            <div class="grid md:grid-cols-3 gap-12 items-end">
                 <!-- Base -->
-                <div class="glass-box premium-border rounded-[2.5rem] p-8 flex flex-col justify-between hover:bg-white/[0.02] h-[480px]">
+                <div class="glass-box premium-border rounded-[2.5rem] p-10 flex flex-col justify-between hover:bg-white/[0.02] h-[520px]">
                     <div>
                         <h4 class="text-lg font-black text-stone-500 mb-4 uppercase tracking-widest">Standard Deployment</h4>
-                        <div class="mb-8"><span class="text-5xl font-black text-white font-outfit">KES 0</span><span class="text-stone-700 font-bold ml-2"> / mo</span></div>
-                        <ul class="space-y-3 text-sm text-stone-400 border-t border-white/5 pt-8">
+                        <div class="mb-10"><span class="text-6xl font-black text-white font-outfit tracking-tighter">KES 0</span><span class="text-stone-700 font-bold ml-2"> / mo</span></div>
+                        <ul class="space-y-4 text-sm text-stone-400 border-t border-white/5 pt-10">
                             <li>✓ 20 Customer Seats</li>
                             <li>✓ Daily Analytics</li>
                             <li>✓ Simple Tools</li>
                         </ul>
                     </div>
-                    <a href="{% url 'register' %}" class="mt-8 block text-center border border-white/10 text-white font-black py-4 rounded-2xl hover:bg-white/5 transition-all uppercase tracking-widest text-[10px]">Initialize Base</a>
+                    <a href="{% url 'register' %}" class="mt-12 block text-center border border-white/10 text-white font-black py-4 rounded-2xl hover:bg-white/5 transition-all uppercase tracking-widest text-[10px]">Initialize Base</a>
                 </div>
-
                 <!-- Retail Pro -->
-                <div class="glass-box premium-border border-stone-800 rounded-[3rem] p-10 flex flex-col justify-between relative shadow-2xl bg-gradient-to-br from-stone-900/40 to-stone-800/10 h-[520px] group hover:border-brand/40 transition-all">
+                <div class="glass-box premium-border border-stone-800 rounded-[3rem] p-12 flex flex-col justify-between relative shadow-2xl bg-gradient-to-br from-stone-900/40 to-stone-800/10 h-[560px] group hover:border-brand/40 transition-all">
                     <div class="absolute -top-5 left-1/2 -translate-x-1/2 bg-stone-800 text-stone-400 text-[10px] font-black px-6 py-2 rounded-full uppercase tracking-[0.2em] group-hover:bg-brand group-hover:text-deep transition-all">Most Popular</div>
                     <div>
                         <h4 class="text-lg font-black text-stone-400 group-hover:text-brand mb-4 uppercase tracking-widest transition-colors text-center">Retail Pro</h4>
-                        <div class="mb-8 text-center"><span class="text-5xl font-black text-white font-outfit">KES 700</span><span class="text-stone-700 font-bold ml-2"> / mo</span></div>
-                        <ul class="space-y-3 text-sm text-stone-400 border-t border-stone-800 pt-8">
+                        <div class="mb-10 text-center"><span class="text-6xl font-black text-white font-outfit tracking-tighter">KES 700</span><span class="text-stone-700 font-bold ml-2"> / mo</span></div>
+                        <ul class="space-y-4 text-sm text-stone-400 border-t border-stone-800 pt-10">
                             <li>● Unlimited Capacity</li>
                             <li>● Reward Programs</li>
                             <li>● Smart Payment</li>
                         </ul>
                     </div>
-                    <a href="{% url 'register' %}" class="mt-8 block w-full text-center bg-stone-800 text-white font-black py-5 rounded-2xl hover:bg-brand hover:text-deep transition-all uppercase tracking-widest text-xs">Deploy Pro Instance</a>
+                    <a href="{% url 'register' %}" class="mt-12 block w-full text-center bg-stone-800 text-white font-black py-5 rounded-2xl hover:bg-brand hover:text-deep transition-all uppercase tracking-widest text-xs">Deploy Pro Instance</a>
                 </div>
-
                 <!-- Portal Access -->
-                <div class="glass-box premium-border border-magic-blue/50 rounded-[3rem] p-10 flex flex-col justify-between relative shadow-[0_0_30px_rgba(59,130,246,0.1)] bg-gradient-to-br from-stone-900/40 to-magic-blue/5 h-[530px] md:scale-105">
+                <div class="glass-box premium-border border-magic-blue/50 rounded-[3rem] p-12 flex flex-col justify-between relative shadow-[0_0_40px_rgba(59,130,246,0.1)] bg-gradient-to-br from-stone-900/40 to-magic-blue/5 h-[580px] md:scale-105">
                     <div class="absolute -top-5 left-1/2 -translate-x-1/2 bg-magic-blue text-white text-[10px] font-black px-6 py-2 rounded-full uppercase tracking-[0.2em] shadow-lg shadow-magic-blue/20">Elite Corporate</div>
                     <div>
                         <h4 class="text-lg font-black text-magic-blue mb-4 uppercase tracking-widest text-center">Portal Access</h4>
-                        <div class="mb-8 text-center"><span class="text-5xl font-black text-white font-outfit">KES 3.5k</span><span class="text-magic-blue/40 font-bold ml-2"> / mo</span></div>
-                        <ul class="space-y-3 text-sm text-stone-200 border-t border-magic-blue/20 pt-8">
+                        <div class="mb-10 text-center"><span class="text-6xl font-black text-white font-outfit tracking-tighter">KES 3.5k</span><span class="text-magic-blue/40 font-bold ml-2"> / mo</span></div>
+                        <ul class="space-y-4 text-sm text-stone-200 border-t border-magic-blue/20 pt-10">
                             <li class="text-teal-500">✓ NGO / Impact Portal</li>
                             <li class="text-fuchsia-500">✓ Resort / Hospitality Portal</li>
                             <li>✓ Multi-Tenant Sync</li>
                         </ul>
                     </div>
-                    <a href="{% url 'register' %}" class="mt-8 block w-full text-center bg-magic-blue text-white font-black py-5 rounded-2xl shadow-lg shadow-magic-blue/20 hover:scale-[1.05] transition-all uppercase tracking-widest text-xs">Secure My Portal</a>
+                    <a href="{% url 'register' %}" class="mt-12 block w-full text-center bg-magic-blue text-white font-black py-5 rounded-2xl shadow-lg shadow-magic-blue/20 hover:scale-[1.05] transition-all uppercase tracking-widest text-xs">Secure My Portal</a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Value Propositions -->
-    <section class="relative z-10 py-20 px-4">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+    <section class="relative z-10 py-32 px-4">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
             <div class="text-center p-8 bg-white/[0.02] border border-white/5 rounded-3xl group hover:bg-brand/5 transition-all">
-                <p class="text-stone-600 font-black text-[10px] uppercase tracking-widest mb-4">The Vision</p>
-                <h4 class="text-white text-xl font-bold mb-4 italic italic text-glow">"Small sales build big empires."</h4>
-                <p class="text-stone-500 text-sm leading-relaxed">We turn numbers into growth strategies for you.</p>
+                <p class="text-stone-600 font-black text-[10px] uppercase tracking-widest mb-6">The Vision</p>
+                <h4 class="text-white text-2xl font-bold mb-6 italic text-glow">"Small sales build big empires."</h4>
+                <p class="text-stone-500 text-base leading-relaxed">We turn numbers into growth strategies for you.</p>
             </div>
             <div class="text-center p-8 bg-white/[0.02] border border-white/5 rounded-3xl group hover:bg-teal-400/5 transition-all">
-                <p class="text-stone-600 font-black text-[10px] uppercase tracking-widest mb-4">The Mission</p>
-                <h4 class="text-white text-xl font-bold mb-4 italic italic text-glow">"Transform numbers into human impact."</h4>
-                <p class="text-stone-500 text-sm leading-relaxed">Secure data to help you help others better.</p>
+                <p class="text-stone-600 font-black text-[10px] uppercase tracking-widest mb-6">The Mission</p>
+                <h4 class="text-white text-2xl font-bold mb-6 italic text-glow">"Transform numbers into human impact."</h4>
+                <p class="text-stone-500 text-base leading-relaxed">Secure data to help you help others better.</p>
             </div>
             <div class="text-center p-8 bg-white/[0.02] border border-white/5 rounded-3xl group hover:bg-fuchsia-500/5 transition-all">
-                <p class="text-stone-600 font-black text-[10px] uppercase tracking-widest mb-4">The Standard</p>
-                <h4 class="text-white text-xl font-bold mb-4 italic italic text-glow">"Excellence isn't a checklist; it's a feeling."</h4>
-                <p class="text-stone-500 text-sm leading-relaxed">Precision tools for world-class service.</p>
+                <p class="text-stone-600 font-black text-[10px] uppercase tracking-widest mb-6">The Standard</p>
+                <h4 class="text-white text-2xl font-bold mb-6 italic text-glow">"Excellence isn't a checklist; it's a feeling."</h4>
+                <p class="text-stone-500 text-base leading-relaxed">Precision tools for world-class service.</p>
             </div>
         </div>
     </section>
 
     <!-- Final CTA -->
-    <section class="relative z-10 py-24 text-center">
+    <section class="relative z-10 py-40 text-center">
         <div class="max-w-3xl mx-auto px-4">
-            <h2 class="text-4xl md:text-5xl font-black text-white mb-8 font-outfit tracking-tighter">Ready to stabilize your <span class="text-magic-blue">operations</span>?</h2>
-            <p class="text-lg text-stone-500 mb-10">Join the elite businesses scaling with magic.</p>
-            <a href="{% url 'register' %}" class="inline-block bg-white text-deep font-black px-10 py-5 rounded-[2rem] hover:scale-105 active:scale-95 transition-all shadow-2xl text-xl font-outfit tracking-tight">Deploy Your Workspace</a>
+            <h2 class="text-5xl md:text-6xl font-black text-white mb-10 font-outfit tracking-tighter">Ready to stabilize your <span class="text-magic-blue">operations</span>?</h2>
+            <p class="text-xl text-stone-500 mb-12">Join the elite businesses scaling with magic.</p>
+            <a href="{% url 'register' %}" class="inline-block bg-white text-deep font-black px-12 py-6 rounded-[2rem] hover:scale-105 active:scale-95 transition-all shadow-2xl text-2xl font-outfit tracking-tight">Deploy Your Workspace</a>
         </div>
     </section>
 
     <!-- Professional Footer -->
-    <footer class="border-t border-white/5 pt-16 pb-12 text-center bg-black/60 backdrop-blur-3xl relative z-10">
+    <footer class="border-t border-white/5 pt-24 pb-16 text-center bg-black/60 backdrop-blur-3xl relative z-10">
         <div class="max-w-7xl mx-auto px-6">
             <div class="flex flex-col md:flex-row items-center justify-between gap-10">
                 <div class="text-left">
                     <div class="text-3xl font-black text-white font-outfit tracking-tighter">Campo<span class="text-brand">Pawa</span></div>
                     <p class="text-stone-500 text-[10px] mt-4 uppercase tracking-[0.2em] font-bold">The Unified SaaS Ecosystem</p>
                 </div>
-                <div class="flex gap-10">
-                    <div class="text-left">
-                        <p class="text-[10px] font-black text-white uppercase tracking-widest mb-2">Verticals</p>
-                        <ul class="text-stone-500 text-[10px] space-y-1">
-                            <li>Retail Pro</li>
-                            <li>Impact Ops</li>
-                            <li>Resort OS</li>
-                        </ul>
-                    </div>
-                </div>
             </div>
-            <div class="mt-12 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="mt-20 pt-10 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
                 <p class="text-stone-700 text-[10px] font-black uppercase tracking-[0.3em]">&copy; {% now "Y" %} CampoPawa. All Rights Reserved.</p>
             </div>
         </div>

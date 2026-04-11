@@ -7,18 +7,18 @@ DAYS = {
     2: ("Wednesday", "", "Halfway there — you're doing great!"),
     3: ("Thursday", "", "Almost weekend — Kidogo tuu!"),
     4: ("Friday", "", "End week strong!"),
-    5: ("Saturday", "", "Weekend hustle hits different!"),
+    5: ("Saturday", "", "Weekend moments are for peaceful growth!"),
     6: ("Sunday", "", "Rest, reflect,we thank God and prepare for week!"),
 }
 
 QUOTES = {
     0: "Every big business started with one customer. Keep building.",
-    1: "Consistency is what transforms average into excellence.",
-    2: "Your reputation is built one customer at a time.",
-    3: "Small daily improvements lead to stunning results.",
-    4: "The best marketing is a happy customer.",
-    5: "Hustle now so your future self can thank you.",
-    6: "Plan tomorrow today. Success loves preparation.",
+    1: "Consistency is the gentle art of transforming effort into excellence.",
+    2: "Your premium reputation is built with every sweet customer interaction.",
+    3: "Small daily refinements lead to breathtaking results.",
+    4: "The most beautiful marketing is a happy customer's smile.",
+    5: "Invest in your passion today, and your future self will thank you with joy.",
+    6: "Success loves a prepared and peaceful mind. Plan with love.",
 }
 
 RANDOM_MESSAGES = [

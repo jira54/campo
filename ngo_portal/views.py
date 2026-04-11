@@ -1,7 +1,7 @@
-import csv
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from django.contrib import messages
 
 from .decorators import ngo_enterprise_required
 from .models import Beneficiary, Program, Intervention
@@ -64,7 +64,7 @@ def beneficiary_list(request):
 def export_donor_audit(request):
     """
     1-Click Donor Compliant CSV Export
-    USAID Standard: Export unique anonymized IDs, demographics, and activities (no PII Names).
+    Global Standard: Export unique anonymized IDs, demographics, and activities (no Personal Names).
     """
     vendor = request.user
     response = HttpResponse(content_type='text/csv')
@@ -101,3 +101,78 @@ def export_donor_audit(request):
         ])
 
     return response
+
+@login_required
+@ngo_enterprise_required
+def add_program(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        donor = request.POST.get('donor')
+        target = request.POST.get('target', 0)
+        
+        Program.objects.create(
+            vendor=request.user,
+            name=name,
+            donor=donor,
+            target_beneficiaries_count=target
+        )
+        messages.success(request, "A new vision has been seeded! Program created successfully. ✨")
+        return redirect('ngo_portal:dashboard')
+    return render(request, 'ngo_portal/add_program.html')
+
+
+@login_required
+@ngo_enterprise_required
+def add_beneficiary(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        phone = request.POST.get('phone')
+        sex = request.POST.get('sex')
+        county = request.POST.get('county')
+        vulnerability = request.POST.get('vulnerability', 'none')
+        
+        Beneficiary.objects.create(
+            vendor=request.user,
+            name=name,
+            phone=phone,
+            sex=sex,
+            county=county,
+            vulnerability_marker=vulnerability
+        )
+        messages.success(request, "A new life added to the standard of care. Beneficiary registered beautifully. 🌸")
+        return redirect('ngo_portal:beneficiaries')
+    return render(request, 'ngo_portal/add_beneficiary.html')
+
+
+@login_required
+@ngo_enterprise_required
+def log_activity(request):
+    vendor = request.user
+    if request.method == 'POST':
+        ben_id = request.POST.get('beneficiary_id')
+        prog_id = request.POST.get('program_id')
+        activity = request.POST.get('activity_type')
+        notes = request.POST.get('notes')
+        
+        try:
+            beneficiary = Beneficiary.objects.get(id=ben_id, vendor=vendor)
+            program = Program.objects.get(id=prog_id, vendor=vendor)
+            
+            Intervention.objects.create(
+                vendor=vendor,
+                beneficiary=beneficiary,
+                program=program,
+                activity_type=activity,
+                notes=notes
+            )
+            messages.success(request, "Impact beautifully recorded. Every act of care matters. ✨")
+            return redirect('ngo_portal:dashboard')
+        except (Beneficiary.DoesNotExist, Program.DoesNotExist):
+            messages.error(request, "Hmm, we couldn't find those records. Please try again with love.")
+            
+    beneficiaries = Beneficiary.objects.filter(vendor=vendor)
+    programs = Program.objects.filter(vendor=vendor)
+    return render(request, 'ngo_portal/log_activity.html', {
+        'beneficiaries': beneficiaries,
+        'programs': programs
+    })

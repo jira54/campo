@@ -18,8 +18,8 @@ Instead of building a massive, tightly coupled monolith, the SaaS platform is se
 - **Price:** KES 3,500 / month (Enterprise)
 - **Routing:** Handled gracefully by `vendors/views.py` `root_redirect` intercepting `business_type == 'ngo'`.
 - **Workflow:**
-  - Built strictly around **USAID AMELP** compliance.
-  - PII (Personally Identifiable Information) strictly divorced from data tables.
+  - Built strictly around global M&E impact standards.
+  - Secure Personal Data strictly divorced from public data tables.
   - **Models:** `Beneficiary` (generates automated UUIDs, tracks demographics/vulnerability markers), `Intervention` (tracks specific field activities against programs).
   - **Core Utility:** `export_donor_audit` generates an instant, 1-Click CSV stripping names and outputting pure statistical compliance frameworks for grant reporting.
 
@@ -28,11 +28,11 @@ Instead of building a massive, tightly coupled monolith, the SaaS platform is se
 - **Price:** KES 3,500 / month (Enterprise)
 - **Routing:** Intercepted natively for `business_type == 'resort'`.
 - **Workflow:**
-  - Uses professional hospitality software logic built on a **Master Folio** structure.
+  - Uses professional hospitality software logic built on a **Master Guest Bill** structure.
   - **Models:**
     - `Room` (Tracks Status: Clean, Dirty, Occupied).
-    - `Folio` (The Master guest bill connecting a stay).
-    - `FolioCharge` (The Point-of-Sale tracker mapping a single drink to a specific `Department` and a specific `Folio` instantly).
+    - `GuestBill` (The Master record connecting a stay).
+    - `BillCharge` (The Point-of-Sale tracker mapping a single drink to a specific `Department` and a specific `GuestBill` instantly).
   - **Core Utility:** "Smart Insights Engine". The dashboard recalculates live data constantly, presenting Occupancy Rates, Daily Revenue split strictly by Department Yield, Housekeeping Alerts, and VIP "Churn Radars".
 
 ---

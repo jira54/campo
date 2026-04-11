@@ -33,10 +33,10 @@ class Beneficiary(models.Model):
 
     vendor = models.ForeignKey('vendors.Vendor', on_delete=models.CASCADE, related_name='ngo_beneficiaries')
     
-    # USAID requirement: Anonymized ID to prevent double counting
+    # Global Standard: Anonymized ID to prevent double counting
     unique_system_id = models.CharField(max_length=20, unique=True, blank=True, db_index=True)
     
-    # PII (Personally Identifiable Information)
+    # Secure Personal Data
     name = models.CharField(max_length=255, help_text="Restricted to field workers. Excluded from aggregated donor exports.")
     phone = models.CharField(max_length=50, blank=True)
     

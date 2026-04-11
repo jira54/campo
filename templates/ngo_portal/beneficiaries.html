@@ -6,17 +6,18 @@
 <div class="flex min-h-screen">
     {% include 'ngo_portal/sidebar_ngo.html' %}
 
-    <div class="flex-1 overflow-auto bg-deep">
-        <div class="p-4 md:p-8">
+    <div class="flex-1 h-screen overflow-y-auto overflow-x-hidden relative bg-deep">
+        <div class="p-6 md:p-10 pt-24 md:pt-32 pb-24">
             
             <div class="flex justify-between items-center mb-8">
                 <div>
-                    <h1 class="text-3xl font-bold text-white mb-2">Beneficiary Database</h1>
-                    <p class="text-gray-400">Manage cohorts, track demographics, and ensure data compliance.</p>
+                    <h1 class="text-4xl font-black text-white mb-2 leading-tight tracking-tighter">Loved Ones <span class="text-brand">Database</span>.</h1>
+                    <p class="text-stone-400 text-sm">We provide care, and we remember every soul we touch.</p>
                 </div>
-                <button class="bg-gradient-to-r from-teal to-cyan-500 text-deep font-bold px-6 py-3 rounded-lg hover:scale-105 transition-all shadow-lg shadow-teal/30">
-                    ➕ Add Beneficiary
-                </button>
+                <a href="{% url 'ngo_portal:add_beneficiary' %}" class="bg-brand text-deep font-black px-8 py-4 rounded-2xl hover:scale-105 transition-all shadow-brand flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
+                    Register New Life
+                </a>
             </div>
 
             <!-- Datatable Container -->
@@ -33,7 +34,7 @@
                                 <th class="p-4 font-semibold border-b border-gray-600/30">Added</th>
                             </tr>
                         </thead>
-                        <tbody class="text-gray-300 text-sm">
+                        <tbody class="text-stone-300 text-sm">
                             {% for ben in beneficiaries %}
                             <tr class="hover:bg-gray-700/20 transition-colors border-b border-gray-600/10 last:border-0">
                                 <td class="p-4 font-mono text-xs text-gray-500">{{ ben.unique_system_id }}</td>

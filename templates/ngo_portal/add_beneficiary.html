@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Register New Life - CampoPawa NGO{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen bg-deep overflow-hidden font-outfit">
+    {% include 'ngo_portal/sidebar_ngo.html' %}
+
+    <div class="flex-1 h-screen overflow-y-auto overflow-x-hidden relative">
+        <div class="p-6 md:p-10 pt-24 md:pt-32 pb-24 max-w-2xl mx-auto">
+            
+            <div class="mb-10 text-center">
+                <h1 class="text-4xl font-black text-white mb-2 leading-tight tracking-tighter">Register New <span class="text-brand">Life</span>.</h1>
+                <p class="text-stone-400 text-sm">Every identity added strengthens the standard of care for our community.</p>
+            </div>
+
+            <div class="bg-stone-900/60 border border-white/10 rounded-3xl p-8 backdrop-blur-md shadow-2xl">
+                <form method="POST" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-stone-500 uppercase tracking-widest ml-1">Full Name</label>
+                        <input type="text" name="name" required placeholder="Enter their beautiful name..." 
+                               class="w-full bg-black/40 border border-white/5 rounded-xl px-6 py-4 text-white focus:border-brand/50 transition-all outline-none">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-stone-500 uppercase tracking-widest ml-1">Phone Number</label>
+                            <input type="text" name="phone" placeholder="Valid contact..." 
+                                   class="w-full bg-black/40 border border-white/5 rounded-xl px-6 py-4 text-white focus:border-brand/50 transition-all outline-none">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-stone-500 uppercase tracking-widest ml-1">Gender Identity</label>
+                            <select name="sex" required class="w-full bg-black/40 border border-white/5 rounded-xl px-6 py-4 text-white focus:border-brand/50 transition-all outline-none appearance-none">
+                                <option value="O">Prefer not to say</option>
+                                <option value="M">Male</option>
+                                <option value="F">Female</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-stone-500 uppercase tracking-widest ml-1">Location (County/Region)</label>
+                        <input type="text" name="county" required placeholder="Where do they reside?" 
+                               class="w-full bg-black/40 border border-white/5 rounded-xl px-6 py-4 text-white focus:border-brand/50 transition-all outline-none">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-stone-500 uppercase tracking-widest ml-1">Vulnerability Context</label>
+                        <select name="vulnerability" class="w-full bg-black/40 border border-white/5 rounded-xl px-6 py-4 text-white focus:border-brand/50 transition-all outline-none appearance-none">
+                            <option value="none">None specified</option>
+                            <option value="pwd">Person with Disability</option>
+                            <option value="idp">Internally Displaced Person</option>
+                            <option value="orphan">Orphaned/Vulnerable Child</option>
+                            <option value="fhh">Female-Headed Household</option>
+                        </select>
+                    </div>
+
+                    <div class="pt-6">
+                        <button type="submit" class="w-full bg-brand text-deep font-black py-5 rounded-2xl shadow-brand hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
+                            Record with Love
+                        </button>
+                        <a href="{% url 'ngo_portal:beneficiaries' %}" class="block text-center mt-6 text-[10px] font-black text-stone-600 uppercase tracking-widest hover:text-white transition-all">Cancel and Return</a>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

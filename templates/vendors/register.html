@@ -78,12 +78,11 @@
                     <label class="block text-stone-400 font-bold text-[10px] uppercase tracking-[0.2em] mb-2 font-outfit">Business Type *</label>
                     <select name="business_type" required class="w-full bg-black/40 border border-stone-800 text-white px-4 py-3 rounded-xl focus:outline-none focus:border-gold transition-all [&>option]:bg-stone-900">
                         <option value="">Select a type...</option>
-                        <option value="general" {% if form.business_type.value == 'general' %}selected{% endif %}>Retail / MSME</option>
+                        <option value="other" {% if form.business_type.value == 'other' %}selected{% endif %}>Retail / MSME</option>
                         <option value="ngo" {% if form.business_type.value == 'ngo' %}selected{% endif %}>NGO / Non-Profit</option>
                         <option value="resort" {% if form.business_type.value == 'resort' %}selected{% endif %}>Resort / Hospitality</option>
                         <option value="food" {% if form.business_type.value == 'food' %}selected{% endif %}>Food Vendor</option>
                         <option value="printing" {% if form.business_type.value == 'printing' %}selected{% endif %}>Technical Services</option>
-                        <option value="other" {% if form.business_type.value == 'other' %}selected{% endif %}>Other</option>
                     </select>
                     {% if form.business_type.errors %}
                         <p class="text-red-400 text-xs mt-1">{{ form.business_type.errors.0 }}</p>

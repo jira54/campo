@@ -99,6 +99,9 @@ def register_view(request):
             return redirect('vendors:dashboard')
     else:
         form = RegisterForm()
+    
+    if request.method == 'POST' and not form.is_valid():
+        messages.error(request, "Please check the form for errors and try again.")
 
     return render(request, 'vendors/register.html', {'form': form})
 

@@ -27,7 +27,7 @@ class RegisterForm(forms.ModelForm):
 
     class Meta:
         model  = Vendor
-        fields = ['email', 'business_name', 'owner_name', 'business_type', 'phone_number', 'persona_type']
+        fields = ['email', 'business_name', 'owner_name', 'business_type', 'phone_number']
 
     def clean(self):
         cleaned = super().clean()

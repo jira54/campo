@@ -61,6 +61,37 @@ with connection.cursor() as cursor:
             print("    Adding missing column: physical_address")
             cursor.execute("ALTER TABLE vendors_vendor ADD COLUMN physical_address TEXT DEFAULT ''")
 
+        if "phone" not in existing_columns:
+            print("    Adding missing column: phone")
+            cursor.execute("ALTER TABLE vendors_vendor ADD COLUMN phone VARCHAR(20) DEFAULT ''")
+
+        if "mpesa_till_number" not in existing_columns:
+            print("    Adding missing column: mpesa_till_number")
+            cursor.execute("ALTER TABLE vendors_vendor ADD COLUMN mpesa_till_number VARCHAR(20) DEFAULT ''")
+
+        if "business_type_custom" not in existing_columns:
+            print("    Adding missing column: business_type_custom")
+            cursor.execute("ALTER TABLE vendors_vendor ADD COLUMN business_type_custom VARCHAR(120) DEFAULT ''")
+
+    # Repair Resort Portal Tables if they exist
+    if "resort_portal_resortguest" in tables:
+        print("  Checking resort_portal_resortguest for columns...")
+        cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'resort_portal_resortguest'")
+        guest_cols = {r[0] for r in cursor.fetchall()}
+        if "email" not in guest_cols:
+            cursor.execute("ALTER TABLE resort_portal_resortguest ADD COLUMN email VARCHAR(254) DEFAULT ''")
+        if "passport_id" not in guest_cols:
+            cursor.execute("ALTER TABLE resort_portal_resortguest ADD COLUMN passport_id VARCHAR(100) DEFAULT ''")
+        if "nationality" not in guest_cols:
+            cursor.execute("ALTER TABLE resort_portal_resortguest ADD COLUMN nationality VARCHAR(100) DEFAULT 'Kenyan'")
+
+    if "resort_portal_room" in tables:
+        print("  Checking resort_portal_room for columns...")
+        cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'resort_portal_room'")
+        room_cols = {r[0] for r in cursor.fetchall()}
+        if "base_rate" not in room_cols:
+            cursor.execute("ALTER TABLE resort_portal_room ADD COLUMN base_rate DECIMAL(10,2) DEFAULT 0.00")
+
     connection.connection.commit()
 
 print("\nMigrating core contenttypes and auth first to satisfy post_migrate signals...")

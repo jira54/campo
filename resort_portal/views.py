@@ -36,49 +36,59 @@ def resort_dashboard(request):
                 from django.contrib import messages
                 messages.success(request, f"Guest {guest.name} registered successfully.")
     
-    today = timezone.now().date()
-    
-    # Insights Engine: Room Status
-    rooms = Room.objects.filter(vendor=vendor)
-    total_rooms = rooms.count()
-    occupied_rooms = rooms.filter(status='occupied').count()
-    dirty_rooms = rooms.filter(status='vacant_dirty').count()
-    
-    occupancy_rate = round((occupied_rooms / total_rooms * 100) if total_rooms > 0 else 0)
-    
-    # Insights Engine: Revenue Today
-    charges_today = FolioCharge.objects.filter(vendor=vendor, logged_at__date=today)
-    total_revenue_today = charges_today.aggregate(total=Sum('amount'))['total'] or 0
-    
-    # Revenue by Department (e.g. Bar vs Spa vs Restaurant)
-    departments = Department.objects.filter(vendor=vendor)
-    dept_revenue = []
-    for dept in departments:
-        rev = charges_today.filter(department=dept).aggregate(total=Sum('amount'))['total'] or 0
-        dept_revenue.append({'name': dept.name, 'revenue': rev})
+    try:
+        today = timezone.now().date()
         
-    # Active Folios (Live Guests in House)
-    active_folios = Folio.objects.filter(vendor=vendor, status='open').select_related('guest', 'room').order_by('room__room_number')
-    
-    # VIP Check-Ins Today
-    vip_arrivals = active_folios.filter(
-        check_in_date=today,
-        guest__vip_status=True
-    ).count()
+        # Insights Engine: Room Status
+        rooms = Room.objects.filter(vendor=vendor)
+        total_rooms = rooms.count()
+        occupied_rooms = rooms.filter(status='occupied').count()
+        dirty_rooms = rooms.filter(status='vacant_dirty').count()
+        
+        occupancy_rate = round((occupied_rooms / total_rooms * 100) if total_rooms > 0 else 0)
+        
+        # Insights Engine: Revenue Today
+        charges_today = FolioCharge.objects.filter(vendor=vendor, logged_at__date=today)
+        total_revenue_today = charges_today.aggregate(total=Sum('amount'))['total'] or 0
+        
+        # Revenue by Department (e.g. Bar vs Spa vs Restaurant)
+        departments = Department.objects.filter(vendor=vendor)
+        dept_revenue = []
+        for dept in departments:
+            rev = charges_today.filter(department=dept).aggregate(total=Sum('amount'))['total'] or 0
+            dept_revenue.append({'name': dept.name, 'revenue': rev})
+            
+        # Active Folios (Live Guests in House)
+        active_folios = Folio.objects.filter(vendor=vendor, status='open').select_related('guest', 'room').order_by('room__room_number')
+        
+        # VIP Check-Ins Today
+        vip_arrivals = active_folios.filter(
+            check_in_date=today,
+            guest__vip_status=True
+        ).count()
 
-    context = {
-        'total_rooms': total_rooms,
-        'occupied_rooms': occupied_rooms,
-        'dirty_rooms': dirty_rooms,
-        'occupancy_rate': occupancy_rate,
-        'total_revenue_today': total_revenue_today,
-        'dept_revenue': dept_revenue,
-        'active_folios': active_folios,
-        'vip_arrivals': vip_arrivals,
-        'departments': departments, # Added for dynamic POS modal
-        'all_guests': ResortGuest.objects.filter(vendor=vendor).order_by('name'), # Added for universal billing
-        'dirty_room_list': rooms.filter(status='vacant_dirty').order_by('room_number'), # Added for Housekeeping Controller
-    }
+        context = {
+            'total_rooms': total_rooms,
+            'occupied_rooms': occupied_rooms,
+            'dirty_rooms': dirty_rooms,
+            'occupancy_rate': occupancy_rate,
+            'total_revenue_today': total_revenue_today,
+            'dept_revenue': dept_revenue,
+            'active_folios': active_folios,
+            'vip_arrivals': vip_arrivals,
+            'departments': departments,
+            'all_guests': ResortGuest.objects.filter(vendor=vendor).order_by('name'),
+            'dirty_room_list': rooms.filter(status='vacant_dirty').order_by('room_number'),
+        }
+    except Exception as e:
+        # Fallback to a bare-bones context if something is broken in the logic
+        context = {
+            'total_rooms': 0, 'occupied_rooms': 0, 'dirty_rooms': 0,
+            'occupancy_rate': 0, 'total_revenue_today': 0, 'dept_revenue': [],
+            'active_folios': [], 'vip_arrivals': 0, 'departments': [],
+            'all_guests': [], 'dirty_room_list': [],
+            'critical_error': str(e)
+        }
     
     return render(request, 'resort_portal/dashboard.html', context)
 

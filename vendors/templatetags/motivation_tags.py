@@ -8,10 +8,10 @@ register = template.Library()
 def get_pulse_quote(persona):
     hour = timezone.localtime().hour
     
-    # --- PERSONA: MSME (Growth Hustler) ---
+    # --- PERSONA: MSME (Enterprise Builder) ---
     quotes_msme = {
         'morning': [
-            "Hustle starts with a clean ledger and a sharp mind.",
+            "Leadership excellence starts with a clean ledger and a sharp mind.",
             "Today's goal: Beat yesterday's record.",
             "Small sales build big empires. Let's get started."
         ],
@@ -22,7 +22,7 @@ def get_pulse_quote(persona):
         ],
         'evening': [
             "Reflect on tonight's totals; tomorrow's strategy starts now.",
-            "You built something today. Rest well, Hustler.",
+            "You built something today. Excellence is your reward.",
             "Growth is incremental. You're 1% better than this morning."
         ]
     }
@@ -50,7 +50,7 @@ def get_pulse_quote(persona):
     quotes_resort = {
         'morning': [
             "Excellence isn't a check-list; it's a feeling. Set the tone.",
-            "3 VIP arrivals today. Let's make their first impression perfect.",
+            "VIP arrivals today. Let's make their first impression perfect.",
             "The resort is a stage. Your staff are the performers. Action."
         ],
         'day': [

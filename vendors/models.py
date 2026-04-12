@@ -13,12 +13,11 @@ BUSINESS_TYPES = [
     ('cakes',    'Cakes & Confectionery'),
     ('ngo',      'NGO / Non-Profit (Pro)'),
     ('resort',   'Resort / Hospitality (Pro)'),
-    ('general',  'General / Other'),
-    ('other',    'Other (specify)')
+    ('other',    'Other')
 ]
 
 PERSONA_TYPES = [
-    ('msme', 'Growth Hustler (MSME)'),
+    ('msme', 'Enterprise Builder (MSME)'),
     ('ngo', 'Impact Maker (NGO)'),
     ('resort', 'Luxury Concierge (Resort)'),
 ]

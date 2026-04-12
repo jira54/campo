@@ -6,5 +6,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 ENV PYTHONUNBUFFERED=1
 ENV DJANGO_SETTINGS_MODULE=config.settings
-RUN python manage.py collectstatic --noinput || true
+# Required for collectstatic during build phase
+ENV SECRET_KEY=build-phase-dummy-key-for-assets
+RUN python manage.py collectstatic --noinput
 CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000"]

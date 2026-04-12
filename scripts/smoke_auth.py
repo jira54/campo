@@ -34,10 +34,10 @@ try:
     r = s.post(reg_url, data=data, headers=headers, allow_redirects=True)
     print('Register POST ->', r.status_code, ' final url:', r.url)
 
-    if r.url.endswith('/login/') or '/login' in r.url:
-        print('Registration redirected to login as expected.')
+    if '/dashboard/' in r.url or '/portal/' in r.url:
+        print('Registration AUTO-LOGGED IN and redirected to dashboard as expected.')
     else:
-        print('Registration did not redirect to login; response length:', len(r.text))
+        print('Registration did not auto-login to dashboard; final url:', r.url)
         snippet = r.text[:1000]
         print('\n--- response snippet ---\n', snippet)
         # look for common Django form error markers

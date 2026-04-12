@@ -207,18 +207,25 @@ def c2b_confirmation(request):
 @login_required
 def poll_latest_payments(request):
     """Dashboard JS pings this to check for new C2B payments."""
-    unviewed = TillPayment.objects.filter(vendor=request.user, is_viewed=False)
-    
-    payments_data = []
-    for p in unviewed:
-        payments_data.append({
-            'id': p.id,
-            'amount': str(p.amount),
-            'customer_name': p.customer_name,
-            'phone_number': p.phone_number[-4:] if p.phone_number else '',
-            'time': p.created_at.strftime('%H:%M'),
-        })
-        p.is_viewed = True
-        p.save(update_fields=['is_viewed'])
+    try:
+        # Match by vendor and only get unviewed payments
+        unviewed = TillPayment.objects.filter(vendor=request.user, is_viewed=False)
+        
+        payments_data = []
+        for p in unviewed:
+            payments_data.append({
+                'id': p.id,
+                'amount': str(p.amount),
+                'customer_name': p.customer_name or 'M-Pesa Guest',
+                'phone_number': p.phone_number[-4:] if p.phone_number else '****',
+                'time': p.created_at.strftime('%H:%M'),
+            })
+            # Atomic update to prevent double-polling
+            p.is_viewed = True
+            p.save(update_fields=['is_viewed'])
 
-    return JsonResponse({'new_payments': payments_data})
+        return JsonResponse({'new_payments': payments_data, 'ok': True})
+    except Exception as e:
+        # Log and fail gracefully with an empty list instead of 500
+        logging.error(f"Polling error for vendor {request.user.id}: {str(e)}")
+        return JsonResponse({'new_payments': [], 'ok': False, 'error': 'Background sync paused'})

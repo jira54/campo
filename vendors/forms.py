@@ -37,8 +37,18 @@ class RegisterForm(forms.ModelForm):
 
     def save(self, commit=True):
         vendor = super().save(commit=False)
-        vendor.email    = self.cleaned_data['email']
+        vendor.email = self.cleaned_data['email']
         vendor.set_password(self.cleaned_data['password'])
+        
+        # Auto-map persona_type based on business_type for a personalized experience
+        bt = self.cleaned_data.get('business_type')
+        if bt == 'ngo':
+            vendor.persona_type = 'ngo'
+        elif bt == 'resort':
+            vendor.persona_type = 'resort'
+        else:
+            vendor.persona_type = 'msme'
+            
         if commit:
             vendor.save()
         return vendor
@@ -47,10 +57,13 @@ class RegisterForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         
         # Inject the Navy/Gold Tailwind classes into every input
-        custom_classes = 'w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold'
+        custom_classes = 'w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold cursor-pointer'
         
         for field in self.fields.values():
             field.widget.attrs.update({'class': custom_classes})
+            # Ensure Select dropdowns stay dark even on browsers that default to white
+            if isinstance(field.widget, forms.Select):
+                field.widget.attrs.update({'style': 'background-color: #0c0a09; color: white;'})
             
         # Add placeholders so they display inside the Django-rendered inputs
         self.fields['email'].widget.attrs.update({'placeholder': 'your@email.com'})

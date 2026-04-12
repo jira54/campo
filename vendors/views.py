@@ -90,11 +90,13 @@ def register_view(request):
             if request.user.is_authenticated:
                 logout(request)
                 
-            # Store email in session for login form pre-fill
-            request.session['registration_email'] = email
-                
-            messages.success(request, "Account created successfully. Please sign in to continue.")
-            return redirect('login')
+            messages.success(request, f"Welcome to CampoPawa! Your {vendor.get_business_type_display()} dashboard is ready.")
+            
+            # Auto-Login after registration (Instant Onboarding)
+            from django.contrib.auth import login
+            login(request, vendor, backend='django.contrib.auth.backends.ModelBackend')
+            
+            return redirect('vendors:dashboard')
     else:
         form = RegisterForm()
 

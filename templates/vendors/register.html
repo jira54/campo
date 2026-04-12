@@ -11,12 +11,12 @@
     </div>
 
     <div class="w-full max-w-md relative z-10">
-        <a href="{% url 'landing' %}" class="text-stone-500 hover:text-brand hover:scale-105 text-[10px] font-black uppercase tracking-widest mb-8 inline-block transition-all duration-300">&larr; Back to Network</a>
+        <a href="{% url 'landing' %}" class="text-stone-300 hover:text-brand hover:scale-105 text-[10px] font-black uppercase tracking-widest mb-8 inline-block transition-all duration-300">&larr; Back to Network</a>
 
         <div class="glass-box premium-border rounded-[2.5rem] p-10 backdrop-blur-xl shadow-2xl relative overflow-hidden">
             <div class="absolute top-0 right-0 w-24 h-24 bg-brand/5 blur-3xl pointer-events-none"></div>
             <h1 class="text-3xl font-black text-white mb-2 font-outfit uppercase tracking-tight">Deployment Hub</h1>
-            <p class="text-stone-500 mb-10 text-xs font-medium">Join the elite network of operational intelligence.</p>
+            <p class="text-stone-300 mb-10 text-xs font-medium">Join the elite network of operational intelligence.</p>
 
             {% if form.non_field_errors %}
                 <div class="bg-red-900 bg-opacity-40 border-l-4 border-red-500 p-4 rounded-lg mb-6">
@@ -37,7 +37,7 @@
                         value="{{ form.email.value|default_if_none:'' }}"
                         placeholder="your@email.com"
                         required
-                        class="w-full bg-black/40 border border-stone-800 text-white placeholder-stone-500 px-4 py-3 rounded-xl focus:outline-none focus:border-gold transition-all"
+                        class="w-full bg-black/40 border border-stone-800 text-white placeholder-stone-400 px-4 py-3 rounded-xl focus:outline-none focus:border-gold transition-all"
                     >
                     {% if form.email.errors %}
                         <p class="text-red-400 text-xs mt-1">{{ form.email.errors.0 }}</p>
@@ -52,7 +52,7 @@
                         value="{{ form.business_name.value|default_if_none:'' }}"
                         placeholder="e.g., Savannah Retail"
                         required
-                        class="w-full bg-black/40 border border-stone-800 text-white placeholder-stone-500 px-4 py-3 rounded-xl focus:outline-none focus:border-gold transition-all"
+                        class="w-full bg-black/40 border border-stone-800 text-white placeholder-stone-400 px-4 py-3 rounded-xl focus:outline-none focus:border-gold transition-all"
                     >
                     {% if form.business_name.errors %}
                         <p class="text-red-400 text-xs mt-1">{{ form.business_name.errors.0 }}</p>
@@ -67,7 +67,7 @@
                         value="{{ form.owner_name.value|default_if_none:'' }}"
                         placeholder="e.g., John Doe"
                         required
-                        class="w-full bg-black/40 border border-stone-800 text-white placeholder-stone-500 px-4 py-3 rounded-xl focus:outline-none focus:border-gold transition-all"
+                        class="w-full bg-black/40 border border-stone-800 text-white placeholder-stone-400 px-4 py-3 rounded-xl focus:outline-none focus:border-gold transition-all"
                     >
                     {% if form.owner_name.errors %}
                         <p class="text-red-400 text-xs mt-1">{{ form.owner_name.errors.0 }}</p>
@@ -76,14 +76,14 @@
 
                 <div>
                     <label class="block text-stone-400 font-bold text-[10px] uppercase tracking-[0.2em] mb-2 font-outfit">Business Type *</label>
-                    <select name="business_type" required class="w-full bg-black/40 border border-stone-800 text-white px-4 py-3 rounded-xl focus:outline-none focus:border-gold transition-all">
+                    <select name="business_type" required class="w-full bg-black/40 border border-stone-800 text-white px-4 py-3 rounded-xl focus:outline-none focus:border-gold transition-all [&>option]:bg-stone-900">
                         <option value="">Select a type...</option>
                         <option value="general" {% if form.business_type.value == 'general' %}selected{% endif %}>Retail / MSME</option>
                         <option value="ngo" {% if form.business_type.value == 'ngo' %}selected{% endif %}>NGO / Non-Profit</option>
                         <option value="resort" {% if form.business_type.value == 'resort' %}selected{% endif %}>Resort / Hospitality</option>
                         <option value="food" {% if form.business_type.value == 'food' %}selected{% endif %}>Food Vendor</option>
                         <option value="printing" {% if form.business_type.value == 'printing' %}selected{% endif %}>Technical Services</option>
-                        <option value="other" {% if form.business_type.value == 'other' %}selected{% endif %}>Other / Specify</option>
+                        <option value="other" {% if form.business_type.value == 'other' %}selected{% endif %}>Other</option>
                     </select>
                     {% if form.business_type.errors %}
                         <p class="text-red-400 text-xs mt-1">{{ form.business_type.errors.0 }}</p>
@@ -98,9 +98,9 @@
                         value="{{ form.phone_number.value|default_if_none:'' }}"
                         placeholder="+254712345678"
                         required
-                        class="w-full bg-black/40 border border-stone-800 text-white placeholder-stone-500 px-4 py-3 rounded-xl focus:outline-none focus:border-gold transition-all"
+                        class="w-full bg-black/40 border border-stone-800 text-white placeholder-stone-400 px-4 py-3 rounded-xl focus:outline-none focus:border-gold transition-all"
                     >
-                    <p class="text-stone-600 text-[10px] mt-1 font-bold">MPESA-CONNECTED NUMBER</p>
+                    <p class="text-stone-400 text-[10px] mt-1 font-bold">MPESA-CONNECTED NUMBER</p>
                     {% if form.phone_number.errors %}
                         <p class="text-red-400 text-xs mt-1">{{ form.phone_number.errors.0 }}</p>
                     {% endif %}
@@ -116,7 +116,7 @@
                             id="password_input_1"
                             placeholder="••••••••"
                             required
-                            class="w-full bg-black/40 border border-stone-800 text-white placeholder-stone-500 px-4 py-3 rounded-xl focus:outline-none focus:border-gold transition-all"
+                            class="w-full bg-black/40 border border-stone-800 text-white placeholder-stone-400 px-4 py-3 rounded-xl focus:outline-none focus:border-gold transition-all"
                         >
                         <button type="button" onclick="togglePassword('password_input_1', 'eye_icon_1')" class="absolute inset-y-0 right-0 pr-4 flex items-center text-stone-600 hover:text-gold focus:outline-none">
                             <svg id="eye_icon_1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -125,7 +125,7 @@
                             </svg>
                         </button>
                     </div>
-                    <p class="text-stone-600 text-[10px] mt-1 font-bold">MINIMUM 8 CHARACTERS</p>
+                    <p class="text-stone-400 text-[10px] mt-1 font-bold">MINIMUM 8 CHARACTERS</p>
                     {% if form.password.errors %}
                         <p class="text-red-400 text-xs mt-1">{{ form.password.errors.0 }}</p>
                     {% endif %}
@@ -140,7 +140,7 @@
                             id="password_input_2"
                             placeholder="••••••••"
                             required
-                            class="w-full bg-black/40 border border-stone-800 text-white placeholder-stone-500 px-4 py-3 rounded-xl focus:outline-none focus:border-gold transition-all"
+                            class="w-full bg-black/40 border border-stone-800 text-white placeholder-stone-400 px-4 py-3 rounded-xl focus:outline-none focus:border-gold transition-all"
                         >
                         <button type="button" onclick="togglePassword('password_input_2', 'eye_icon_2')" class="absolute inset-y-0 right-0 pr-4 flex items-center text-stone-600 hover:text-gold focus:outline-none">
                             <svg id="eye_icon_2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -166,7 +166,7 @@
                 <a href="{% url 'login' %}" class="text-gold hover:text-yellow-300 font-bold">Sign in here</a>
             </p>
 
-            <p class="text-gray-400 text-xs text-center mt-4">
+            <p class="text-stone-400 text-xs text-center mt-4">
                 By signing up, you agree to our Terms of Service
             </p>
         </div>

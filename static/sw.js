@@ -17,10 +17,25 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  event.respondWith(
-    fetch(event.request)
-      .catch(() => caches.match(event.request)
-        .then(response => response || caches.match('/offline/'))
-      )
-  );
+  const url = new URL(event.request.url);
+  
+  // Only intercept same-origin requests to avoid CORS errors with external CDNs (like Tailwind)
+  // This ensures third-party assets are handled directly by the browser's standard network stack.
+  if (url.origin !== self.location.origin) {
+    return; 
+  }
+
+  // Only serve the offline page logic for navigation requests (HTML pages)
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .catch(() => caches.match('/offline/'))
+    );
+  } else {
+    // For local assets (JS, CSS, Images), try network first, then cache, then fail gracefully
+    event.respondWith(
+      fetch(event.request)
+        .catch(() => caches.match(event.request))
+    );
+  }
 });

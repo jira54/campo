@@ -12,13 +12,13 @@
 
     <div class="w-full max-w-md relative z-10">
         <!-- Back to Landing -->
-        <a href="{% url 'landing' %}" class="text-stone-500 hover:text-brand hover:scale-105 text-[10px] font-black uppercase tracking-widest mb-8 inline-block transition-all duration-300">&larr; Back to Network</a>
+        <a href="{% url 'landing' %}" class="text-stone-300 hover:text-brand hover:scale-105 text-[10px] font-black uppercase tracking-widest mb-8 inline-block transition-all duration-300">&larr; Back to Network</a>
 
         <!-- Form Card -->
         <div class="glass-box premium-border rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden">
             <div class="absolute top-0 right-0 w-24 h-24 bg-brand/5 blur-3xl pointer-events-none"></div>
             <h1 class="text-3xl font-black text-white mb-2 font-outfit uppercase tracking-tight">Access Hub</h1>
-            <p class="text-stone-500 mb-10 text-xs font-medium">Continue your operational journey.</p>
+            <p class="text-stone-300 mb-10 text-xs font-medium">Continue your operational journey.</p>
 
             <!-- Error Message -->
             {% if error %}
@@ -40,7 +40,7 @@
                         value="{{ initial_email|default:'' }}"
                         placeholder="your@email.com"
                         required
-                        class="w-full bg-black/40 border border-stone-800 text-white placeholder-stone-500 px-4 py-3 rounded-xl focus:outline-none focus:border-gold transition-all"
+                        class="w-full bg-black/40 border border-stone-800 text-white placeholder-stone-400 px-4 py-3 rounded-xl focus:outline-none focus:border-gold transition-all"
                     >
                 </div>
 
@@ -53,9 +53,9 @@
                             name="password" 
                             placeholder="•••••••"
                             required
-                            class="w-full bg-black/40 border border-stone-800 text-white placeholder-stone-500 px-4 py-3 rounded-xl focus:outline-none focus:border-gold transition-all"
+                            class="w-full bg-black/40 border border-stone-800 text-white placeholder-stone-400 px-4 py-3 rounded-xl focus:outline-none focus:border-gold transition-all"
                         >
-                        <button type="button" id="togglePassword" class="absolute right-4 top-3 text-stone-600 hover:text-gold transition-colors font-bold text-xs uppercase tracking-widest" aria-label="Toggle password visibility">Show</button>
+                        <button type="button" id="togglePassword" class="absolute right-4 top-3 text-stone-400 hover:text-gold transition-colors font-bold text-xs uppercase tracking-widest" aria-label="Toggle password visibility">Show</button>
                     </div>
                     <p class="text-right mt-2">
                         <a href="{% url 'password_reset' %}" class="text-gold hover:text-yellow-300 text-sm">Forgot your password?</a>

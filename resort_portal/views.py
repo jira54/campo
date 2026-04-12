@@ -11,7 +11,11 @@ from .models import Room, Folio, FolioCharge, Department
 @resort_enterprise_required
 def resort_dashboard(request):
     vendor = request.user
-    from .models import ResortGuest
+    from .models import ResortGuest, Department
+    
+    # Auto-initialize 'General Services' if no revenue centers exist
+    if not Department.objects.filter(vendor=vendor).exists():
+        Department.objects.create(vendor=vendor, name='General Services')
     
     if request.method == 'POST':
         action = request.POST.get('action')
@@ -137,9 +141,28 @@ def log_charge(request):
                 
                 if folio_id:
                     folio = Folio.objects.get(vendor=vendor, id=folio_id)
+                    guest = folio.guest
                 elif guest_id:
                     guest = ResortGuest.objects.get(vendor=vendor, id=guest_id)
+                else:
+                    # Quick Entry: Manual Name/Phone
+                    guest_name = request.POST.get('guest_name')
+                    guest_phone = request.POST.get('guest_phone')
+                    if guest_name:
+                        # Try matching by phone first
+                        guest = ResortGuest.objects.filter(vendor=vendor, phone=guest_phone).first() if guest_phone else None
+                        if not guest:
+                            guest = ResortGuest.objects.create(
+                                vendor=vendor,
+                                name=guest_name,
+                                phone=guest_phone or ''
+                            )
                 
+                if dept_id == 'default':
+                    dept = Department.objects.filter(vendor=vendor).first()
+                else:
+                    dept = Department.objects.get(vendor=vendor, id=dept_id)
+
                 FolioCharge.objects.create(
                     vendor=vendor,
                     folio=folio,

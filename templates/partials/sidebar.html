@@ -31,7 +31,7 @@
             {% endif %}
             <div>
                 <p class="text-white font-outfit font-black text-lg leading-tight truncate max-w-[140px]">{{ user.business_name }}</p>
-                <p class="text-stone-100 text-[10px] font-black uppercase tracking-widest mt-1">Retail OS</p>
+                <p class="text-stone-100 text-[10px] font-black uppercase tracking-widest mt-1">Retail</p>
             </div>
         </div>
     </div>
@@ -55,12 +55,12 @@
             
             <a href="{% url 'customers:customer_list' %}" class="flex items-center gap-4 px-4 py-4 rounded-2xl transition-all group {% if page == 'customers' %}bg-brand text-deep shadow-brand{% else %}text-stone-100 hover:bg-white/[0.03] hover:text-white{% endif %}">
                 <svg class="w-5 h-5 {% if page == 'customers' %}text-deep{% else %}text-stone-200 group-hover:text-brand transition-colors{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                <span class="font-outfit font-bold text-sm tracking-tight">Customer Base</span>
+                <span class="font-outfit font-bold text-sm tracking-tight">Customers</span>
             </a>
 
             <a href="{% url 'customers:services_list' %}" class="flex items-center gap-4 px-4 py-4 rounded-2xl transition-all group {% if page == 'services' %}bg-brand text-deep shadow-brand{% else %}text-stone-100 hover:bg-white/[0.03] hover:text-white{% endif %}">
-                <svg class="w-5 h-5 {% if page == 'services' %}text-deep{% else %}text-brand animate-pulse{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.618.309a6 6 0 01-3.86.517l-3.158-.632a2 2 0 01-1.223-2.953L5.83 8.15a2 2 0 011.62-.65l3.158-.632a6 6 0 013.86.517l.618.309a6 6 0 003.86.517l2.387-.477a2 2 0 012.308 1.936l-.004 5.34a2 2 0 01-1.123 1.831z"/></svg>
-                <span class="font-outfit font-bold text-sm tracking-tight text-brand">Service Suite</span>
+                <svg class="w-5 h-5 {% if page == 'services' %}text-deep{% else %}text-brand{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.618.309a6 6 0 01-3.86.517l-3.158-.632a2 2 0 01-1.223-2.953L5.83 8.15a2 2 0 011.62-.65l3.158-.632a6 6 0 013.86.517l.618.309a6 6 0 003.86.517l2.387-.477a2 2 0 012.308 1.936l-.004 5.34a2 2 0 01-1.123 1.831z"/></svg>
+                <span class="font-outfit font-bold text-sm tracking-tight">My Services</span>
             </a>
         </div>
 

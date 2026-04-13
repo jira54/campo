@@ -99,37 +99,6 @@ class Vendor(AbstractBaseUser, PermissionsMixin):
         return dict(BUSINESS_TYPES).get(self.business_type, 'General')
 
 
-class Customer(models.Model):
-    vendor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
-    phone_number = models.CharField(max_length=50)
-    visit_count = models.IntegerField(default=1)
-    last_visit = models.DateTimeField(auto_now=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.name} ({self.phone_number})"
-
-
-class Sale(models.Model):
-    vendor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    date = models.DateField(default=timezone.now)
-    notes = models.TextField(blank=True)
-
-    def __str__(self):
-        return f"{self.vendor}: {self.amount} on {self.date}"
-
-
-class LoyaltyReward(models.Model):
-    vendor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    reward_name = models.CharField(max_length=255)
-    required_visits = models.IntegerField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.reward_name} ({self.required_visits})"
 
 
 class LoginStreak(models.Model):

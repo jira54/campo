@@ -18,7 +18,12 @@ def main():
     # This prevents the 'relation does not exist' error
     run_cmd("python manage.py migrate --fake vendors 0010")
     
-    # 2. Run standard migrate for anything else
+    # 2. Fix admin app if tables are missing
+    # We unfake it first so migrate will actually run the SQL
+    run_cmd("python manage.py migrate --fake admin zero")
+    run_cmd("python manage.py migrate admin")
+
+    # 3. Run standard migrate for anything else
     ret = run_cmd("python manage.py migrate")
     
     if ret == 0:

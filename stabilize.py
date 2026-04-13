@@ -1,18 +1,19 @@
 import os
-import sys
+import django
 import subprocess
+from django.db import connection
+
+# Setup Django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'club.settings')
+django.setup()
 
 def run_cmd(cmd):
     print(f"🚀 Running: {cmd}")
-    result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
-    if result.returncode != 0:
-        print(f"❌ Error: {result.stderr}")
-    else:
-        print(f"✅ Success: {result.stdout}")
+    result = subprocess.run(cmd, shell=True)
     return result.returncode
 
 def main():
-    print("🛠️ Starting Post-Repair Stabilization...")
+    print("🛠️ Starting Post-Repair Stabilization (Direct DB Access)...")
     
     # 1. Ensure junction and system tables exist
     sql_commands = [
@@ -47,17 +48,21 @@ def main():
             "session_data" text NOT NULL,
             "expire_date" timestamp with time zone NOT NULL
         )""",
-        # Add Foreign Keys if they don't exist (simplified)
-        'CREATE INDEX IF NOT EXISTS "django_session_expire_date_a5c62663" ON "django_session" ("expire_date")',
-        'CREATE INDEX IF NOT EXISTS "django_admin_log_content_type_id_c4bce8eb" ON "django_admin_log" ("content_type_id")',
-        'CREATE INDEX IF NOT EXISTS "django_admin_log_user_id_c561a30a" ON "django_admin_log" ("user_id")'
     ]
     
-    for cmd in sql_commands:
-        # Wrap each in a management command to run raw SQL
-        # Using a simple python string execution via manage.py shell
-        print(f"Executing SQL: {cmd[:50]}...")
-        subprocess.run(f'python manage.py shell -c "from django.db import connection; cursor = connection.cursor(); cursor.execute(\\"\\\"{cmd}\\"\\\" )"', shell=True)
+    with connection.cursor() as cursor:
+        for cmd in sql_commands:
+            print(f"Executing SQL: {cmd[:50]}...")
+            cursor.execute(cmd)
+        
+        # Add indexes
+        print("Creating indexes...")
+        try:
+            cursor.execute('CREATE INDEX IF NOT EXISTS "django_session_expire_date_a5c62663" ON "django_session" ("expire_date")')
+            cursor.execute('CREATE INDEX IF NOT EXISTS "django_admin_log_content_type_id_c4bce8eb" ON "django_admin_log" ("content_type_id")')
+            cursor.execute('CREATE INDEX IF NOT EXISTS "django_admin_log_user_id_c561a30a" ON "django_admin_log" ("user_id")')
+        except Exception as e:
+            print(f"Index creation notice: {e}")
 
     # 2. Fake the migration for vendors 0010 (the delete Sale migration)
     run_cmd("python manage.py migrate --fake vendors 0010")
@@ -69,10 +74,10 @@ def main():
     ret = run_cmd("python manage.py migrate")
     
     if ret == 0:
-        print("🎉 Stabilization Complete!")
+        print("✅ Stabilization Successful!")
     else:
-        print("⚠️ Migration finished with issues, but core fake was attempted.")
-        sys.exit(ret)
+        print("❌ Stabilization Failed with errors.")
+        exit(1)
 
 if __name__ == "__main__":
     main()

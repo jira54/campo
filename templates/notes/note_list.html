@@ -3,7 +3,13 @@
 
 {% block content %}
 <div class="flex min-h-screen bg-deep">
-    {% include 'partials/sidebar.html' %}
+    {% if user.persona_type == 'ngo' %}
+        {% include 'ngo_portal/sidebar_ngo.html' %}
+    {% elif user.persona_type == 'resort' %}
+        {% include 'resort_portal/sidebar_resort.html' %}
+    {% else %}
+        {% include 'partials/sidebar.html' %}
+    {% endif %}
 
     <main class="flex-1 p-6">
         <!-- Header with Gradient -->

@@ -38,17 +38,19 @@
 
     <!-- Navigation -->
     <nav class="flex-1 px-4 space-y-2 overflow-y-auto custom-scrollbar">
-        <p class="px-4 text-[10px] font-black text-white/70 uppercase tracking-[0.2em] mb-4">Impact Tracking</p>
-        
         <a href="{% url 'ngo_portal:dashboard' %}" class="flex items-center gap-4 px-4 py-4 rounded-2xl transition-all group {% if request.resolver_match.url_name == 'dashboard' %}bg-brand text-deep shadow-brand{% else %}text-stone-100 hover:bg-white/[0.03] hover:text-white{% endif %}">
             <svg class="w-5 h-5 {% if request.resolver_match.url_name == 'dashboard' %}text-deep{% else %}text-brand transition-transform group-hover:scale-110{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
             <span class="font-outfit font-bold text-sm tracking-tight">Dashboard</span>
         </a>
 
-        <a href="{% url 'ngo_portal:beneficiaries' %}" class="flex items-center gap-4 px-4 py-4 rounded-2xl transition-all group {% if request.resolver_match.url_name == 'beneficiaries' %}bg-brand text-deep shadow-brand{% else %}text-stone-100 hover:bg-white/[0.03] hover:text-white{% endif %}">
-            <svg class="w-5 h-5 {% if request.resolver_match.url_name == 'beneficiaries' %}text-deep{% else %}text-stone-200 group-hover:text-brand transition-colors{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-            <span class="font-outfit font-bold text-sm tracking-tight">Beneficiaries</span>
-        </a>
+        <div class="pt-6">
+            <p class="px-4 text-[10px] font-black text-white/70 uppercase tracking-[0.2em] mb-4">Impact Tracking</p>
+            
+            <a href="{% url 'ngo_portal:beneficiaries' %}" class="flex items-center gap-4 px-4 py-4 rounded-2xl transition-all group {% if 'beneficiaries' in request.path %}bg-brand text-deep shadow-brand{% else %}text-stone-100 hover:bg-white/[0.03] hover:text-white{% endif %}">
+                <svg class="w-5 h-5 {% if 'beneficiaries' in request.path %}text-deep{% else %}text-stone-200 group-hover:text-brand transition-colors{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                <span class="font-outfit font-bold text-sm tracking-tight">Beneficiaries</span>
+            </a>
+        </div>
 
         <div class="mt-8 mb-4">
             <p class="px-4 text-[10px] font-black text-white/70 uppercase tracking-[0.2em] mb-4">Add Records</p>
@@ -86,51 +88,19 @@
 
             <div class="mt-4 px-4 py-3 bg-stone-900/50 border border-white/5 rounded-2xl space-y-2">
                 <p class="text-[9px] font-black text-stone-200 uppercase tracking-widest mb-2">Vertical Switcher</p>
-                <a href="{% url 'vendors:dashboard' %}" class="flex items-center gap-2 text-[11px] font-bold text-amber-400 hover:text-white transition-colors">
+                <a href="{% url 'vendors:switch_portal' 'msme' %}" class="flex items-center gap-2 text-[11px] font-bold text-amber-400 hover:text-white transition-colors">
                     <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Retail Pro
                 </a>
-                <a href="{% url 'ngo_portal:dashboard' %}" class="flex items-center gap-2 text-[11px] font-bold text-teal-400 hover:text-white transition-colors">
+                <a href="{% url 'vendors:switch_portal' 'ngo' %}" class="flex items-center gap-2 text-[11px] font-bold text-teal-400 hover:text-white transition-colors">
                     <span class="w-1.5 h-1.5 rounded-full bg-teal-500"></span> Impact Ops
                 </a>
-                <a href="{% url 'resort_portal:dashboard' %}" class="flex items-center gap-2 text-[11px] font-bold text-fuchsia-400 hover:text-white transition-colors">
+                <a href="{% url 'vendors:switch_portal' 'resort' %}" class="flex items-center gap-2 text-[11px] font-bold text-fuchsia-400 hover:text-white transition-colors">
                     <span class="w-1.5 h-1.5 rounded-full bg-fuchsia-500"></span> Resort OS
                 </a>
             </div>
         </div>
         {% endif %}
     </nav>
-
-    <!-- Quick Notes Sidebar Section (NGO) -->
-    <div class="mt-8 px-4 py-8 border-t border-white/5 bg-gradient-to-b from-transparent to-brand/5">
-        <div class="flex items-center justify-between mb-4 px-2">
-            <h4 class="text-[10px] font-black text-brand uppercase tracking-widest flex items-center gap-2">
-                <span class="w-1.5 h-1.5 rounded-full bg-brand"></span>
-                Quick Notes
-            </h4>
-        </div>
-
-        <div id="sidebar-notes-list" class="space-y-3 mb-6">
-            {% for note in sidebar_notes %}
-            <div class="bg-white/5 border border-white/5 p-3 rounded-xl hover:bg-white/[0.08] transition-all group">
-                <p class="text-xs text-stone-100 leading-relaxed mb-1">{{ note.content }}</p>
-                <p class="text-[9px] text-stone-500 font-bold uppercase tracking-tighter">{{ note.created_at|date:"M d, H:i" }}</p>
-            </div>
-            {% empty %}
-            <div id="no-notes-msg" class="text-center py-4">
-                <p class="text-[10px] text-stone-500 italic">No quick notes yet.</p>
-            </div>
-            {% endfor %}
-        </div>
-
-        <form id="sidebar-note-form" class="relative group">
-            {% csrf_token %}
-            <input type="text" name="content" placeholder="Type a note..." required
-                class="w-full bg-stone-900 border border-white/10 rounded-xl px-4 py-3 text-xs text-white placeholder-stone-600 focus:outline-none focus:border-brand/50 transition-all pr-10">
-            <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 text-brand hover:scale-110 transition-transform">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
-            </button>
-        </form>
-    </div>
 
     <!-- User & Exit -->
     <div class="p-4 border-t border-white/5 space-y-1">
@@ -169,43 +139,6 @@
 
     sidebar.querySelectorAll('nav a').forEach(link => {
         link.addEventListener('click', closeMenu);
-    });
-
-    // AJAX Note Creation
-    document.getElementById('sidebar-note-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const form = this;
-        const content = form.content.value;
-        const csrf = form.querySelector('[name=csrfmiddlewaretoken]').value;
-
-        fetch('{% url "notes:sidebar-add" %}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrf
-            },
-            body: JSON.stringify({ content: content })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                const list = document.getElementById('sidebar-notes-list');
-                const noMsg = document.getElementById('no-notes-msg');
-                if (noMsg) noMsg.remove();
-
-                const newNote = document.createElement('div');
-                newNote.className = "bg-white/5 border border-white/5 p-3 rounded-xl hover:bg-white/[0.08] transition-all group animate-fade-in";
-                newNote.innerHTML = `
-                    <p class="text-xs text-stone-100 leading-relaxed mb-1">${data.content}</p>
-                    <p class="text-[9px] text-stone-500 font-bold uppercase tracking-tighter">${data.created_at}</p>
-                `;
-                list.insertBefore(newNote, list.firstChild);
-                form.reset();
-                if (list.children.length > 5) {
-                    list.removeChild(list.lastChild);
-                }
-            }
-        });
     });
 </script>
 

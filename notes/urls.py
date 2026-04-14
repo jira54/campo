@@ -9,5 +9,5 @@ urlpatterns = [
     path('<int:pk>/', views.note_detail, name='note_detail'),
     path('<int:pk>/edit/', views.note_edit, name='note_edit'),
     path('<int:pk>/delete/', views.note_delete, name='note_delete'),
-    path('sidebar-add/', views.sidebar_note_add, name='sidebar_note_add'),
 ]
+

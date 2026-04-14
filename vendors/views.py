@@ -316,4 +316,25 @@ def custom_404(request, exception):
     return render(request, '404.html', status=404)
 
 def custom_500(request):
-    return render(request, '500.html', status=500)
+    return render(request, '500.html', status=500)
+
+@login_required
+def switch_portal(request, portal_type):
+    if not request.user.is_superuser:
+        messages.error(request, "Access denied.")
+        return redirect('vendors:dashboard')
+    
+    if portal_type == 'msme':
+        request.user.business_type = 'other'
+        request.user.persona_type = 'msme'
+    elif portal_type == 'ngo':
+        request.user.business_type = 'ngo'
+        request.user.persona_type = 'ngo'
+    elif portal_type == 'resort':
+        request.user.business_type = 'resort'
+        request.user.persona_type = 'resort'
+    
+    request.user.save()
+    messages.success(request, f"Switched to {portal_type.upper()} view.")
+    return redirect('vendors:dashboard')
+

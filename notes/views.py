@@ -82,3 +82,28 @@ def note_delete(request, pk):
         note.delete()
         messages.success(request, f"Note '{title}' deleted.")
     return redirect('notes:note_list')
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+
+@login_required
+@require_POST
+def sidebar_note_add(request):
+    title = request.POST.get('title', 'Quick Note')
+    content = request.POST.get('content')
+    
+    if content:
+        note = Note.objects.create(
+            vendor=request.user,
+            title=title,
+            content=content
+        )
+        return JsonResponse({
+            'status': 'success',
+            'note': {
+                'id': note.id,
+                'title': note.title,
+                'excerpt': note.excerpt,
+                'created_at': note.created_at.strftime('%b %d, %H:%M')
+            }
+        })
+    return JsonResponse({'status': 'error', 'message': 'Content is required'}, status=400)

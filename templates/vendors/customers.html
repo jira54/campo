@@ -55,11 +55,20 @@
         {% for c in customers %}
           <div class="border-b p-4">
             <div class="flex justify-between items-start mb-2">
-              <div class="font-semibold">{{ c.name }}</div>
-              <div class="text-gold font-bold">{{ c.visit_count }} visits</div>
+              <div class="flex items-center gap-2">
+                <div class="font-semibold">{{ c.name }}</div>
+                {% if c.status == 'loyal' %}
+                  <span class="text-[10px] bg-amber-500/10 text-amber-500 px-1.5 py-0.5 rounded font-black uppercase flex items-center gap-1">👑 Loyal</span>
+                {% elif c.status == 'atrisk' %}
+                  <span class="text-[10px] bg-red-500/10 text-red-500 px-1.5 py-0.5 rounded font-black uppercase flex items-center gap-1 animate-pulse">⚡ At-Risk</span>
+                {% elif c.status == 'regular' %}
+                  <span class="text-[10px] bg-emerald-500/10 text-emerald-500 px-1.5 py-0.5 rounded font-black uppercase flex items-center gap-1">🟢 Regular</span>
+                {% endif %}
+              </div>
+              <div class="text-gold font-bold">{{ c.total_visits }} visits</div>
             </div>
-            <div class="text-sm text-gray-600">{{ c.phone_number }}</div>
-            <div class="text-xs text-gray-500 mt-1">Last seen: {{ c.last_visit }}</div>
+            <div class="text-sm text-gray-600">{{ c.phone }}</div>
+            <div class="text-xs text-gray-500 mt-1">Last seen: {{ c.last_purchase.purchased_at|date:"M d, Y"|default:"Never" }}</div>
           </div>
           {% empty %}
             <div class="p-4 text-center text-gray-600">No customers yet — record a visit above to get started</div>
@@ -68,12 +77,28 @@
       
       <!-- Desktop Table View -->
       <table class="hidden md:table w-full text-left text-sm">
-        <thead class="bg-gray-50"><tr><th class="p-3">Name</th><th class="p-3">Phone</th><th class="p-3">Visits</th><th class="p-3">Last seen</th></tr></thead>
+        <thead class="bg-gray-50"><tr><th class="p-3">Name</th><th class="p-3">Status</th><th class="p-3">Phone</th><th class="p-3">Visits</th><th class="p-3">Last seen</th></tr></thead>
         <tbody>
           {% for c in customers %}
-            <tr class="border-t"><td class="p-3">{{ c.name }}</td><td class="p-3">{{ c.phone_number }}</td><td class="p-3 font-semibold">{{ c.visit_count }}</td><td class="p-3 text-xs text-gray-600">{{ c.last_visit }}</td></tr>
+            <tr class="border-t">
+              <td class="p-3 font-medium">{{ c.name }}</td>
+              <td class="p-3">
+                {% if c.status == 'loyal' %}
+                  <span class="text-[10px] bg-amber-500/10 text-amber-500 px-2 py-1 rounded-full font-black uppercase tracking-tighter">👑 Loyal</span>
+                {% elif c.status == 'atrisk' %}
+                  <span class="text-[10px] bg-red-500/10 text-red-500 px-2 py-1 rounded-full font-black uppercase tracking-tighter shadow-[0_0_10px_rgba(239,68,68,0.1)]">⚡ At-Risk</span>
+                {% elif c.status == 'regular' %}
+                  <span class="text-[10px] bg-emerald-500/10 text-emerald-500 px-2 py-1 rounded-full font-black uppercase tracking-tighter">🟢 Regular</span>
+                {% else %}
+                  <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded-full font-black uppercase tracking-tighter">New</span>
+                {% endif %}
+              </td>
+              <td class="p-3">{{ c.phone }}</td>
+              <td class="p-3 font-semibold">{{ c.total_visits }}</td>
+              <td class="p-3 text-xs text-gray-600">{{ c.last_purchase.purchased_at|date:"M d, Y"|default:"Never" }}</td>
+            </tr>
           {% empty %}
-            <tr><td class="p-3 col-span-4" colspan="4">No customers yet — record a visit above to get started</td></tr>
+            <tr><td class="p-3 col-span-5" colspan="5">No customers yet — record a visit above to get started</td></tr>
           {% endfor %}
         </tbody>
       </table>

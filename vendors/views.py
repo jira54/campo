@@ -13,7 +13,7 @@ from django.utils.html import strip_tags
 
 from .forms import RegisterForm, VendorProfileForm
 from .greetings import get_daily_context
-from customers.models import Customer, Purchase
+from customers.models import Customer, Purchase, Service
 from promotions.models import Promotion
 from credit.models import CreditRecord
 
@@ -211,6 +211,8 @@ def dashboard(request):
         # Credit alerts
         'overdue_credits':  overdue_credits,
         'total_credit_owed': total_credit_owed,
+        # Check if services exist for Quick Sale visibility
+        'has_services': Service.objects.filter(vendor=vendor, is_active=True).exists(),
         # Add daily greeting context
         **get_daily_context(vendor),
     }
@@ -238,43 +240,35 @@ def quick_sale(request):
         try:
             amount = float(amount)
             
-            from customers.models import Customer, Purchase, Service
-            
-            # Auto-CRM for Cash Sales
+            from customers.models import Customer, Purchase
+
+            # Get or create the generic Walk-in Customer for this vendor
+            # to avoid cluttering the CRM with "Cash Customer" entries
+            walkin_customer, _ = Customer.objects.get_or_create(
+                vendor=request.user,
+                name="Walk-in Customer",
+                defaults={'phone': ''}
+            )
+
+            customer = walkin_customer
             if customer_phone:
-                customer = Customer.objects.filter(vendor=request.user, phone=customer_phone).first()
-                if not customer:
-                    customer = Customer.objects.create(
-                        vendor=request.user,
-                        phone=customer_phone,
-                        name="Cash Customer"
-                    )
-            else:
-                # Anonymous walk-in
-                customer, _ = Customer.objects.get_or_create(
-                    vendor=request.user,
-                    name="Walk-in Customer",
-                    defaults={'phone': ''}
-                )
-            
-            # Get a default service for quick sales
-            default_service = Service.objects.filter(vendor=request.user).first()
-            if not default_service:
-                default_service = Service.objects.create(
-                    vendor=request.user,
-                    name="Quick Sale",
-                    description="Quick sale from dashboard",
-                    price=amount
-                )
-            
+                # Try to find existing customer if phone provided
+                existing_customer = Customer.objects.filter(vendor=request.user, phone=customer_phone).first()
+                if existing_customer:
+                    customer = existing_customer
+                else:
+                    # If new phone, we keep it as Walk-in but note the phone
+                    # per user request to avoid "storing as customer in customer records"
+                    notes = f"{notes} | Phone: {customer_phone}" if notes else f"Phone: {customer_phone}"
+
             Purchase.objects.create(
                 customer=customer,
                 amount=amount,
-                service=default_service.name,
+                service="Quick Sale",  # Use literal string to avoid auto-creating Service objects
                 notes=notes or "Quick sale from dashboard"
             )
-            
-            messages.success(request, f"Sale of KES {amount:.2f} logged for {customer.name}")
+
+            messages.success(request, f"Sale of KES {amount:.2f} logged.")
             return redirect('vendors:dashboard')
             
         except ValueError:
@@ -317,3 +311,9 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
             pass
             
         return response
+
+def custom_404(request, exception):
+    return render(request, '404.html', status=404)
+
+def custom_500(request):
+    return render(request, '500.html', status=500)

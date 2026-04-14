@@ -40,3 +40,6 @@ urlpatterns = [
     path('sw.js', service_worker, name='service_worker'),
     path('offline/', offline, name='offline'),
 ]
+
+handler404 = 'vendors.views.custom_404'
+handler500 = 'vendors.views.custom_500'

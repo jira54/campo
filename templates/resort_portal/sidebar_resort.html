@@ -31,7 +31,7 @@
             {% endif %}
             <div>
                 <p class="text-white font-outfit font-black text-lg leading-tight truncate max-w-[140px]">{{ user.business_name }}</p>
-                <p class="text-stone-500 text-[10px] font-black uppercase tracking-widest mt-1">Operational OS</p>
+                <p class="text-stone-500 text-[10px] font-black uppercase tracking-widest mt-1">Resort</p>
             </div>
         </div>
     </div>
@@ -42,7 +42,7 @@
         
         <a href="{% url 'resort_portal:dashboard' %}" class="flex items-center gap-4 px-4 py-4 rounded-2xl transition-all group {% if request.resolver_match.url_name == 'dashboard' %}bg-brand text-deep shadow-brand{% else %}text-stone-100 hover:bg-white/[0.03] hover:text-white{% endif %}">
             <svg class="w-5 h-5 {% if request.resolver_match.url_name == 'dashboard' %}text-deep{% else %}text-brand group-hover:scale-110 transition-transform{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
-            <span class="font-outfit font-bold text-sm tracking-tight text-white">Resort Dashboard</span>
+            <span class="font-outfit font-bold text-sm tracking-tight">Dashboard</span>
         </a>
 
         <div class="pt-6">
@@ -50,17 +50,17 @@
             
             <a href="{% url 'resort_portal:guest_index' %}" class="flex items-center gap-4 px-4 py-4 rounded-2xl transition-all group {% if 'guests' in request.path %}bg-brand text-deep shadow-brand{% else %}text-stone-100 hover:bg-white/[0.03] hover:text-white{% endif %}">
                 <svg class="w-5 h-5 {% if 'guests' in request.path %}text-deep{% else %}text-stone-200 group-hover:text-brand transition-colors{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                <span class="font-outfit font-bold text-sm tracking-tight text-white">Guest Directory</span>
+                <span class="font-outfit font-bold text-sm tracking-tight">Guests</span>
             </a>
 
             <a href="#" class="flex items-center gap-4 px-4 py-4 rounded-2xl text-stone-100 hover:bg-white/[0.03] hover:text-white transition-all group">
                 <svg class="w-5 h-5 text-stone-200 group-hover:text-brand transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                <span class="font-outfit font-bold text-sm tracking-tight">Front Desk (Folios)</span>
+                <span class="font-outfit font-bold text-sm tracking-tight">Front Desk</span>
             </a>
 
             <a href="{% url 'resort_portal:setup' %}" class="flex items-center gap-4 px-4 py-4 rounded-2xl transition-all group {% if request.resolver_match.url_name == 'setup' %}bg-brand text-deep shadow-brand{% else %}text-stone-100 hover:bg-white/[0.03] hover:text-white{% endif %}">
                 <svg class="w-5 h-5 {% if request.resolver_match.url_name == 'setup' %}text-deep{% else %}text-stone-200 group-hover:text-brand transition-colors{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
-                <span class="font-outfit font-bold text-sm tracking-tight text-white">Property Setup</span>
+                <span class="font-outfit font-bold text-sm tracking-tight">Property Setup</span>
             </a>
         </div>
         {% if user.is_superuser %}
@@ -87,6 +87,35 @@
         </div>
         {% endif %}
     </nav>
+
+    <!-- Sidebar Notes Section -->
+    <div class="mt-8 px-4 py-8 border-t border-white/5 bg-gradient-to-b from-transparent to-brand/5">
+        <div class="flex items-center justify-between mb-4 px-2">
+            <h4 class="text-[10px] font-black uppercase tracking-widest text-stone-500">Quick Notes</h4>
+            <a href="{% url 'notes:note_list' %}" class="text-[10px] text-brand hover:underline font-bold">All</a>
+        </div>
+        
+        <div id="sidebar-notes-list" class="space-y-3 mb-6">
+            {% for note in sidebar_notes %}
+            <div class="p-3 bg-white/5 border border-white/5 rounded-xl hover:border-brand/30 transition-all group cursor-default">
+                <p class="text-white text-xs font-bold leading-tight mb-1 truncate">{{ note.title }}</p>
+                <p class="text-[10px] text-stone-400 line-clamp-2 leading-relaxed">{{ note.content|truncatechars:60 }}</p>
+            </div>
+            {% empty %}
+            <p id="no-notes-msg" class="text-[10px] text-stone-600 italic px-2">No quick notes yet.</p>
+            {% endfor %}
+        </div>
+
+        <form id="sidebar-note-form" class="relative group">
+            {% csrf_token %}
+            <textarea name="content" rows="1" placeholder="Type a note..." 
+                      class="w-full bg-navy border border-white/10 rounded-xl px-4 py-3 text-xs text-white placeholder-stone-600 focus:border-brand/50 focus:ring-0 transition-all resize-none custom-scrollbar"
+                      oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
+            <button type="submit" class="absolute right-2 bottom-2 p-1.5 bg-brand text-deep rounded-lg opacity-0 group-focus-within:opacity-100 transition-all hover:scale-105 shadow-brand">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
+            </button>
+        </form>
+    </div>
 
     <!-- User & Exit -->
     <div class="p-4 border-t border-white/5 space-y-1">
@@ -125,6 +154,51 @@
 
     sidebar.querySelectorAll('nav a').forEach(link => {
         link.addEventListener('click', closeMenu);
+    });
+
+    // Sidebar Note Submission
+    document.getElementById('sidebar-note-form')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const textarea = this.querySelector('textarea');
+        const content = textarea.value.trim();
+        if(!content) return;
+
+        const formData = new FormData();
+        formData.append('content', content);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+        const btn = this.querySelector('button');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="animate-spin text-[10px]">⌛</span>';
+
+        fetch('{% url "notes:sidebar_note_add" %}', {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === 'success') {
+                const list = document.getElementById('sidebar-notes-list');
+                const noNotes = document.getElementById('no-notes-msg');
+                if(noNotes) noNotes.remove();
+
+                const noteHtml = `
+                    <div class="p-3 bg-white/5 border border-white/5 rounded-xl hover:border-brand/30 transition-all group cursor-default animate-in slide-in-from-bottom-2 duration-300">
+                        <p class="text-white text-xs font-bold leading-tight mb-1 truncate">${data.note.title}</p>
+                        <p class="text-[10px] text-stone-400 line-clamp-2 leading-relaxed">${content}</p>
+                    </div>
+                `;
+                list.insertAdjacentHTML('afterbegin', noteHtml);
+                textarea.value = '';
+                textarea.style.height = '';
+                if(list.children.length > 5) list.lastElementChild.remove();
+            }
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btn.innerHTML = '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>';
+        });
     });
 </script>
 

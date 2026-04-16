@@ -39,6 +39,7 @@ class Beneficiary(models.Model):
     # Secure Personal Data
     name = models.CharField(max_length=255, help_text="Restricted to field workers. Excluded from aggregated donor exports.")
     phone = models.CharField(max_length=50, blank=True)
+    email = models.EmailField(blank=True, null=True, help_text="For newsletters and program updates")
     
     # Demographics
     sex = models.CharField(max_length=1, choices=GENDER_CHOICES, default='O')

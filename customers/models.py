@@ -35,6 +35,7 @@ class Customer(models.Model):
     vendor   = models.ForeignKey('vendors.Vendor', on_delete=models.CASCADE, related_name='customers')
     name     = models.CharField(max_length=120)
     phone    = models.CharField(max_length=20)
+    email    = models.EmailField(blank=True, null=True, help_text="For newsletters and receipts")
     notes    = models.TextField(blank=True)
     tags     = models.CharField(max_length=255, blank=True, default='')
     is_active = models.BooleanField(default=True)
@@ -177,3 +178,22 @@ class Receipt(models.Model):
     def generate_number():
         import secrets
         return f"CP-{timezone.now().strftime('%y%m%d')}-{secrets.token_hex(4).upper()}"
+
+
+class BusinessNote(models.Model):
+    vendor = models.ForeignKey('vendors.Vendor', on_delete=models.CASCADE, related_name='business_notes')
+    content = models.TextField(help_text="Business ideas, customer feedback, reminders")
+    note_type = models.CharField(max_length=20, choices=[
+        ('idea', 'Business Idea'),
+        ('feedback', 'Customer Feedback'),
+        ('reminder', 'Reminder'),
+        ('insight', 'Business Insight'),
+    ], default='idea')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-updated_at']
+
+    def __str__(self):
+        return f"Note ({self.vendor.business_name}) - {self.updated_at.date()}"

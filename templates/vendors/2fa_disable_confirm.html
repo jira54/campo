@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Disable 2FA - CampoPawa{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-deep flex items-center justify-center pt-12 px-4 sm:pt-16 sm:px-6 lg:pt-20 lg:px-8 relative overflow-hidden">
+    <!-- Premium Background Effects -->
+    <div class="absolute inset-0 pointer-events-none">
+        <div class="absolute top-1/4 -left-20 w-80 h-80 bg-red-500/5 blur-[100px] rounded-full"></div>
+    </div>
+
+    <div class="w-full max-w-md relative z-10">
+        <div class="glass-box premium-border rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden">
+            <h1 class="text-3xl font-black text-white mb-2 font-outfit uppercase tracking-tight">Disable Shield</h1>
+            <p class="text-stone-300 mb-8 text-xs font-medium uppercase tracking-widest">Remove Two-Factor Authentication</p>
+
+            <div class="space-y-6 text-center">
+                <div class="w-20 h-20 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 text-4xl">
+                    ⚠️
+                </div>
+
+                <p class="text-stone-400 text-sm leading-relaxed mb-8">
+                    Are you sure you want to disable the Account Shield? This will lower the security of your operational hub.
+                </p>
+
+                <form method="post" action="{% url 'vendors:disable_2fa' %}" class="space-y-3">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full bg-red-500 text-white font-black py-4 rounded-xl shadow-lg hover:bg-red-600 transition-all font-outfit uppercase tracking-widest">
+                        Yes, Disable Shield
+                    </button>
+                    <a href="{% url 'vendors:profile' %}" class="block w-full bg-stone-800 text-stone-300 font-black py-4 rounded-xl border border-white/5 hover:bg-stone-700 transition-all font-outfit uppercase tracking-widest">
+                        Keep Protection
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

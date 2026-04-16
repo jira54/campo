@@ -13,10 +13,10 @@
             <div class="flex items-center gap-3 mb-8">
                 <a href="{% url 'resort_portal:guest_index' %}" class="text-stone-600 hover:text-brand transition-all flex items-center gap-2 text-xs font-black uppercase tracking-widest">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-                    Guest Directory
+                    Guest List
                 </a>
                 <span class="text-stone-800">/</span>
-                <span class="text-stone-400 text-xs font-black uppercase tracking-widest">Guest Dossier</span>
+                <span class="text-stone-400 text-xs font-black uppercase tracking-widest">Guest Profile</span>
             </div>
 
             <!-- Profile Header Card -->
@@ -58,7 +58,7 @@
             <!-- Stats Grid -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
                 <div class="bg-stone-900/40 border border-white/5 rounded-3xl p-8 backdrop-blur-sm">
-                    <p class="text-[9px] font-black tracking-widest text-stone-500 uppercase mb-4">Lifetime Yield</p>
+                    <p class="text-[9px] font-black tracking-widest text-stone-500 uppercase mb-4">Total Sent</p>
                     <div class="text-3xl font-black text-white">KES {{ total_lifetime_spend|floatformat:0 }}</div>
                 </div>
                 <div class="bg-stone-900/40 border border-white/5 rounded-3xl p-8 backdrop-blur-sm">
@@ -94,7 +94,7 @@
                                 class="w-full bg-black/40 border border-white/5 rounded-2xl p-6 text-stone-300 placeholder-stone-700 focus:outline-none focus:border-brand/40 transition-all text-sm leading-relaxed mb-6"
                                 placeholder="Record guest preferences, allergies, or special event notes here...">{{ guest.preferences }}</textarea>
                             <button type="submit" class="bg-white/5 hover:bg-brand hover:text-deep text-white text-[10px] font-black px-6 py-3 rounded-xl border border-white/5 transition-all uppercase tracking-widest">
-                                Save Intelligence
+                                Save Notes
                             </button>
                         </form>
                     </div>
@@ -102,8 +102,8 @@
                     <!-- Interaction History -->
                     <div class="bg-stone-900/40 border border-white/5 rounded-3xl overflow-hidden">
                         <div class="p-8 border-b border-white/5 flex items-center justify-between">
-                            <h2 class="text-white font-black text-lg">Platform Journey</h2>
-                            <div class="text-[10px] font-black uppercase tracking-widest text-stone-500">Universal Spend History</div>
+                            <h2 class="text-white font-black text-lg">Activity History</h2>
+                            <div class="text-[10px] font-black uppercase tracking-widest text-stone-500">Service & Stay Records</div>
                         </div>
 
                         {% if all_charges %}
@@ -111,10 +111,10 @@
                             <table class="w-full text-left">
                                 <thead class="bg-white/5">
                                     <tr>
-                                        <th class="px-8 py-4 text-[9px] font-black text-stone-400 uppercase tracking-widest">Operation Date</th>
+                                        <th class="px-8 py-4 text-[9px] font-black text-stone-400 uppercase tracking-widest">Date</th>
                                         <th class="px-8 py-4 text-[9px] font-black text-stone-400 uppercase tracking-widest">Department</th>
-                                        <th class="px-8 py-4 text-[9px] font-black text-stone-400 uppercase tracking-widest">Descriptor</th>
-                                        <th class="px-8 py-4 text-[9px] font-black text-stone-400 uppercase tracking-widest text-right">Yield</th>
+                                        <th class="px-8 py-4 text-[9px] font-black text-stone-400 uppercase tracking-widest">Description</th>
+                                        <th class="px-8 py-4 text-[9px] font-black text-stone-400 uppercase tracking-widest text-right">Amount</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-white/5">

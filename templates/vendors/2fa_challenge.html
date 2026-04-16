@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Verify Identity - CampoPawa{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-deep flex items-center justify-center pt-12 px-4 sm:pt-16 sm:px-6 lg:pt-20 lg:px-8 relative overflow-hidden">
+    <!-- Premium Background Effects -->
+    <div class="absolute inset-0 pointer-events-none">
+        <div class="absolute top-1/4 -left-20 w-80 h-80 bg-brand/5 blur-[100px] rounded-full"></div>
+        <div class="absolute bottom-1/4 -right-20 w-96 h-96 bg-amber-500/5 blur-[120px] rounded-full"></div>
+    </div>
+
+    <div class="w-full max-w-md relative z-10">
+        <div class="glass-box premium-border rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden">
+            <h1 class="text-3xl font-black text-white mb-2 font-outfit uppercase tracking-tight">Challenge</h1>
+            <p class="text-stone-300 mb-8 text-xs font-medium uppercase tracking-widest">Multi-Factor Authentication Required</p>
+
+            <div class="space-y-6 text-center">
+                <div class="w-20 h-20 bg-brand/10 border border-brand/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <svg class="w-10 h-10 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                </div>
+
+                <p class="text-stone-400 text-sm leading-relaxed mb-8">
+                    Please enter the 6-digit verification code from your authenticator app to secure this session.
+                </p>
+
+                {% if error %}
+                    <div class="bg-red-900 bg-opacity-40 border-l-4 border-red-500 p-4 rounded-lg mb-6 text-left">
+                        <p class="text-red-400 text-xs">{{ error }}</p>
+                    </div>
+                {% endif %}
+
+                <form method="post" action="{% url 'vendors:2fa_challenge' %}" class="space-y-4">
+                    {% csrf_token %}
+                    <div>
+                        <input 
+                            type="text" 
+                            name="token" 
+                            inputmode="numeric"
+                            autocomplete="one-time-code"
+                            placeholder="000 000"
+                            required
+                            autofocus
+                            class="w-full bg-black/40 border border-stone-800 text-white text-center text-3xl font-outfit font-black placeholder-stone-700 px-4 py-4 rounded-xl focus:outline-none focus:border-brand transition-all"
+                        >
+                    </div>
+
+                    <button type="submit" class="w-full bg-brand text-deep font-black py-4 rounded-xl shadow-brand hover:scale-[1.02] active:scale-[0.98] transition-all font-outfit uppercase tracking-widest mt-4">
+                        Verify & Sign In
+                    </button>
+                </form>
+
+                <p class="text-[10px] text-stone-500 font-black uppercase tracking-widest pt-4">
+                    Having trouble? <a href="{% url 'login' %}" class="text-brand hover:underline">Back to Login</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

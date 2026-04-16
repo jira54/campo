@@ -15,4 +15,7 @@ urlpatterns = [
     # Operations
     path('folio/check-out/<int:folio_id>/', views.check_out_folio, name='check_out_folio'),
     path('room/mark-clean/<int:room_id>/', views.mark_room_clean, name='mark_room_clean'),
+    path('room/start-cleaning/<int:room_id>/', views.start_cleaning, name='start_cleaning'),
+    path('room/finish-cleaning/<int:room_id>/', views.finish_cleaning, name='finish_cleaning'),
+    path('room/inspect/<int:room_id>/', views.inspect_room, name='inspect_room'),
 ]

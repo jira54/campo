@@ -135,6 +135,7 @@ def add_beneficiary(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         phone = request.POST.get('phone')
+        email = request.POST.get('email')
         sex = request.POST.get('sex')
         county = request.POST.get('county')
         vulnerability = request.POST.get('vulnerability', 'none')
@@ -143,6 +144,7 @@ def add_beneficiary(request):
             vendor=request.user,
             name=name,
             phone=phone,
+            email=email,
             sex=sex,
             county=county,
             vulnerability_marker=vulnerability

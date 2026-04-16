@@ -63,6 +63,12 @@ class Vendor(AbstractBaseUser, PermissionsMixin):
     email             = models.EmailField(unique=True)
     is_active         = models.BooleanField(default=True)
     is_staff          = models.BooleanField(default=False)
+    
+    # --- Production Hardening ---
+    is_2fa_enabled    = models.BooleanField(default=False)
+    totp_secret      = models.CharField(max_length=32, blank=True, null=True)
+    has_onboarding_completed = models.BooleanField(default=False)
+    
     trial_end_date    = models.DateTimeField(null=True, blank=True)
     created_at        = models.DateTimeField(auto_now_add=True)
 
@@ -100,6 +106,27 @@ class Vendor(AbstractBaseUser, PermissionsMixin):
 
 
 
+
+
+class Property(models.Model):
+    PROPERTY_TYPES = [
+        ('resort', 'Resort / Hotel'),
+        ('retail', 'Retail / Branch'),
+        ('ngo',    'NGO / Regional Office'),
+        ('other',  'Other')
+    ]
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='properties')
+    name = models.CharField(max_length=255)
+    location = models.CharField(max_length=255, blank=True)
+    property_type = models.CharField(max_length=20, choices=PROPERTY_TYPES, default='resort')
+    is_default = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Properties"
+
+    def __str__(self):
+        return f"{self.name} ({self.vendor.business_name})"
 
 class LoginStreak(models.Model):
     vendor = models.OneToOneField(

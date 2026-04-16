@@ -22,13 +22,16 @@ def saas_overview(request):
     
     total_mrr = sum([PLAN_PRICES.get(sub.plan, 0) for sub in active_subscriptions])
 
-    # 2. Vertical Distribution
+    # 2. Vertical Distribution (Optimized)
     all_vendors = Vendor.objects.filter(is_superuser=False)
     total_vendors = all_vendors.count()
     
-    retail_count = all_vendors.filter(business_type__in=['general', 'food', 'thrift', 'barber']).count()
-    ngo_count = all_vendors.filter(business_type='ngo').count()
-    resort_count = all_vendors.filter(business_type='resort').count()
+    type_counts = {item['business_type']: item['count'] for item in all_vendors.values('business_type').annotate(count=Count('id'))}
+    
+    retail_types = ['general', 'food', 'thrift', 'barber', 'printing', 'cakes', 'rental']
+    retail_count = sum(type_counts.get(t, 0) for t in retail_types)
+    ngo_count = type_counts.get('ngo', 0)
+    resort_count = type_counts.get('resort', 0)
 
     # 3. Churn Radar
     # A vendor is at risk if their subscription expires within 3 days OR they haven't logged in for 14 days

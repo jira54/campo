@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Setup 2FA - CampoPawa{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-deep flex items-center justify-center pt-12 px-4 sm:pt-16 sm:px-6 lg:pt-20 lg:px-8 relative overflow-hidden">
+    <!-- Premium Background Effects -->
+    <div class="absolute inset-0 pointer-events-none">
+        <div class="absolute top-1/4 -left-20 w-80 h-80 bg-brand/5 blur-[100px] rounded-full"></div>
+        <div class="absolute bottom-1/4 -right-20 w-96 h-96 bg-amber-500/5 blur-[120px] rounded-full"></div>
+    </div>
+
+    <div class="w-full max-w-md relative z-10">
+        <div class="glass-box premium-border rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden">
+            <h1 class="text-3xl font-black text-white mb-2 font-outfit uppercase tracking-tight">Security Shield</h1>
+            <p class="text-stone-300 mb-8 text-xs font-medium uppercase tracking-widest">Two-Factor Authentication Setup</p>
+
+            <div class="space-y-6 text-center">
+                <div class="bg-white p-4 rounded-3xl inline-block shadow-2xl shadow-brand/20">
+                    <img src="data:image/png;base64,{{ qr_code }}" alt="Scan this QR code" class="w-48 h-48">
+                </div>
+
+                <div class="text-left space-y-4">
+                    <div class="bg-black/40 border border-stone-800 p-4 rounded-xl">
+                        <p class="text-[10px] text-stone-500 font-black uppercase tracking-widest mb-1">Manual Entry Key</p>
+                        <code class="text-brand font-mono text-lg break-all">{{ secret }}</code>
+                    </div>
+
+                    <p class="text-stone-400 text-xs leading-relaxed">
+                        1. Scan the QR code with Google Authenticator or Authy.<br>
+                        2. Enter the 6-digit code from your app below to verify.
+                    </p>
+                </div>
+
+                <form method="post" action="{% url 'vendors:verify_2fa' %}" class="space-y-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="secret" value="{{ secret }}">
+                    
+                    <div>
+                        <input 
+                            type="text" 
+                            name="token" 
+                            placeholder="000 000"
+                            required
+                            class="w-full bg-black/40 border border-stone-800 text-white text-center text-3xl font-outfit font-black placeholder-stone-700 px-4 py-4 rounded-xl focus:outline-none focus:border-brand transition-all"
+                        >
+                    </div>
+
+                    <button type="submit" class="w-full bg-brand text-deep font-black py-4 rounded-xl shadow-brand hover:scale-[1.02] active:scale-[0.98] transition-all font-outfit uppercase tracking-widest">
+                        Complete Activation
+                    </button>
+                </form>
+
+                <a href="{% url 'vendors:dashboard' %}" class="block text-stone-500 hover:text-stone-300 text-[10px] font-black uppercase tracking-widest transition-colors">
+                    Cancel Setup
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

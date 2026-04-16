@@ -44,6 +44,18 @@
                     {% if form.phone.errors %}<p class="text-red-400 text-sm mt-1">{{ form.phone.errors.0 }}</p>{% endif %}
                 </div>
 
+                <!-- Email Address -->
+                <div>
+                    <label for="{{ form.email.id_for_label }}" class="block text-gold font-bold mb-2">Email Address (optional)</label>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        placeholder="e.g., john@example.com"
+                        class="w-full bg-deep border border-gold border-opacity-30 text-white placeholder-gray-600 px-4 py-2 rounded focus:outline-none focus:border-gold"
+                    >
+                    {% if form.email.errors %}<p class="text-red-400 text-sm mt-1">{{ form.email.errors.0 }}</p>{% endif %}
+                </div>
+
                 <!-- Notes -->
                 <div>
                     <label for="{{ form.notes.id_for_label }}" class="block text-gold font-bold mb-2">Notes (optional)</label>

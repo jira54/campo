@@ -1,0 +1,88 @@
+<!-- Onboarding Overlay -->
+{% if not user.has_onboarding_completed %}
+<div id="onboarding-overlay" class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-deep/90 backdrop-blur-xl animate-fade-in">
+    <div class="max-w-2xl w-full bg-stone-900 border border-white/10 rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative overflow-hidden group">
+        <!-- Decoration -->
+        <div class="absolute -top-24 -right-24 w-64 h-64 bg-brand/10 blur-[100px] rounded-full group-hover:bg-brand/20 transition-all duration-1000"></div>
+        <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-brand/5 blur-[100px] rounded-full group-hover:bg-brand/10 transition-all duration-1000"></div>
+
+        <div class="relative z-10 text-center space-y-8">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-brand rounded-3xl text-deep text-4xl shadow-brand animate-bounce-subtle">
+                🚀
+            </div>
+            
+            <div class="space-y-4">
+                <h2 class="text-3xl md:text-5xl font-outfit font-black text-white tracking-tight">
+                    Welcome to <span class="text-brand">CampoPawa</span>
+                </h2>
+                <p class="text-stone-300 text-lg font-medium max-w-lg mx-auto leading-relaxed">
+                    Your infrastructure is ready. We've optimized your dashboard for the <span class="text-white font-bold">{{ user.get_persona_type_display }}</span> persona.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+                <div class="bg-white/5 border border-white/5 p-6 rounded-2xl">
+                    <div class="text-brand text-xl mb-3">📊</div>
+                    <h4 class="text-white font-bold text-sm mb-1">Pulse Engine</h4>
+                    <p class="text-stone-400 text-[10px] leading-relaxed">Real-time data visualization of your business velocity.</p>
+                </div>
+                <div class="bg-white/5 border border-white/5 p-6 rounded-2xl">
+                    <div class="text-brand text-xl mb-3">🛠️</div>
+                    <h4 class="text-white font-bold text-sm mb-1">Total Control</h4>
+                    <p class="text-stone-400 text-[10px] leading-relaxed">Manage inventory, guests, or impact from one interface.</p>
+                </div>
+                <div class="bg-white/5 border border-white/5 p-6 rounded-2xl">
+                    <div class="text-brand text-xl mb-3">🔒</div>
+                    <h4 class="text-white font-bold text-sm mb-1">Hardened</h4>
+                    <p class="text-stone-400 text-[10px] leading-relaxed">Enterprise-grade security protecting your commercial data.</p>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+                <button onclick="dismissOnboarding()" class="w-full sm:w-auto bg-brand text-deep font-outfit font-black px-10 py-5 rounded-2xl shadow-brand hover:scale-105 active:scale-95 transition-all text-lg">
+                    Begin Operations
+                </button>
+                <a href="{% url 'resort_portal:setup' %}" class="w-full sm:w-auto text-stone-300 hover:text-white font-black text-xs uppercase tracking-[0.2em] py-5 px-8 transition-all">
+                    Configure First →
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function dismissOnboarding() {
+    fetch('{% url "vendors:dismiss_onboarding" %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json'
+        }
+    }).then(response => {
+        if (response.ok) {
+            document.getElementById('onboarding-overlay').classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                document.getElementById('onboarding-overlay').remove();
+            }, 500);
+        }
+    });
+}
+</script>
+
+<style>
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+.animate-fade-in {
+    animation: fade-in 0.5s ease-out forwards;
+}
+@keyframes bounce-subtle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+.animate-bounce-subtle {
+    animation: bounce-subtle 2s ease-in-out infinite;
+}
+</style>
+{% endif %}

@@ -4,7 +4,7 @@ from .models import Customer, Purchase
 class CustomerForm(forms.ModelForm):
     class Meta:
         model  = Customer
-        fields = ['name', 'phone', 'notes', 'tags']
+        fields = ['name', 'phone', 'email', 'notes', 'tags']
         widgets = {
             'name':  forms.TextInput(attrs={
                 'class': 'w-full bg-navy border border-gold border-opacity-20 text-white rounded px-4 py-3',

@@ -13,7 +13,10 @@ from django.utils.html import strip_tags
 
 from .forms import RegisterForm, VendorProfileForm
 from .greetings import get_daily_context
-from customers.models import Customer, Purchase, Service
+from config.decorators import rate_limit
+from .otp import generate_otp_secret, get_totp_uri, generate_qr_base64, verify_otp
+from customers.models import Customer, Purchase, Service, BusinessNote
+import pyotp
 from promotions.models import Promotion
 from credit.models import CreditRecord
 
@@ -27,6 +30,7 @@ def root_redirect(request):
         return redirect('vendors:dashboard')
     return render(request, 'vendors/landing.html')
 
+@rate_limit('login', limit=5, period=60)
 def login_view(request):
     if hasattr(request, 'user') and request.user.is_authenticated:
         return redirect('vendors:dashboard')
@@ -49,6 +53,12 @@ def login_view(request):
             # Clear stored registration email on successful login
             if 'registration_email' in request.session:
                 del request.session['registration_email']
+            
+            if user.is_2fa_enabled:
+                # Store user ID in session temporarily and redirect to 2FA challenge
+                request.session['pre_2fa_user_id'] = user.id
+                return redirect('vendors:two_factor_challenge')
+            
             login(request, user)
             return redirect('vendors:dashboard')
         else:
@@ -72,6 +82,7 @@ def logout_view(request):
     logout(request)
     return redirect('login')
 
+@rate_limit('register', limit=3, period=3600)  # Stringent registration limit
 def register_view(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
@@ -213,6 +224,8 @@ def dashboard(request):
         'total_credit_owed': total_credit_owed,
         # Check if services exist for Quick Sale visibility
         'has_services': Service.objects.filter(vendor=vendor, is_active=True).exists(),
+        # Add latest quick notes
+        'quick_notes': BusinessNote.objects.filter(vendor=vendor).first().content if BusinessNote.objects.filter(vendor=vendor).exists() else '',
         # Add daily greeting context
         **get_daily_context(vendor),
     }
@@ -336,5 +349,125 @@ def switch_portal(request, portal_type):
     
     request.user.save()
     messages.success(request, f"Switched to {portal_type.upper()} view.")
+    return redirect('vendors:dashboard')
+
+@login_required
+def dismiss_onboarding(request):
+    if request.method == 'POST':
+        request.user.has_onboarding_completed = True
+        request.user.save()
+        from django.http import JsonResponse
+        return JsonResponse({'status': 'success'})
+    from django.http import HttpResponseBadRequest
+    return HttpResponseBadRequest()
+
+@login_required
+def setup_2fa(request):
+    """Generates a new TOTP secret and displays the QR code for enrollment."""
+    user = request.user
+    if user.is_2fa_enabled:
+        return redirect('vendors:dashboard')
+    
+    # Generate secret if not already set or if user is re-attempting setup
+    secret = generate_otp_secret()
+    uri = get_totp_uri(user.email, secret)
+    qr_code = generate_qr_base64(uri)
+    
+    context = {
+        'secret': secret,
+        'qr_code': qr_code,
+    }
+    return render(request, 'vendors/2fa_setup.html', context)
+
+@login_required
+def verify_2fa(request):
+    """Verifies the initial token to complete 2FA setup."""
+    if request.method == 'POST':
+        secret = request.POST.get('secret')
+        token = request.POST.get('token')
+        
+        if verify_otp(secret, token):
+            user = request.user
+            user.totp_secret = secret
+            user.is_2fa_enabled = True
+            user.save()
+            messages.success(request, "Two-Factor Authentication has been successfully enabled.")
+            return redirect('vendors:dashboard')
+        else:
+            messages.error(request, "Invalid verification code. Please scan the QR code again.")
+            return redirect('vendors:setup_2fa')
+    return redirect('vendors:setup_2fa')
+
+@rate_limit('two_factor_challenge', limit=5, period=60)
+def two_factor_challenge(request):
+    """Challenge view for the second stage of login."""
+    user_id = request.session.get('pre_2fa_user_id')
+    if not user_id:
+        return redirect('login')
+    
+    from .models import Vendor
+    try:
+        user = Vendor.objects.get(id=user_id)
+    except Vendor.DoesNotExist:
+        return redirect('login')
+        
+    if request.method == 'POST':
+        token = request.POST.get('token')
+        if verify_otp(user.totp_secret, token):
+            login(request, user)
+            del request.session['pre_2fa_user_id']
+            return redirect('vendors:dashboard')
+        else:
+            return render(request, 'vendors/2fa_challenge.html', {'error': 'Invalid code. Please try again.'})
+            
+    return render(request, 'vendors/2fa_challenge.html')
+
+@login_required
+def disable_2fa(request):
+    """Disables 2FA for the current user."""
+    if request.method == 'POST':
+        user = request.user
+        user.is_2fa_enabled = False
+        user.totp_secret = None
+        user.save()
+        messages.success(request, "Two-Factor Authentication has been disabled.")
+        return redirect('vendors:profile')
+    return render(request, 'vendors/2fa_disable_confirm.html')
+
+@login_required
+def save_business_note(request):
+    if request.method == 'POST':
+        import json
+        from django.http import JsonResponse
+        try:
+            data = json.loads(request.body)
+            content = data.get('content', '')
+            
+            # Update or create the latest note
+            note = BusinessNote.objects.filter(vendor=request.user).first()
+            if note:
+                note.content = content
+                note.save()
+            else:
+                BusinessNote.objects.create(vendor=request.user, content=content)
+                
+            return JsonResponse({'status': 'success'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+    return redirect('vendors:dashboard')
+
+@login_required
+def switch_property(request, property_id):
+    from .models import Property
+    try:
+        prop = Property.objects.get(id=property_id, vendor=request.user)
+        request.session['current_property_id'] = prop.id
+        messages.success(request, f"Switched to {prop.name}")
+    except Property.DoesNotExist:
+        messages.error(request, "Property not found.")
+    
+    referer = request.META.get('HTTP_REFERER')
+    if referer:
+        return redirect(referer)
     return redirect('vendors:dashboard')
 

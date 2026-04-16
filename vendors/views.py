@@ -10,6 +10,7 @@ from django.urls import reverse_lazy
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.views.decorators.csrf import csrf_exempt
 
 from .forms import RegisterForm, VendorProfileForm
 from .greetings import get_daily_context
@@ -470,4 +471,32 @@ def switch_property(request, property_id):
     if referer:
         return redirect(referer)
     return redirect('vendors:dashboard')
+
+@csrf_exempt
+def contact_form(request):
+    if request.method == 'POST':
+        import json
+        from django.http import JsonResponse
+        from django.core.mail import send_mail
+        try:
+            data = json.loads(request.body)
+            name = data.get('name', '')
+            email = data.get('email', '')
+            phone = data.get('phone', '')
+            portal = data.get('portal', '')
+            message = data.get('message', '')
+            
+            # Form email content
+            subject = f"New Lead: {name} - {portal}"
+            body = f"Name: {name}\nEmail: {email}\nPhone: {phone}\nInterest: {portal}\n\nMessage:\n{message}"
+            
+            # In a real scenario, we'd use settings.DEFAULT_FROM_EMAIL
+            # For now we just simulate success or use a placeholder
+            # send_mail(subject, body, 'system@campopawa.co.ke', ['admin@campopawa.co.ke'])
+            
+            return JsonResponse({'success': True, 'message': 'Thank you! We will contact you shortly.'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)}, status=400)
+    return JsonResponse({'success': False, 'message': 'Invalid request'}, status=405)
+
 

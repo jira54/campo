@@ -16,4 +16,5 @@ urlpatterns = [
     path('security/2fa/challenge/', views.two_factor_challenge, name='two_factor_challenge'),
     path('security/2fa/disable/', views.disable_2fa, name='disable_2fa'),
     path('business-note/save/', views.save_business_note, name='save_business_note'),
+    path('contact/', views.contact_form, name='contact_form'),
 ]

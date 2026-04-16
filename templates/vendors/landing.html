@@ -4,6 +4,7 @@
 {% block title %}CampoPawa — Scale Your Enterprise. Bila Worry.{% endblock %}
 
 {% block content %}
+
 <div class="min-h-screen bg-deep relative overflow-hidden selection:bg-brand selection:text-deep">
     <!-- Sophisticated Background Engine -->
     <div class="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
@@ -12,17 +13,67 @@
         <div class="absolute -bottom-40 left-1/4 w-[700px] h-[700px] bg-stone-500/5 blur-[120px] rounded-full"></div>
     </div>
 
-    <!-- Navigation -->
-    <nav class="relative z-50 border-b border-white/5 py-4 px-6 md:px-12 backdrop-blur-xl bg-deep/60 sticky top-0">
+    <!-- Enhanced Navigation -->
+    <nav class="enhanced-navigation relative z-50 border-b border-white/5 py-4 px-6 md:px-12 backdrop-blur-xl bg-deep/60 sticky top-0">
         <div class="flex items-center justify-between max-w-7xl mx-auto">
+            <!-- Logo -->
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-brand flex items-center justify-center text-deep font-outfit font-black text-xl shadow-brand">C</div>
-                <h1 class="text-2xl font-black text-white tracking-tighter font-outfit">Campo<span class="text-brand">Pawa</span></h1>
+                <div class="w-10 h-10 rounded-xl bg-brand flex items-center justify-center text-deep font-outfit font-black text-xl shadow-brand cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">C</div>
+                <h1 class="text-2xl font-black text-white tracking-tighter font-outfit cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Campo<span class="text-brand">Pawa</span></h1>
             </div>
-            <div class="flex items-center gap-2 md:gap-6">
+            
+            <!-- Navigation Menu -->
+            <div class="hidden md:flex items-center gap-8">
+                <div class="nav-item group relative">
+                    <a href="#solutions" class="text-stone-300 font-bold hover:text-white transition-colors uppercase tracking-widest text-[10px] flex items-center gap-2">
+                        Solutions
+                        <svg class="w-2.5 h-2.5 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </a>
+                    <div class="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-64 bg-deep/95 backdrop-blur-2xl border border-white/10 rounded-2xl p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 shadow-2xl">
+                        <a href="#retail" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors">
+                            <div class="w-8 h-8 rounded-lg bg-brand/20 flex items-center justify-center text-brand"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg></div>
+                            <div><div class="text-white font-black text-xs">Retail Pro</div><div class="text-stone-500 text-[10px]">Shops & MSMEs</div></div>
+                        </a>
+                        <a href="#ngo" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors">
+                            <div class="w-8 h-8 rounded-lg bg-teal-400/20 flex items-center justify-center text-teal-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2 2 2 0 012 2v.653"/></svg></div>
+                            <div><div class="text-white font-black text-xs">Impact Ops</div><div class="text-stone-500 text-[10px]">NGOs & Non-profits</div></div>
+                        </a>
+                        <a href="#resort" class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors">
+                            <div class="w-8 h-8 rounded-lg bg-fuchsia-500/20 flex items-center justify-center text-fuchsia-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg></div>
+                            <div><div class="text-white font-black text-xs">Resort OS</div><div class="text-stone-500 text-[10px]">Hospitality & Lodges</div></div>
+                        </a>
+                    </div>
+                </div>
+                
+                <a href="#how-it-works" class="text-stone-300 font-bold hover:text-white transition-colors uppercase tracking-widest text-[10px]">How it Works</a>
+                <a href="#pricing" class="text-stone-300 font-bold hover:text-white transition-colors uppercase tracking-widest text-[10px]">Pricing</a>
+                <a href="#about" class="text-stone-300 font-bold hover:text-white transition-colors uppercase tracking-widest text-[10px]">About</a>
+                <a href="#contact" class="text-stone-300 font-bold hover:text-white transition-colors uppercase tracking-widest text-[10px]">Contact</a>
+            </div>
+            
+            <!-- Actions -->
+            <div class="flex items-center gap-2 md:gap-4">
                 <a href="{% url 'login' %}" class="text-stone-300 font-bold hover:text-white transition-colors uppercase tracking-widest text-[10px]">Login</a>
-                <a href="{% url 'register' %}" class="bg-white text-deep font-black px-6 py-3 rounded-xl hover:scale-105 active:scale-95 transition-all shadow-xl text-sm">Join the Network</a>
+                <a href="{% url 'register' %}" class="bg-white text-deep font-black px-6 py-3 rounded-xl hover:scale-105 active:scale-95 transition-all shadow-xl text-sm">Start Free</a>
             </div>
+            
+            <!-- Mobile Menu Toggle -->
+            <button class="md:hidden text-white" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden mt-4 pt-4 border-t border-white/10 flex flex-col gap-4 pb-4">
+            <a href="#solutions" class="text-stone-300 font-bold hover:text-white transition-colors uppercase tracking-widest text-[10px]">Solutions</a>
+            <a href="#how-it-works" class="text-stone-300 font-bold hover:text-white transition-colors uppercase tracking-widest text-[10px]">How it Works</a>
+            <a href="#pricing" class="text-stone-300 font-bold hover:text-white transition-colors uppercase tracking-widest text-[10px]">Pricing</a>
+            <a href="#about" class="text-stone-300 font-bold hover:text-white transition-colors uppercase tracking-widest text-[10px]">About</a>
+            <a href="#contact" class="text-stone-300 font-bold hover:text-white transition-colors uppercase tracking-widest text-[10px]">Contact</a>
+            <a href="{% url 'login' %}" class="text-stone-300 font-bold hover:text-white transition-colors uppercase tracking-widest text-[10px] mt-2">Login</a>
+            <a href="{% url 'register' %}" class="bg-brand text-deep font-black px-6 py-3 rounded-xl text-center text-sm">Join Now</a>
         </div>
     </nav>
 
@@ -35,97 +86,303 @@
                 <span class="text-[10px] font-black uppercase tracking-[0.3em] text-brand">The Unified Business Architecture</span>
             </div>
             <!-- Heading -->
-            <h2 class="text-5xl md:text-6xl font-black text-white mb-8 leading-[0.9] tracking-tighter font-outfit">
+            <h2 class="text-5xl md:text-7xl font-black text-white mb-8 leading-[1] tracking-tighter font-outfit">
                 Scale Your Enterprise. <br class="hidden md:block">
                 <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand via-magic-blue to-white">Bila Worry.</span>
             </h2>
             <!-- Subtext -->
             <p class="text-xl md:text-2xl text-stone-300 mb-12 max-w-3xl mx-auto font-medium leading-relaxed">
-                One Platform. Absolute Control. Total Growth.
+                Empowering Kenyan businesses with world-class automation, secure data tracking, and seamless financial operations.
             </p>
             <!-- CTA Buttons -->
             <div class="flex flex-col sm:flex-row justify-center gap-6">
-                <a href="{% url 'register' %}" class="bg-brand text-deep font-black text-lg px-12 py-5 rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-brand uppercase tracking-tighter">Start Free</a>
-                <a href="#solutions" class="bg-white/5 border border-white/10 text-white font-bold text-lg px-12 py-5 rounded-2xl hover:bg-white/10 transition-all backdrop-blur-md">See the Magic</a>
+                <a href="{% url 'register' %}" class="bg-brand text-deep font-black text-lg px-12 py-5 rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-brand uppercase tracking-tighter">Start Your Journey</a>
+                <a href="#solutions" class="bg-white/5 border border-white/10 text-white font-bold text-lg px-12 py-5 rounded-2xl hover:bg-white/10 transition-all backdrop-blur-md">Explore the Ecosystem</a>
             </div>
         </div>
     </section>
 
-    <!-- Daily Business Magic -->
-    <section id="solutions" class="relative z-10 section-compact px-4 md:px-8">
+    <!-- Detailed Solution Verticals -->
+    <section id="solutions" class="relative z-10 py-24 space-y-32">
+        
+        <!-- Retail Pro Vertical -->
+        <div id="retail" class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+            <div class="order-2 md:order-1 relative group">
+                <div class="absolute -inset-4 bg-brand/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                <div class="glass-box premium-border rounded-[3rem] p-12 relative overflow-hidden h-[400px] flex items-center justify-center">
+                    <div class="text-center">
+                        <div class="w-24 h-24 rounded-3xl bg-brand/10 border border-brand/20 flex items-center justify-center text-brand text-5xl mb-8 mx-auto shadow-2xl">🛍️</div>
+                        <div class="space-y-4">
+                            <div class="h-4 w-48 bg-white/5 rounded-full mx-auto overflow-hidden"><div class="h-full w-2/3 bg-brand animate-pulse-slow"></div></div>
+                            <div class="h-4 w-32 bg-white/5 rounded-full mx-auto overflow-hidden"><div class="h-full w-4/5 bg-brand/60 animate-pulse-slow delay-75"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="order-1 md:order-2">
+                <p class="text-[10px] font-black text-brand uppercase tracking-[0.4em] mb-4">Retail Transformation</p>
+                <h3 class="text-4xl md:text-5xl font-black text-white mb-6 font-outfit tracking-tight">Retail <span class="text-brand">Pro</span></h3>
+                <p class="text-xl text-stone-300 mb-8 leading-relaxed">
+                    Designed for shops and modern retail environments. Manage inventory, track repeat customers, and log M-Pesa transactions instantly.
+                </p>
+                <ul class="space-y-6">
+                    <li class="flex items-start gap-4">
+                        <div class="w-6 h-6 rounded-full bg-brand/20 flex items-center justify-center text-brand mt-1 flex-shrink-0">✓</div>
+                        <div><strong class="text-white block mb-1">Automated CRM</strong><p class="text-stone-400 text-sm">Every sale creates a customer profile. No manual logging required.</p></div>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <div class="w-6 h-6 rounded-full bg-brand/20 flex items-center justify-center text-brand mt-1 flex-shrink-0">✓</div>
+                        <div><strong class="text-white block mb-1">M-Pesa Integration</strong><p class="text-stone-400 text-sm">Seamless mapping of payments to sales records for accurate accounting.</p></div>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <div class="w-6 h-6 rounded-full bg-brand/20 flex items-center justify-center text-brand mt-1 flex-shrink-0">✓</div>
+                        <div><strong class="text-white block mb-1">Loyalty & Credit</strong><p class="text-stone-400 text-sm">Track customer debts and reward your most loyal fans.</p></div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Impact Ops Vertical -->
+        <div id="ngo" class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+            <div>
+                <p class="text-[10px] font-black text-teal-400 uppercase tracking-[0.4em] mb-4">NGO & Field Operations</p>
+                <h3 class="text-4xl md:text-5xl font-black text-white mb-6 font-outfit tracking-tight">Impact <span class="text-teal-400">Ops</span></h3>
+                <p class="text-xl text-stone-300 mb-8 leading-relaxed">
+                    The ultimate data engine for NGOs. Track beneficiaries, monitor impact metrics, and maintain a bulletproof audit trail for donors.
+                </p>
+                <ul class="space-y-6">
+                    <li class="flex items-start gap-4">
+                        <div class="w-6 h-6 rounded-full bg-teal-400/20 flex items-center justify-center text-teal-400 mt-1 flex-shrink-0">✓</div>
+                        <div><strong class="text-white block mb-1">Beneficiary CRM</strong><p class="text-stone-400 text-sm">detailed history of interactions, subsidies, and impact for every person you serve.</p></div>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <div class="w-6 h-6 rounded-full bg-teal-400/20 flex items-center justify-center text-teal-400 mt-1 flex-shrink-0">✓</div>
+                        <div><strong class="text-white block mb-1">Field-Ready Offline Access</strong><p class="text-stone-400 text-sm">Log data even in low-connectivity areas; sync when you're back online.</p></div>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <div class="w-6 h-6 rounded-full bg-teal-400/20 flex items-center justify-center text-teal-400 mt-1 flex-shrink-0">✓</div>
+                        <div><strong class="text-white block mb-1">Enterprise Auditing</strong><p class="text-stone-400 text-sm">Transparency for stakeholders with immutable logs of all resource distributions.</p></div>
+                    </li>
+                </ul>
+            </div>
+            <div class="relative group">
+                <div class="absolute -inset-4 bg-teal-400/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                <div class="glass-box premium-border rounded-[3rem] p-12 relative overflow-hidden h-[400px] flex items-center justify-center">
+                    <div class="text-center">
+                        <div class="w-24 h-24 rounded-3xl bg-teal-400/10 border border-teal-400/20 flex items-center justify-center text-teal-400 text-5xl mb-8 mx-auto shadow-2xl">🌍</div>
+                        <div class="space-y-4">
+                            <div class="h-4 w-48 bg-white/5 rounded-full mx-auto overflow-hidden"><div class="h-full w-full bg-teal-400 animate-pulse-slow"></div></div>
+                            <div class="h-4 w-32 bg-white/5 rounded-full mx-auto overflow-hidden"><div class="h-full w-3/4 bg-teal-400/60 animate-pulse-slow delay-75"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resort OS Vertical -->
+        <div id="resort" class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+            <div class="order-2 md:order-1 relative group">
+                <div class="absolute -inset-4 bg-fuchsia-500/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                <div class="glass-box premium-border rounded-[3rem] p-12 relative overflow-hidden h-[400px] flex items-center justify-center">
+                    <div class="text-center">
+                        <div class="w-24 h-24 rounded-3xl bg-fuchsia-500/10 border border-fuchsia-500/20 flex items-center justify-center text-fuchsia-400 text-5xl mb-8 mx-auto shadow-2xl">🏨</div>
+                        <div class="space-y-4">
+                            <div class="h-4 w-48 bg-white/5 rounded-full mx-auto overflow-hidden"><div class="h-full w-1/2 bg-fuchsia-500 animate-pulse-slow"></div></div>
+                            <div class="h-4 w-32 bg-white/5 rounded-full mx-auto overflow-hidden"><div class="h-full w-full bg-fuchsia-500/60 animate-pulse-slow delay-75"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="order-1 md:order-2">
+                <p class="text-[10px] font-black text-fuchsia-400 uppercase tracking-[0.4em] mb-4">Hospitality Excellence</p>
+                <h3 class="text-4xl md:text-5xl font-black text-white mb-6 font-outfit tracking-tight">Resort <span class="text-fuchsia-400">OS</span></h3>
+                <p class="text-xl text-stone-300 mb-8 leading-relaxed">
+                    A premium operating system for lodges and boutique hotels. Absolute control over guest folios, housekeeping lifecycles, and multi-property management.
+                </p>
+                <ul class="space-y-6">
+                    <li class="flex items-start gap-4">
+                        <div class="w-6 h-6 rounded-full bg-fuchsia-500/20 flex items-center justify-center text-fuchsia-400 mt-1 flex-shrink-0">✓</div>
+                        <div><strong class="text-white block mb-1">Automated Folios</strong><p class="text-stone-400 text-sm">Guest billing simplified. Log charges for bar, kitchen, or stay in one click.</p></div>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <div class="w-6 h-6 rounded-full bg-fuchsia-500/20 flex items-center justify-center text-fuchsia-400 mt-1 flex-shrink-0">✓</div>
+                        <div><strong class="text-white block mb-1">Housekeeping Hub</strong><p class="text-stone-400 text-sm">Real-time room status tracking from 'Dirty' to 'Inspected' & 'Clean'.</p></div>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <div class="w-6 h-6 rounded-full bg-fuchsia-500/20 flex items-center justify-center text-fuchsia-400 mt-1 flex-shrink-0">✓</div>
+                        <div><strong class="text-white block mb-1">Multi-Property View</strong><p class="text-stone-400 text-sm">Switch between multiple hotels or campsites from a single dashboard.</p></div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials (Social Proof) -->
+    <section id="testimonials" class="relative z-10 py-32 bg-black/20 border-y border-white/5">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-24">
+                <p class="text-[10px] font-black text-magic-blue uppercase tracking-[0.5em] mb-4">Success Stories</p>
+                <h2 class="text-5xl md:text-6xl font-black text-white font-outfit tracking-tighter uppercase">Trusted by <span class="text-brand">Leaders</span></h2>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Retail Testimonial -->
+                <div class="glass-box premium-border rounded-[2.5rem] p-10 relative group hover:bg-white/[0.03] transition-all">
+                    <div class="absolute top-8 right-10 text-brand/20 text-6xl font-serif">"</div>
+                    <p class="text-stone-300 text-lg leading-relaxed mb-10 italic relative z-10">
+                        "CampoPawa transformed our retail operations. Customer management is now 10x faster and we've seen a 40% increase in repeat business."
+                    </p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-brand/20 border border-brand/40 flex items-center justify-center text-brand font-black">SK</div>
+                        <div>
+                            <p class="text-white font-black text-sm">Sarah Kimani</p>
+                            <p class="text-stone-500 text-[10px] uppercase tracking-widest">Owner, Urban Boutique</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NGO Testimonial -->
+                <div class="glass-box premium-border rounded-[2.5rem] p-10 relative group hover:bg-white/[0.03] transition-all">
+                    <div class="absolute top-8 right-10 text-teal-400/20 text-6xl font-serif">"</div>
+                    <p class="text-stone-300 text-lg leading-relaxed mb-10 italic relative z-10">
+                        "Donor reporting went from weeks to minutes. Our compliance is now 100% automated and we can focus on our mission."
+                    </p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-teal-400/20 border border-teal-400/40 flex items-center justify-center text-teal-400 font-black">JM</div>
+                        <div>
+                            <p class="text-white font-black text-sm">John Mwaura</p>
+                            <p class="text-stone-500 text-[10px] uppercase tracking-widest">Director, Hope Foundation</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resort Testimonial -->
+                <div class="glass-box premium-border rounded-[2.5rem] p-10 relative group hover:bg-white/[0.03] transition-all">
+                    <div class="absolute top-8 right-10 text-fuchsia-400/20 text-6xl font-serif">"</div>
+                    <p class="text-stone-300 text-lg leading-relaxed mb-10 italic relative z-10">
+                        "Front desk operations are now seamless. Check-ins take seconds, and our guest satisfaction has improved dramatically."
+                    </p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-fuchsia-500/20 border border-fuchsia-500/40 flex items-center justify-center text-fuchsia-400 font-black">GO</div>
+                        <div>
+                            <p class="text-white font-black text-sm">Grace Ochieng</p>
+                            <p class="text-stone-500 text-[10px] uppercase tracking-widest">Manager, Safari Lodge</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it Works (Educational Tour) -->
+    <section id="how-it-works" class="relative z-10 py-32 bg-white/[0.02] border-y border-white/5">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-24">
+                <p class="text-[10px] font-black text-magic-blue uppercase tracking-[0.5em] mb-4">Zero Friction</p>
+                <h2 class="text-5xl md:text-6xl font-black text-white font-outfit tracking-tighter uppercase">How it <span class="text-brand">Works</span></h2>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-16 relative">
+                <!-- Connector Line -->
+                <div class="hidden md:block absolute top-[15%] left-[10%] right-[10%] h-0.5 bg-gradient-to-r from-brand/20 via-magic-blue/20 to-teal-400/20"></div>
+                
+                <!-- Step 1 -->
+                <div class="relative group text-center">
+                    <div class="w-20 h-20 rounded-full bg-brand text-deep font-black text-2xl flex items-center justify-center mx-auto mb-10 shadow-brand group-hover:scale-110 transition-transform relative z-10">1</div>
+                    <h4 class="text-2xl font-black text-white mb-6">Create Account</h4>
+                    <p class="text-stone-400">Register in 30 seconds. Choose your business type and your environment is instantly provisioned.</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="relative group text-center">
+                    <div class="w-20 h-20 rounded-full bg-magic-blue text-white font-black text-2xl flex items-center justify-center mx-auto mb-10 shadow-magic-blue group-hover:scale-110 transition-transform relative z-10">2</div>
+                    <h4 class="text-2xl font-black text-white mb-6">Configure Workflow</h4>
+                    <p class="text-stone-400">Add your products, staff, or beneficiaries. Map your custom categories and permissions with zero code.</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="relative group text-center">
+                    <div class="w-20 h-20 rounded-full bg-teal-400 text-deep font-black text-2xl flex items-center justify-center mx-auto mb-10 shadow-teal-400 group-hover:scale-110 transition-transform relative z-10">3</div>
+                    <h4 class="text-2xl font-black text-white mb-6">Go Live</h4>
+                    <p class="text-stone-400">Start logging business magic. Get real-time analytics and scale your enterprise with absolute clarity.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Deep Dive -->
+    <section id="features" class="relative z-10 py-32 px-6">
         <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-16">
-                <p class="text-[10px] font-black text-magic-blue/60 uppercase tracking-[0.4em] mb-4">Ready-made for you</p>
-                <h3 class="text-4xl md:text-5xl font-black text-white mb-6 uppercase tracking-tight font-outfit text-glow text-center">Daily Business <span class="text-brand">Magic</span></h3>
+            <div class="text-center mb-24">
+                <p class="text-[10px] font-black text-brand uppercase tracking-[0.5em] mb-4">Core Signal Capabilities</p>
+                <h2 class="text-5xl md:text-6xl font-black text-white font-outfit tracking-tighter uppercase">The <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand to-magic-blue">Ecosystem</span> Advantage</h2>
             </div>
 
             <div class="grid md:grid-cols-3 gap-8">
-                <!-- Retail Pro -->
-                <div class="glass-box premium-border rounded-[3rem] p-10 group cursor-pointer relative overflow-hidden h-[450px] flex flex-col justify-start transition-all duration-700 hover:magic-glow">
-                    <div class="sparkle-particles absolute inset-0 pointer-events-none"></div>
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-magic-blue/5 blur-3xl pointer-events-none transition-all group-hover:bg-magic-blue/10"></div>
-                    <div class="w-16 h-16 rounded-2xl bg-brand/10 border border-brand/20 mb-8 flex items-center justify-center text-brand glow-gold text-center mx-auto md:mx-0">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                    </div>
-                    <h4 class="text-3xl font-black text-white mb-4 font-outfit tracking-tight text-center md:text-left">Retail Pro</h4>
-                    <div class="opacity-0 translate-y-8 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 delay-75">
-                        <p class="text-stone-300 mb-8 text-base leading-relaxed text-center md:text-left">
-                            The ultimate setup for shops. M-Pesa hooks, customer loyalty, and fast sales.
-                        </p>
-                        <ul class="text-stone-300 space-y-4 text-[11px] font-black uppercase tracking-widest">
-                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-brand"></span> Automatic CRM</li>
-                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-brand"></span> SMS Reminders</li>
-                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-brand"></span> Inventory Alert</li>
-                        </ul>
-                    </div>
-                    <div class="absolute bottom-10 left-10 group-hover:opacity-0 transition-opacity flex items-center gap-2">
-                        <span class="text-brand text-[10px] font-black uppercase tracking-widest">Tap to see magic ✨</span>
-                    </div>
+                <!-- Data Security -->
+                <div class="glass-box premium-border rounded-3xl p-10 hover:border-brand/30 transition-all group">
+                    <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-brand text-3xl mb-8 group-hover:scale-110 transition-transform">🔒</div>
+                    <h4 class="text-xl font-black text-white mb-4">Hardened Security</h4>
+                    <p class="text-stone-400 text-sm leading-relaxed mb-6">Enterprise-grade encryption protecting your commercial and beneficiary data with local compliance at its core.</p>
+                    <ul class="text-[10px] font-black uppercase tracking-widest text-stone-500 space-y-2">
+                        <li>● 256-Bit Storage</li>
+                        <li>● Daily Secure Backups</li>
+                        <li>● Permission Engines</li>
+                    </ul>
                 </div>
 
-                <!-- Impact Ops -->
-                <div class="glass-box premium-border rounded-[3rem] p-10 group cursor-pointer relative overflow-hidden h-[450px] flex flex-col justify-start transition-all duration-700 hover:magic-glow">
-                    <div class="sparkle-particles absolute inset-0 pointer-events-none"></div>
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-teal-400/5 blur-3xl pointer-events-none transition-all group-hover:bg-teal-400/10"></div>
-                    <div class="w-16 h-16 rounded-2xl bg-teal-400/10 border border-teal-400/20 mb-8 flex items-center justify-center text-teal-400 glow-cyan mx-auto md:mx-0">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 002 2 2 2 0 012 2v.653"/></svg>
-                    </div>
-                    <h4 class="text-3xl font-black text-white mb-4 font-outfit tracking-tight text-center md:text-left">Impact Ops</h4>
-                    <div class="opacity-0 translate-y-8 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 delay-75">
-                        <p class="text-stone-300 mb-8 text-base leading-relaxed text-center md:text-left">
-                            Perfect for project tracking. Clean reports and secure data for your mission.
-                        </p>
-                        <ul class="text-stone-300 space-y-4 text-[11px] font-black uppercase tracking-widest">
-                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span> Instant Audits</li>
-                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span> Safe Data Layers</li>
-                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span> Impact Maps</li>
-                        </ul>
-                    </div>
-                    <div class="absolute bottom-10 left-10 group-hover:opacity-0 transition-opacity flex items-center gap-2">
-                        <span class="text-teal-400 text-[10px] font-black uppercase tracking-widest">Tap to see magic ✨</span>
-                    </div>
+                <!-- Offline First -->
+                <div class="glass-box premium-border rounded-3xl p-10 hover:border-magic-blue/30 transition-all group">
+                    <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-magic-blue text-3xl mb-8 group-hover:scale-110 transition-transform">📡</div>
+                    <h4 class="text-xl font-black text-white mb-4">Field-Ready PWA</h4>
+                    <p class="text-stone-400 text-sm leading-relaxed mb-6">Log data even in low-connectivity areas. Our "Core Signal" architecture ensures zero data loss during sync.</p>
+                    <ul class="text-[10px] font-black uppercase tracking-widest text-stone-500 space-y-2">
+                        <li>● Offline Data Logging</li>
+                        <li>● Intelligent Syncing</li>
+                        <li>● App-Like Experience</li>
+                    </ul>
                 </div>
 
-                <!-- Resort OS -->
-                <div class="glass-box premium-border rounded-[3rem] p-10 group cursor-pointer relative overflow-hidden h-[450px] flex flex-col justify-start transition-all duration-700 hover:magic-glow">
-                    <div class="sparkle-particles absolute inset-0 pointer-events-none"></div>
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-fuchsia-500/5 blur-3xl pointer-events-none transition-all group-hover:bg-fuchsia-500/10"></div>
-                    <div class="w-16 h-16 rounded-2xl bg-fuchsia-500/10 border border-fuchsia-500/20 mb-8 flex items-center justify-center text-fuchsia-400 glow-purple mx-auto md:mx-0">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                    </div>
-                    <h4 class="text-3xl font-black text-white mb-4 font-outfit tracking-tight text-center md:text-left">Resort OS</h4>
-                    <div class="opacity-0 translate-y-8 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 delay-75">
-                        <p class="text-stone-300 mb-8 text-base leading-relaxed text-center md:text-left">
-                            Beautiful tools for resorts. Room status, guest bills, and easy management.
-                        </p>
-                        <ul class="text-stone-300 space-y-4 text-[11px] font-black uppercase tracking-widest">
-                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-fuchsia-500"></span> Live Folios</li>
-                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-fuchsia-500"></span> Room Logic</li>
-                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 rounded-full bg-fuchsia-500"></span> Staff Care</li>
-                        </ul>
-                    </div>
-                    <div class="absolute bottom-10 left-10 group-hover:opacity-0 transition-opacity flex items-center gap-2">
-                        <span class="text-fuchsia-400 text-[10px] font-black uppercase tracking-widest">Tap to see magic ✨</span>
+                <!-- Real-Time Pulse -->
+                <div class="glass-box premium-border rounded-3xl p-10 hover:border-teal-400/30 transition-all group">
+                    <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-teal-400 text-3xl mb-8 group-hover:scale-110 transition-transform">📊</div>
+                    <h4 class="text-xl font-black text-white mb-4">Live Analytics</h4>
+                    <p class="text-stone-400 text-sm leading-relaxed mb-6">Real-time pulse engine for your business velocity. Track KPIs, impact, or revenue as it happens.</p>
+                    <ul class="text-[10px] font-black uppercase tracking-widest text-stone-500 space-y-2">
+                        <li>● Custom Dashboards</li>
+                        <li>● Instant Reporting</li>
+                        <li>● KPI Visualization</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Metrics & Story -->
+    <section id="about" class="relative z-10 py-32 px-6">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-24 items-center">
+            <div>
+                <p class="text-[10px] font-black text-magic-blue uppercase tracking-[0.4em] mb-4">Empowering Kenya</p>
+                <h2 class="text-5xl font-black text-white font-outfit tracking-tight leading-tight mb-8">Building the Infrastructure for <span class="text-brand">Future Titans.</span></h2>
+                <p class="text-xl text-stone-300 mb-12 leading-relaxed">
+                    CampoPawa was built to solve a single problem: Kenyan businesses needed enterprise tools that understood the local hustle. Today, we power hundreds of vendors with a simple promise—absolute reliability and zero worry.
+                </p>
+                
+                <div class="grid grid-cols-3 gap-8">
+                    <div><div class="text-3xl font-black text-white mb-2">500+</div><div class="text-[10px] text-stone-500 uppercase tracking-widest">Titans Scaled</div></div>
+                    <div><div class="text-3xl font-black text-white mb-2">99.9%</div><div class="text-[10px] text-stone-500 uppercase tracking-widest">System Uptime</div></div>
+                    <div><div class="text-3xl font-black text-white mb-2">24/7</div><div class="text-[10px] text-stone-500 uppercase tracking-widest">Local Support</div></div>
+                </div>
+            </div>
+            
+            <div class="relative">
+                <div class="absolute -inset-10 bg-brand/5 blur-[100px]"></div>
+                <div class="glass-box premium-border rounded-[3rem] p-12 relative overflow-hidden text-center">
+                    <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-brand to-magic-blue mx-auto mb-8 flex items-center justify-center text-white font-black text-2xl">CP</div>
+                    <div class="space-y-4 text-left">
+                        <div class="p-4 bg-white/[0.02] border border-white/5 rounded-2xl flex justify-between items-center"><span class="text-stone-400 text-sm">Founded</span><span class="text-white font-black">2021</span></div>
+                        <div class="p-4 bg-white/[0.02] border border-white/5 rounded-2xl flex justify-between items-center"><span class="text-stone-400 text-sm">HQ</span><span class="text-white font-black">Nairobi, KE</span></div>
+                        <div class="p-4 bg-white/5 border border-brand/20 rounded-2xl flex justify-between items-center"><span class="text-brand text-sm">Security</span><span class="text-white font-black">Hardened</span></div>
                     </div>
                 </div>
             </div>
@@ -133,8 +390,8 @@
     </section>
 
     <!-- Pricing (Spacious) -->
-    <section class="relative z-10 section-compact bg-black/20 border-y border-white/5 mx-4 md:mx-0 rounded-[3rem] md:rounded-none">
-        <div class="max-w-6xl mx-auto">
+    <section id="pricing" class="relative z-10 py-32 bg-black/40 border-y border-white/5">
+        <div class="max-w-6xl mx-auto px-6">
             <p class="text-center text-[10px] font-black text-magic-blue uppercase tracking-[0.5em] mb-4">Investment Roadmap</p>
             <h2 class="text-5xl md:text-6xl font-black text-center text-white mb-20 font-outfit uppercase tracking-tighter">Enterprise <span class="text-brand">Access</span></h2>
             <div class="grid md:grid-cols-3 gap-12 items-end">
@@ -146,7 +403,7 @@
                         <ul class="space-y-4 text-sm text-stone-300 border-t border-white/5 pt-10">
                             <li>✓ 20 Customer Seats</li>
                             <li>✓ Daily Analytics</li>
-                            <li>✓ Simple Tools</li>
+                            <li>✓ Simple CRM Tools</li>
                         </ul>
                     </div>
                     <a href="{% url 'register' %}" class="mt-12 block text-center border border-white/10 text-white font-black py-4 rounded-2xl hover:bg-white/5 transition-all uppercase tracking-widest text-[10px]">Initialize Base</a>
@@ -160,7 +417,7 @@
                         <ul class="space-y-4 text-sm text-stone-400 border-t border-stone-800 pt-10">
                             <li>● Unlimited Capacity</li>
                             <li>● Reward Programs</li>
-                            <li>● Smart Payment</li>
+                            <li>● Smart Payment mapping</li>
                         </ul>
                     </div>
                     <a href="{% url 'register' %}" class="mt-12 block w-full text-center bg-stone-800 text-white font-black py-5 rounded-2xl hover:bg-brand hover:text-deep transition-all uppercase tracking-widest text-xs">Deploy Pro Instance</a>
@@ -174,7 +431,7 @@
                         <ul class="space-y-4 text-sm text-stone-200 border-t border-magic-blue/20 pt-10">
                             <li class="text-teal-500">✓ NGO / Impact Portal</li>
                             <li class="text-fuchsia-500">✓ Resort / Hospitality Portal</li>
-                            <li>✓ Multi-Tenant Sync</li>
+                            <li>✓ Multi-Tenant Sync Control</li>
                         </ul>
                     </div>
                     <a href="{% url 'register' %}" class="mt-12 block w-full text-center bg-magic-blue text-white font-black py-5 rounded-2xl shadow-lg shadow-magic-blue/20 hover:scale-[1.05] transition-all uppercase tracking-widest text-xs">Secure My Portal</a>
@@ -183,61 +440,243 @@
         </div>
     </section>
 
-    <!-- Value Propositions -->
-    <section class="relative z-10 py-32 px-4">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-            <div class="text-center p-8 bg-white/[0.02] border border-white/5 rounded-3xl group hover:bg-brand/5 transition-all">
-                <p class="text-stone-400 font-black text-[10px] uppercase tracking-widest mb-6">The Vision</p>
-                <h4 class="text-white text-2xl font-bold mb-6 italic text-glow">"Small sales build big empires."</h4>
-                <p class="text-stone-300 text-base leading-relaxed">We turn numbers into growth strategies for you.</p>
+    <!-- FAQ Section -->
+    <section id="faq" class="relative z-10 py-32 bg-black/40 border-y border-white/5 px-6">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-24">
+                <p class="text-[10px] font-black text-brand uppercase tracking-[0.5em] mb-4">Knowledge Base</p>
+                <h2 class="text-5xl font-black text-white font-outfit tracking-tighter uppercase">Common <span class="text-brand">Questions</span></h2>
             </div>
-            <div class="text-center p-8 bg-white/[0.02] border border-white/5 rounded-3xl group hover:bg-teal-400/5 transition-all">
-                <p class="text-stone-400 font-black text-[10px] uppercase tracking-widest mb-6">The Mission</p>
-                <h4 class="text-white text-2xl font-bold mb-6 italic text-glow">"Transform numbers into human impact."</h4>
-                <p class="text-stone-300 text-base leading-relaxed">Secure data to help you help others better.</p>
-            </div>
-            <div class="text-center p-8 bg-white/[0.02] border border-white/5 rounded-3xl group hover:bg-fuchsia-500/5 transition-all">
-                <p class="text-stone-400 font-black text-[10px] uppercase tracking-widest mb-6">The Standard</p>
-                <h4 class="text-white text-2xl font-bold mb-6 italic text-glow">"Excellence isn't a checklist; it's a feeling."</h4>
-                <p class="text-stone-300 text-base leading-relaxed">Precision tools for world-class service.</p>
-            </div>
-        </div>
-    </section>
 
-    <!-- Final CTA -->
-    <section class="relative z-10 py-40 text-center">
-        <div class="max-w-3xl mx-auto px-4">
-            <h2 class="text-5xl md:text-6xl font-black text-white mb-10 font-outfit tracking-tighter">Ready to stabilize your <span class="text-magic-blue">operations</span>?</h2>
-            <p class="text-xl text-stone-400 mb-12">Join the elite businesses scaling with magic.</p>
-            <a href="{% url 'register' %}" class="inline-block bg-white text-deep font-black px-12 py-6 rounded-[2rem] hover:scale-105 active:scale-95 transition-all shadow-2xl text-2xl font-outfit tracking-tight">Deploy Your Workspace</a>
-        </div>
-    </section>
+            <div class="space-y-4">
+                <!-- FAQ Item 1 -->
+                <div class="glass-box border border-white/10 rounded-2xl overflow-hidden faq-item">
+                    <button class="w-full p-6 text-left flex items-center justify-between hover:bg-white/5 transition-all text-white font-black uppercase tracking-widest text-xs" onclick="toggleFAQ(this)">
+                        How quickly can I get started?
+                        <span class="faq-icon transition-transform">+</span>
+                    </button>
+                    <div class="faq-content h-0 overflow-hidden transition-all duration-300 px-6 opacity-0">
+                        <p class="pb-6 text-stone-400 text-sm italic">You can sign up and start using CampoPawa in under 5 minutes. Simply register, choose your portal, and start managing operations immediately.</p>
+                    </div>
+                </div>
 
-    <!-- Professional Footer -->
-    <footer class="border-t border-white/5 pt-24 pb-16 text-center bg-black/60 backdrop-blur-3xl relative z-10">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-10">
-                <div class="text-left">
-                    <div class="text-3xl font-black text-white font-outfit tracking-tighter">Campo<span class="text-brand">Pawa</span></div>
-                    <p class="text-stone-300 text-[10px] mt-4 uppercase tracking-[0.2em] font-bold">The Unified SaaS Ecosystem</p>
+                <!-- FAQ Item 2 -->
+                <div class="glass-box border border-white/10 rounded-2xl overflow-hidden faq-item">
+                    <button class="w-full p-6 text-left flex items-center justify-between hover:bg-white/5 transition-all text-white font-black uppercase tracking-widest text-xs" onclick="toggleFAQ(this)">
+                        Is my data secure?
+                        <span class="faq-icon transition-transform">+</span>
+                    </button>
+                    <div class="faq-content h-0 overflow-hidden transition-all duration-300 px-6 opacity-0">
+                        <p class="pb-6 text-stone-400 text-sm italic">Yes. We use 256-bit encryption and comply with the Kenya Data Protection Act. Your data is backed up daily to multiple secure nodes.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="glass-box border border-white/10 rounded-2xl overflow-hidden faq-item">
+                    <button class="w-full p-6 text-left flex items-center justify-between hover:bg-white/5 transition-all text-white font-black uppercase tracking-widest text-xs" onclick="toggleFAQ(this)">
+                        Can I switch between portals?
+                        <span class="faq-icon transition-transform">+</span>
+                    </button>
+                    <div class="faq-content h-0 overflow-hidden transition-all duration-300 px-6 opacity-0">
+                        <p class="pb-6 text-stone-400 text-sm italic">Absolutely. Enterprise users can manage multiple portals (Retail, NGO, Resort) from a single master dashboard.</p>
+                    </div>
                 </div>
             </div>
-            <div class="mt-20 pt-10 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
-                <p class="text-stone-400 text-[10px] font-black uppercase tracking-[0.3em]">&copy; {% now "Y" %} CampoPawa. All Rights Reserved.</p>
+        </div>
+    </section>
+
+    <!-- Contact & Feedback -->
+    <section id="contact" class="relative z-10 py-32 px-6">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-20">
+            <div>
+                <p class="text-[10px] font-black text-brand uppercase tracking-[0.4em] mb-4">Support Hub</p>
+                <h2 class="text-5xl font-black text-white font-outfit tracking-tight leading-tight mb-8">Let's Build the <span class="text-brand">Future</span> Together.</h2>
+                <p class="text-xl text-stone-400 mb-12">Whether you're a single shop or a multi-national NGO, we're here to help you deploy the right infrastructure.</p>
+                
+                <div class="space-y-8">
+                    <div class="flex items-center gap-6">
+                        <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-brand">📧</div>
+                        <div><div class="text-white font-black">Email</div><div class="text-stone-500 text-sm">hello@campopawa.co.ke</div></div>
+                    </div>
+                    <div class="flex items-center gap-6">
+                        <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-brand">📍</div>
+                        <div><div class="text-white font-black">Location</div><div class="text-stone-500 text-sm">Nairobi, Kenya</div></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="glass-box premium-border rounded-[3rem] p-10 bg-white/[0.01]">
+                <form id="contact-form" class="space-y-6">
+                    {% csrf_token %}
+                    <div>
+                        <label class="block text-stone-500 text-[10px] font-black uppercase tracking-widest mb-2">Name</label>
+                        <input type="text" name="name" required class="w-full bg-black/40 border border-white/5 rounded-xl px-6 py-4 text-white focus:border-brand/50 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-stone-500 text-[10px] font-black uppercase tracking-widest mb-2">Email</label>
+                        <input type="email" name="email" required class="w-full bg-black/40 border border-white/5 rounded-xl px-6 py-4 text-white focus:border-brand/50 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-stone-500 text-[10px] font-black uppercase tracking-widest mb-2">I am interested in</label>
+                        <select name="portal" class="w-full bg-black/40 border border-white/5 rounded-xl px-6 py-4 text-white focus:border-brand/50 outline-none transition-all">
+                            <option value="retail">Retail Enterprise</option>
+                            <option value="ngo">NGO / Impact OPS</option>
+                            <option value="resort">Resort / Hospitality OS</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-stone-500 text-[10px] font-black uppercase tracking-widest mb-2">Message</label>
+                        <textarea name="message" required rows="4" class="w-full bg-black/40 border border-white/5 rounded-xl px-6 py-4 text-white focus:border-brand/50 outline-none transition-all resize-none"></textarea>
+                    </div>
+                    <button type="submit" id="submit-btn" class="w-full bg-brand text-deep font-black py-4 rounded-xl hover:scale-102 active:scale-98 transition-all uppercase tracking-widest text-xs">Send Message</button>
+                    <div id="form-feedback" class="text-center text-xs mt-4"></div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final Branding Footer -->
+    <footer class="border-t border-white/5 pt-24 pb-16 text-center bg-black/60 backdrop-blur-3xl relative z-10">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-12 text-left mb-20">
+                <div class="col-span-2">
+                    <div class="text-3xl font-black text-white font-outfit tracking-tighter">Campo<span class="text-brand">Pawa</span></div>
+                    <p class="text-stone-400 mt-6 max-w-sm">The world's first multi-vertical business engine designed from the ground up for the African marketplace.</p>
+                </div>
+                <div>
+                    <h5 class="text-white font-black text-xs uppercase tracking-widest mb-6">Product</h5>
+                    <ul class="space-y-4 text-stone-500 text-sm">
+                        <li><a href="#retail" class="hover:text-brand transition-colors">Retail Pro</a></li>
+                        <li><a href="#ngo" class="hover:text-teal-400 transition-colors">Impact Ops</a></li>
+                        <li><a href="#resort" class="hover:text-fuchsia-400 transition-colors">Resort OS</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="text-white font-black text-xs uppercase tracking-widest mb-6">Contact</h5>
+                    <ul class="space-y-4 text-stone-500 text-sm">
+                        <li>hello@campopawa.co.ke</li>
+                        <li>+254 700 000 000</li>
+                        <li>Nairobi, Kenya</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="pt-10 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+                <p class="text-stone-600 text-[10px] font-black uppercase tracking-[0.3em]">&copy; {% now "Y" %} CampoPawa. Scale Your Enterprise. Bila Worry.</p>
             </div>
         </div>
     </footer>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Smooth Scrolling for all anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                const target = document.querySelector(targetId);
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Contact Form Submission
+        const contactForm = document.getElementById('contact-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const feedback = document.getElementById('form-feedback');
+
+        if (contactForm) {
+            contactForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Sending...';
+                
+                const formData = new FormData(this);
+                const data = {};
+                formData.forEach((value, key) => data[key] = value);
+
+                try {
+                    const response = await fetch('{% url "vendors:contact_form" %}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    
+                    const result = await response.json();
+                    if (result.success) {
+                        feedback.textContent = result.message;
+                        feedback.className = 'text-green-500 mt-4 text-xs font-bold uppercase tracking-widest';
+                        contactForm.reset();
+                    } else {
+                        throw new Error(result.message);
+                    }
+                } catch (err) {
+                    feedback.textContent = 'Error sending message. Please try again.';
+                    feedback.className = 'text-red-500 mt-4 text-xs font-bold uppercase tracking-widest';
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Send Message';
+                }
+            });
+        }
+    });
+
+    function toggleFAQ(button) {
+        const item = button.closest('.faq-item');
+        const content = item.querySelector('.faq-content');
+        const icon = item.querySelector('.faq-icon');
+        const isOpen = content.style.height && content.style.height !== '0px';
+
+        // Close others
+        document.querySelectorAll('.faq-item').forEach(other => {
+            other.querySelector('.faq-content').style.height = '0px';
+            other.querySelector('.faq-content').style.opacity = '0';
+            other.querySelector('.faq-icon').style.transform = 'rotate(0deg)';
+        });
+
+        if (!isOpen) {
+            content.style.height = content.scrollHeight + 'px';
+            content.style.opacity = '1';
+            icon.style.transform = 'rotate(45deg)';
+        }
+    }
+</script>
+
 <style>
     @keyframes fade-in {
-        from { opacity: 0; transform: translateY(10px); }
+        from { opacity: 0; transform: translateY(20px); }
         to { opacity: 1; transform: translateY(0); }
     }
-    .animate-fade-in { animation: fade-in 1s cubic-bezier(0.2, 0, 0, 1) forwards; }
+    .animate-fade-in { animation: fade-in 1.2s cubic-bezier(0.2, 0, 0, 1) forwards; }
     
+    .animate-pulse-slow {
+        animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; transform: translateX(0); }
+        50% { opacity: .5; transform: translateX(10px); }
+    }
+
     .text-glow {
         text-shadow: 0 0 30px rgba(59, 130, 246, 0.15);
+    }
+    
+    html {
+        scroll-behavior: smooth;
+    }
+    
+    .glass-box {
+        background: rgba(255, 255, 255, 0.01);
+        backdrop-filter: blur(20px);
     }
 </style>
 {% endblock %}

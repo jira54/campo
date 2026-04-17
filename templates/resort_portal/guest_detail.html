@@ -150,13 +150,13 @@
                     
                     <div class="bg-stone-900/40 border border-white/5 rounded-3xl p-8">
                         <h3 class="text-white font-black text-sm uppercase tracking-widest mb-8">Resident History</h3>
-                        {% if folios %}
+                        {% if stays %}
                         <div class="space-y-6">
-                            {% for folio in folios %}
+                            {% for stay in stays %}
                             <div class="relative pl-8 pb-6 border-l border-white/5 last:border-0">
                                 <div class="absolute top-0 left-[-5px] w-2.5 h-2.5 rounded-full bg-brand"></div>
-                                <p class="text-white font-black text-xs mb-1">{{ folio.room.room_number|default:"No Room" }} — {{ folio.room.room_type }}</p>
-                                <p class="text-stone-500 text-[10px] font-bold uppercase tracking-widest">{{ folio.check_in_date|date:"M d, Y" }} &rarr; {{ folio.check_out_date|date:"M d, Y"|default:"Active" }}</p>
+                                <p class="text-white font-black text-xs mb-1">{{ stay.room.room_number|default:"No Room" }} — {{ stay.room.room_type }}</p>
+                                <p class="text-stone-500 text-[10px] font-bold uppercase tracking-widest">{{ stay.check_in_date|date:"M d, Y" }} &rarr; {{ stay.check_out_date|date:"M d, Y"|default:"Active" }}</p>
                             </div>
                             {% endfor %}
                         </div>

@@ -1,0 +1,114 @@
+{% extends 'resort_portal/base_section.html' %}
+
+{% block section_title %}Dining & POS{% endblock %}
+{% block breadcrumb %}Restaurant{% endblock %}
+{% block page_title %}Table Management{% endblock %}
+
+{% block section_content %}
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    {% for table in tables %}
+        <div class="relative group">
+            <button onclick="{% if table.status == 'occupied' %}showTableActions('{{ table.id }}', '{{ table.table_number }}'){% else %}openOrderModal('table', '{{ table.id }}', 'Table {{ table.table_number }}'){% endif %}" class="w-full p-6 bg-white/[0.03] border border-white/5 rounded-3xl text-center hover:bg-white/[0.05] hover:border-brand/30 transition-all">
+                <div class="w-16 h-16 {% if table.status == 'occupied' %}bg-brand/20 text-brand{% else %}bg-white/5 text-stone-500{% endif %} rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl group-hover:scale-110 transition-transform">
+                    🍽️
+                </div>
+                <h4 class="text-white font-outfit font-black text-lg">Table {{ table.table_number }}</h4>
+                <p class="text-[9px] font-black text-stone-500 uppercase tracking-widest mt-1">{{ table.table_type }} • {{ table.capacity }} Seats</p>
+                
+                <div class="mt-4 pt-4 border-t border-white/5">
+                    <span class="px-3 py-1 {% if table.status == 'occupied' %}bg-brand text-deep{% else %}bg-emerald-500/10 text-emerald-500{% endif %} text-[9px] font-black uppercase tracking-widest rounded-full border border-white/5">
+                        {{ table.get_status_display }}
+                    </span>
+                </div>
+            </button>
+
+            <!-- Table Action Overlay (Simple Popup) -->
+            <div id="actions-{{ table.id }}" class="hidden absolute inset-0 bg-deep/95 rounded-3xl z-10 flex flex-col items-center justify-center p-4 space-y-3 animate-fade-in">
+                <button onclick="openOrderModal('table', '{{ table.id }}', 'Table {{ table.table_number }}')" class="w-full py-3 bg-white/5 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-white/10 transition-colors">
+                    Add Order
+                </button>
+                <button onclick="openSettleModal('table', '{{ table.id }}', 'Table {{ table.table_number }}')" class="w-full py-3 bg-brand text-deep text-[10px] font-black uppercase tracking-widest rounded-xl hover:scale-105 transition-transform">
+                    Settle Bill
+                </button>
+                <button onclick="hideTableActions('{{ table.id }}')" class="text-[8px] text-stone-500 uppercase font-black hover:text-white transition-colors">
+                    Back
+                </button>
+            </div>
+        </div>
+    {% empty %}
+        <div class="md:col-span-4 p-20 bg-white/[0.02] border border-white/5 rounded-3xl text-center">
+            <div class="text-5xl mb-4 grayscale opacity-30">🍽️</div>
+            <h3 class="text-xl font-outfit font-black text-stone-500 uppercase tracking-widest">No Tables Configured</h3>
+            <p class="text-stone-600 text-xs mt-2">Add tables in the Property Settings to start managing dining operations.</p>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="mt-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Active Bills POS Hub -->
+    <div class="lg:col-span-2 p-8 bg-brand/5 border border-brand/10 rounded-3xl">
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h3 class="text-brand font-outfit font-black text-xl mb-1">POS Billing</h3>
+                <p class="text-stone-500 text-[10px] uppercase font-bold tracking-widest">Active Restaurant Transactions</p>
+            </div>
+            <div class="text-right">
+                <span class="text-stone-500 text-[10px] font-black uppercase tracking-widest block">In-House Bills</span>
+                <span class="text-white font-outfit font-black text-2xl">{{ active_bills|length }}</span>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            {% for bill in active_bills %}
+            <div class="p-4 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-between group hover:border-brand/30 transition-all">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 bg-brand/10 rounded-xl flex items-center justify-center text-brand font-black">
+                        {{ bill.name|slice:":1" }}
+                    </div>
+                    <div>
+                        <h4 class="text-white font-outfit font-black">{{ bill.name }}</h4>
+                        <span class="text-[10px] text-stone-500 font-bold uppercase tracking-widest">Unpaid Balance</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <div class="text-right">
+                        <span class="text-brand font-outfit font-black text-xl">KSh {{ bill.total }}</span>
+                    </div>
+                    <button onclick="openSettleModal('table', '{{ bill.ref_id }}', '{{ bill.name }}')" class="px-6 py-3 bg-brand text-deep font-outfit font-black text-[10px] uppercase tracking-widest rounded-xl hover:scale-105 transition-transform shadow-lg shadow-brand/20">
+                        Settle Bill
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+            <div class="p-12 text-center border-2 border-dashed border-white/5 rounded-3xl">
+                <p class="text-stone-500 font-bold uppercase tracking-widest text-[10px]">No active dining bills to display</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Quick Actions Card -->
+    <div class="p-8 bg-white/5 border border-white/5 rounded-3xl flex flex-col justify-between">
+        <div>
+            <h3 class="text-white font-outfit font-black text-xl mb-1">Fast Checkout</h3>
+            <p class="text-stone-500 text-xs">Process walk-in payments or direct charges manually.</p>
+        </div>
+        
+        <div class="space-y-4 mt-8">
+            <button onclick="openOrderModal('general', '0', 'General Sale')" class="w-full py-4 bg-white/5 text-white text-[10px] font-black uppercase tracking-widest rounded-xl border border-white/10 hover:bg-white/10 transition-colors flex items-center justify-center space-x-3">
+                <span>➕ New Direct Sale</span>
+            </button>
+            <p class="text-[8px] text-stone-600 text-center uppercase font-bold tracking-tighter">Use for walk-in payments without tables</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showTableActions(id, name) {
+        document.getElementById(`actions-${id}`).classList.remove('hidden');
+    }
+    function hideTableActions(id) {
+        document.getElementById(`actions-${id}`).classList.add('hidden');
+    }
+</script>
+{% endblock %}

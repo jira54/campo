@@ -69,6 +69,11 @@ class Vendor(AbstractBaseUser, PermissionsMixin):
     totp_secret      = models.CharField(max_length=32, blank=True, null=True)
     has_onboarding_completed = models.BooleanField(default=False)
     
+    # --- Resort Security ---
+    resort_manager_pin = models.CharField(max_length=4, blank=True, null=True, help_text="4-digit PIN for sensitive manager analytics")
+    resort_otp        = models.CharField(max_length=6, blank=True, null=True)
+    resort_otp_expiry = models.DateTimeField(null=True, blank=True)
+    
     trial_end_date    = models.DateTimeField(null=True, blank=True)
     created_at        = models.DateTimeField(auto_now_add=True)
 

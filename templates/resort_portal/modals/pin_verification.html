@@ -1,0 +1,91 @@
+<!-- PIN Verification Modal (Phase 6 Security Logic) -->
+<div id="pin-modal" class="fixed inset-0 bg-deep/95 backdrop-blur-2xl z-[100] flex items-center justify-center p-6 hidden">
+    <div class="max-w-md w-full animate-in fade-in zoom-in duration-500">
+        <div class="bg-white/[0.03] border border-white/10 p-10 rounded-[3rem] text-center relative overflow-hidden group">
+            <!-- Decorative Glow -->
+            <div class="absolute -top-24 -left-24 w-48 h-48 bg-brand/10 rounded-full blur-[80px] group-hover:bg-brand/20 transition-all duration-700"></div>
+            
+            <div class="relative z-10">
+                <div class="w-20 h-20 bg-brand/10 border border-brand/20 rounded-3xl flex items-center justify-center mx-auto mb-8 animate-bounce-subtle">
+                    <svg class="w-10 h-10 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                </div>
+
+                <h2 class="text-3xl font-outfit font-black text-white mb-2 tracking-tight">Identity Verification</h2>
+                <p class="text-stone-400 text-sm font-medium mb-8 leading-relaxed">Enter your 4-digit Manager PIN to unlock administrative features and financial data.</p>
+
+                <form id="pin-form" onsubmit="handlePinSubmit(event)" class="space-y-8">
+                    <div class="flex justify-center gap-3">
+                        <input type="password" maxlength="1" class="pin-digit w-16 h-20 bg-white/5 border-2 border-white/10 rounded-2xl text-center text-3xl font-black text-brand focus:border-brand focus:bg-brand/5 outline-none transition-all shadow-inner" required autofocus>
+                        <input type="password" maxlength="1" class="pin-digit w-16 h-20 bg-white/5 border-2 border-white/10 rounded-2xl text-center text-3xl font-black text-brand focus:border-brand focus:bg-brand/5 outline-none transition-all shadow-inner" required>
+                        <input type="password" maxlength="1" class="pin-digit w-16 h-20 bg-white/5 border-2 border-white/10 rounded-2xl text-center text-3xl font-black text-brand focus:border-brand focus:bg-brand/5 outline-none transition-all shadow-inner" required>
+                        <input type="password" maxlength="1" class="pin-digit w-16 h-20 bg-white/5 border-2 border-white/10 rounded-2xl text-center text-3xl font-black text-brand focus:border-brand focus:bg-brand/5 outline-none transition-all shadow-inner" required>
+                    </div>
+
+                    <div id="pin-error" class="hidden text-rose-500 text-[10px] font-black uppercase tracking-widest bg-rose-500/10 py-3 rounded-xl border border-rose-500/20">
+                        Invalid PIN. Try again.
+                    </div>
+
+                    <div class="flex flex-col gap-4">
+                        <button type="submit" class="w-full py-5 bg-brand text-deep font-outfit font-black text-xs uppercase tracking-[0.2em] rounded-2xl shadow-brand hover:scale-[1.02] active:scale-95 transition-all">
+                            Verify & Unlock
+                        </button>
+                        <button type="button" onclick="document.getElementById('pin-modal').classList.add('hidden')" class="w-full py-4 text-stone-500 hover:text-white font-black text-[10px] uppercase tracking-widest transition-colors">
+                            Leave Gated Area
+                        </button>
+                    </div>
+                </form>
+
+                <div class="mt-8 pt-8 border-t border-white/5">
+                    <button onclick="togglePinResetModal()" class="text-[9px] font-black text-stone-600 hover:text-brand uppercase tracking-widest transition-colors">
+                        Lost your pin? Reset identity
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // PIN Modal JS
+    const pinInputs = document.querySelectorAll('.pin-digit');
+    pinInputs.forEach((input, index) => {
+        input.addEventListener('input', (e) => {
+            if (e.target.value.length === 1 && index < pinInputs.length - 1) {
+                pinInputs[index + 1].focus();
+            }
+        });
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                pinInputs[index - 1].focus();
+            }
+        });
+    });
+
+    async function handlePinSubmit(e) {
+        e.preventDefault();
+        const pin = Array.from(pinInputs).map(i => i.value).join('');
+        const errorEl = document.getElementById('pin-error');
+        
+        try {
+            const formData = new FormData();
+            formData.append('pin', pin);
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+            const response = await fetch('{% url "resort_portal:verify_manager_pin" %}', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                window.location.reload();
+            } else {
+                errorEl.classList.remove('hidden');
+                pinInputs.forEach(i => i.value = '');
+                pinInputs[0].focus();
+            }
+        } catch (error) {
+            console.error('Verification failed', error);
+        }
+    }
+</script>

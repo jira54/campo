@@ -1,0 +1,34 @@
+{% extends 'resort_portal/base_section.html' %}
+{% block section_title %}Day Visitors{% endblock %}
+{% block breadcrumb %}Visitors{% endblock %}
+{% block page_title %}Day Pass & Walk-in Access{% endblock %}
+{% block section_content %}
+<div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+    <div class="bg-white/[0.03] border border-white/5 p-8 rounded-3xl">
+        <h3 class="text-white font-outfit font-black text-lg mb-6">Active Visitors</h3>
+        {% for visitor in visitors %}
+            <div class="flex items-center justify-between py-4 border-b border-white/5 last:border-0">
+                <div>
+                    <span class="text-stone-200 font-bold block">{{ visitor.name }}</span>
+                    <span class="text-[9px] text-stone-500 uppercase font-black tracking-widest">{{ visitor.pass_type.name }} • {{ visitor.number_of_guests }} Guests</span>
+                </div>
+                <button class="px-3 py-1 bg-white/5 text-stone-400 text-[8px] font-black uppercase tracking-widest rounded-lg">Check Out</button>
+            </div>
+        {% empty %}
+            <p class="text-stone-500 text-[10px] font-black uppercase tracking-widest text-center py-10">No Active Day Visitors</p>
+        {% endfor %}
+    </div>
+    <div class="bg-brand/5 border border-brand/10 p-8 rounded-3xl">
+        <h3 class="text-brand font-outfit font-black text-lg mb-6">Available Day Passes</h3>
+        {% for pass in passes %}
+            <div class="flex items-center justify-between p-4 bg-deep/50 rounded-2xl mb-3 border border-brand/5">
+                <div>
+                    <span class="text-white font-bold block">{{ pass.name }}</span>
+                    <span class="text-[9px] text-brand/70 uppercase font-black tracking-widest">KSh {{ pass.price }}</span>
+                </div>
+                <button class="w-8 h-8 bg-brand text-deep rounded-full flex items-center justify-center font-black">+</button>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

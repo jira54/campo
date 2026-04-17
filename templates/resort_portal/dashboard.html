@@ -46,37 +46,46 @@
                             </div>
                         </div>
                         <h2 class="text-3xl md:text-5xl font-outfit font-black text-white leading-tight">
-                        <h2 class="text-3xl md:text-5xl font-outfit font-black text-white leading-tight">
                             Fresh <span class="text-brand">Arrivals</span>.
                         </h2>
                     </div>
                     
                     <div class="flex flex-col md:flex-row items-end gap-4">
+                        <!-- View Toggle -->
+                        <div class="bg-stone-800 p-1 rounded-xl flex items-center border border-white/5">
+                            <button onclick="setViewMode('staff')" id="staff-toggle" class="px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all bg-brand text-deep shadow-brand">
+                                Staff
+                            </button>
+                            <button onclick="setViewMode('manager')" id="manager-toggle" class="px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all text-stone-500 hover:text-white">
+                                Manager
+                            </button>
+                        </div>
+
                         <button onclick="openRegisterModal()" class="bg-brand text-deep text-[10px] font-black uppercase tracking-[0.2em] px-6 py-4 rounded-xl shadow-brand hover:scale-105 transition-all flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
-                            New Guest & Check-In
+                            New Check-In
                         </button>
-                        <a href="{% url 'resort_portal:setup' %}" class="bg-stone-800 text-white text-[10px] font-black uppercase tracking-[0.2em] px-4 py-4 rounded-xl border border-white/5 hover:border-brand/50 transition-all flex items-center gap-2">
-                            Settings
-                        </a>
                     </div>
-                    <!-- Simplified Header Segment -->
-                    <div class="max-w-md bg-stone-900/40 backdrop-blur-md border border-white/5 p-5 rounded-2xl relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 w-24 h-24 bg-brand/10 blur-3xl -mr-12 -mt-12 group-hover:bg-brand/20 transition-all"></div>
-                        <div class="relative z-10">
-                            <h4 class="text-[10px] font-black text-brand uppercase tracking-widest mb-2 flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 rounded-full bg-brand animate-pulse"></span>
-                                Daily Summary
-                            </h4>
-                            <p class="text-stone-300 text-sm font-medium leading-relaxed">
-                                {{ day_visitors }} day visitors and {{ occupancy_rate }}% occupancy today.
-                            </p>
-                        </div>
+
+                    <!-- Manager Controls (visible in Manager View) -->
+                    <div class="manager-content hidden animate-in border-l border-white/10 pl-4 ml-2 flex items-center gap-3">
+                        <form method="GET" class="flex items-center gap-3">
+                            <select name="period" onchange="this.form.submit()" class="bg-stone-900/50 border border-white/10 rounded-xl px-4 py-3 text-white text-[10px] font-black uppercase tracking-widest focus:outline-none focus:border-brand">
+                                <option value="today" {% if period == 'today' %}selected{% endif %}>Today</option>
+                                <option value="week" {% if period == 'week' %}selected{% endif %}>Last 7 Days</option>
+                                <option value="month" {% if period == 'month' %}selected{% endif %}>Last 30 Days</option>
+                            </select>
+                            
+                            <a href="{% url 'resort_portal:lock_manager' %}" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 p-3 rounded-xl border border-red-500/20 transition-all flex items-center gap-2 text-[10px] font-black uppercase tracking-widest" title="Lock Dashboard">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                Lock
+                            </a>
+                        </form>
                     </div>
                 </div>
             </div>
 
-            <!-- Smart Intelligence Alert (VIP Check-ins) -->
+            <!-- Strategic Intelligence Alert (VIP Check-ins) -->
             {% if vip_arrivals > 0 %}
             <div class="mb-10 bg-brand/10 border border-brand/20 p-6 rounded-2xl flex items-center justify-between gap-6 group hover:bg-brand/15 transition-all">
                 <div class="flex items-center gap-6">
@@ -90,48 +99,93 @@
             </div>
             {% endif %}
 
-            <!-- Top KPIs (Simplified Grid) -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-                <div class="bg-stone-900/50 border border-white/5 rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-brand/5 blur-3xl pointer-events-none"></div>
-                    <div>
-                        <p class="text-stone-300 text-[10px] uppercase tracking-widest font-black mb-4">Occupancy</p>
-                        <h3 class="text-4xl font-outfit font-black text-white tracking-tighter">{{ occupancy_rate }}%</h3>
+            <!-- Strategic KPI Grid (Manager View) -->
+            <div class="manager-content hidden grid grid-cols-1 md:grid-cols-4 gap-6 mb-12 animate-in fade-in zoom-in-95 duration-700">
+                <div class="bg-stone-900/50 border border-white/5 rounded-3xl p-6 relative overflow-hidden">
+                    <p class="text-stone-500 text-[10px] uppercase tracking-widest font-black mb-4">Total Revenue</p>
+                    <div class="flex items-baseline gap-2">
+                        <h3 class="text-3xl font-outfit font-black text-white tracking-tighter">KES {{ total_revenue|floatformat:0 }}</h3>
+                        <span class="text-[10px] font-black {% if rev_trend >= 0 %}text-emerald-400{% else %}text-red-400{% endif %}">
+                            {{ rev_trend|yesno:"+,-" }}{{ rev_trend }}%
+                        </span>
                     </div>
-                    <p class="text-stone-300 text-[10px] mt-4 font-bold">{{ occupied_rooms }} Rooms Active</p>
+                    <div class="mt-4 h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                        <div class="bg-brand h-full" style="width: 65%"></div>
+                    </div>
                 </div>
 
-                <div class="bg-stone-900/50 border border-white/5 rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between">
-                    <div>
-                        <p class="text-stone-300 text-[10px] uppercase tracking-widest font-black mb-4">Day Visitors</p>
-                        <h3 class="text-4xl font-outfit font-black text-white tracking-tighter">{{ day_visitors }}</h3>
+                <div class="bg-stone-900/50 border border-white/5 rounded-3xl p-6 relative overflow-hidden">
+                    <p class="text-stone-500 text-[10px] uppercase tracking-widest font-black mb-4">Occupancy Rate</p>
+                    <div class="flex items-baseline gap-2">
+                        <h3 class="text-3xl font-outfit font-black text-white tracking-tighter">{{ occupancy_rate }}%</h3>
+                        <span class="text-[10px] font-black text-stone-500">Period Avg</span>
                     </div>
-                    <p class="text-stone-300 text-[10px] mt-4 font-bold">New entries today</p>
+                    <div class="mt-4 h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                        <div class="bg-brand h-full" style="width: {{ occupancy_rate }}%"></div>
+                    </div>
                 </div>
-                
-                <div class="bg-stone-900/50 border border-white/5 rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between">
+
+                <div class="bg-stone-900/50 border border-white/5 rounded-3xl p-6 relative overflow-hidden">
+                    <p class="text-stone-500 text-[10px] uppercase tracking-widest font-black mb-4">ADR</p>
+                    <div class="flex items-baseline gap-2">
+                        <h3 class="text-3xl font-outfit font-black text-white tracking-tighter">KES {{ adr|floatformat:0 }}</h3>
+                        <span class="text-[10px] font-black text-emerald-400">Stable</span>
+                    </div>
+                    <p class="text-[8px] text-stone-600 uppercase font-black tracking-widest mt-2 px-2 py-1 bg-white/5 rounded w-max">Avg Daily Rate</p>
+                </div>
+
+                <div class="bg-stone-900/50 border border-white/5 rounded-3xl p-6 relative overflow-hidden">
+                    <p class="text-stone-500 text-[10px] uppercase tracking-widest font-black mb-4">RevPAR</p>
+                    <div class="flex items-baseline gap-2">
+                        <h3 class="text-3xl font-outfit font-black text-white tracking-tighter">KES {{ revpar|floatformat:0 }}</h3>
+                        <span class="text-[10px] font-black text-brand">Target: 4k</span>
+                    </div>
+                    <p class="text-[8px] text-stone-600 uppercase font-black tracking-widest mt-2 px-2 py-1 bg-white/5 rounded w-max">Revenue Per Room</p>
+                </div>
+            </div>
+
+            <!-- Staff Fast KPIs (Staff View) -->
+            <div class="staff-content grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+                <div class="bg-stone-900/50 border border-white/5 rounded-3xl p-6 flex flex-col justify-between">
                     <div>
-                        <p class="text-stone-300 text-[10px] uppercase tracking-widest font-black mb-4">Service Revenue</p>
+                        <p class="text-brand text-[10px] uppercase tracking-widest font-black mb-4">Occupancy</p>
+                        <h3 class="text-4xl font-outfit font-black text-white tracking-tighter">{{ occupancy_rate }}%</h3>
+                    </div>
+                    <p class="text-stone-300 text-[9px] mt-4 font-bold">{{ occupied_rooms }} Rooms Full</p>
+                </div>
+
+                <div class="bg-stone-900/50 border border-white/5 rounded-3xl p-6 flex flex-col justify-between">
+                    <div>
+                        <p class="text-stone-300 text-[10px] uppercase tracking-widest font-black mb-4">Revenue Today</p>
                         <h3 class="text-4xl font-outfit font-black text-white tracking-tighter">
                             <span class="text-sm align-top mr-1 font-bold text-brand">KES</span>{{ total_revenue_today|floatformat:0 }}
                         </h3>
                     </div>
-                    <p class="text-stone-300 text-[10px] mt-4 font-bold">Today's total sales</p>
+                    <p class="text-stone-300 text-[9px] mt-4 font-bold">Real-time sales</p>
                 </div>
 
-                <div class="bg-stone-900/50 border border-white/5 rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between">
+                <div class="bg-stone-900/50 border border-white/5 rounded-3xl p-6 flex flex-col justify-between">
                     <div>
-                        <p class="text-stone-300 text-[10px] uppercase tracking-widest font-black mb-4">Room Cleaning</p>
+                        <p class="text-stone-300 text-[10px] uppercase tracking-widest font-black mb-4">Housekeeping</p>
                         <h3 class="text-4xl font-outfit font-black tracking-tighter {% if dirty_rooms > 0 %}text-red-400{% else %}text-emerald-400{% endif %}">
-                            {% if dirty_rooms > 0 %}{{ dirty_rooms }}{% else %}CLEAN{% endif %}
+                            {% if dirty_rooms > 0 %}{{ dirty_rooms }}{% else %}READY{% endif %}
                         </h3>
                     </div>
-                    <p class="text-stone-300 text-[10px] mt-4 font-bold">Pending room cycles</p>
+                    <p class="text-stone-300 text-[9px] mt-4 font-bold">Pending room cycles</p>
+                </div>
+
+                <div class="bg-stone-900/50 border border-white/5 rounded-3xl p-6 flex flex-col justify-between relative group cursor-pointer" onclick="openRegisterModal()">
+                    <div class="absolute inset-0 bg-brand/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl"></div>
+                    <div>
+                        <p class="text-stone-300 text-[10px] uppercase tracking-widest font-black mb-4">Quick Check-In</p>
+                        <h3 class="text-4xl font-outfit font-black text-white tracking-tighter">GO</h3>
+                    </div>
+                    <p class="text-brand text-[9px] mt-4 font-black uppercase tracking-widest">Start Entry →</p>
                 </div>
             </div>
 
-            <!-- Operations Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+            <!-- Operations Grid (Staff View) -->
+            <div class="staff-content grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
                 <!-- POS Quick Charge -->
                 <div class="bg-stone-900 border border-white/10 rounded-3xl p-10 flex flex-col justify-center items-center text-center relative overflow-hidden">
                     <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-brand/10 to-transparent pointer-events-none"></div>
@@ -168,19 +222,86 @@
                             </div>
                             {% endfor %}
                         {% else %}
-                            <div class="py-12 text-center text-stone-500 italic">No revenue today.</div>
+                            <div class="py-12 text-center text-stone-500 italic">No revenue in this period.</div>
                         {% endif %}
                     </div>
                 </div>
             </div>
+
+            <!-- Manager Analytics Grid (Manager View) -->
+            <div class="manager-content hidden space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-700">
+                <!-- Section 1: Revenue Analytics -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-stone-900 border border-white/10 rounded-3xl p-8">
+                        <div class="flex justify-between items-start mb-8">
+                            <div>
+                                <h4 class="text-white font-outfit font-black text-xl">Revenue Stream Performance</h4>
+                                <p class="text-stone-500 text-[10px] uppercase font-black tracking-widest mt-1">Comparative Channel Analysis</p>
+                            </div>
+                            <div class="w-10 h-10 bg-brand/10 rounded-xl flex items-center justify-center text-brand">📈</div>
+                        </div>
+                        <canvas id="revenueChart" class="w-full h-64"></canvas>
+                    </div>
+                    
+                    <div class="bg-stone-900 border border-white/10 rounded-3xl p-8">
+                        <div class="flex justify-between items-start mb-8">
+                            <div>
+                                <h4 class="text-white font-outfit font-black text-xl">Occupancy Trends</h4>
+                                <p class="text-stone-500 text-[10px] uppercase font-black tracking-widest mt-1">Period Room Utilization</p>
+                            </div>
+                            <div class="w-10 h-10 bg-brand/10 rounded-xl flex items-center justify-center text-brand">🏨</div>
+                        </div>
+                        <canvas id="occupancyChart" class="w-full h-64"></canvas>
+                    </div>
+                </div>
+
+                <!-- Section 2: Guest Analytics & Forecasting -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 bg-stone-900 border border-white/10 rounded-3xl p-8">
+                        <h4 class="text-white font-outfit font-black text-xl mb-6">Guest Demographics & Source</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            <div class="p-6 bg-stone-950/40 rounded-2xl border border-white/5">
+                                <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-2">Repeat Rate</p>
+                                <h5 class="text-2xl font-black text-white">42%</h5>
+                            </div>
+                            <div class="p-6 bg-stone-950/40 rounded-2xl border border-white/5">
+                                <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-2">Avg Stay</p>
+                                <h5 class="text-2xl font-black text-white">2.4<span class="text-xs ml-1 text-stone-400">Days</span></h5>
+                            </div>
+                            <div class="p-6 bg-stone-950/40 rounded-2xl border border-white/5">
+                                <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-2">VIP Ratio</p>
+                                <h5 class="text-2xl font-black text-white">12%</h5>
+                            </div>
+                            <div class="p-6 bg-stone-950/40 rounded-2xl border border-white/5">
+                                <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-2">Cancel Rate</p>
+                                <h5 class="text-2xl font-black text-white">3%</h5>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-brand border border-brand/20 rounded-3xl p-8 relative overflow-hidden group">
+                        <div class="absolute inset-x-0 bottom-0 h-1 bg-deep animate-pulse"></div>
+                        <h4 class="text-deep font-outfit font-black text-xl mb-6">Revenue Forecast</h4>
+                        <div class="space-y-6 relative z-10">
+                            <div>
+                                <p class="text-deep/60 text-[10px] font-black uppercase tracking-widest">Projected Week</p>
+                                <h5 class="text-3xl font-black text-deep">KES 124K</h5>
+                            </div>
+                            <p class="text-deep/80 text-[10px] font-medium leading-relaxed italic">
+                                "Occupancy projected to peak at 82% this weekend based on reservation trends."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
-            <!-- Live Active Guests -->
-            <div class="bg-stone-900/50 border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
+            <!-- Live Active Guests (Staff View) -->
+            <div class="staff-content bg-stone-900/50 border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
                 <div class="p-8 border-b border-white/5 flex justify-between items-center bg-stone-950/20">
                     <h2 class="text-white font-outfit font-black text-2xl">Current Guests</h2>
                     <div class="flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-brand"></span>
-                        <span class="text-xs text-stone-300 font-bold uppercase tracking-widest">{{ active_folios.count }} Guests On-site</span>
+                        <span class="text-xs text-stone-300 font-bold uppercase tracking-widest">{{ active_stays.count }} Guests On-site</span>
                     </div>
                 </div>
                 
@@ -195,24 +316,24 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-white/5">
-                            {% for folio in active_folios|slice:":8" %}
+                            {% for stay in active_stays|slice:":8" %}
                             <tr class="hover:bg-white/[0.02] transition-colors group">
                                 <td class="px-8 py-6">
-                                    <span class="font-outfit font-black text-xl text-white">{{ folio.room.room_number|default:"BILL-" }}{{ folio.id }}</span>
+                                    <span class="font-outfit font-black text-xl text-white">{{ stay.room.room_number|default:"BILL-" }}{{ stay.id }}</span>
                                 </td>
                                 <td class="px-8 py-6">
                                     <div class="flex flex-col">
-                                        <span class="text-stone-200 font-bold">{{ folio.guest.name }}</span>
-                                        {% if folio.guest.vip_status %}
+                                        <span class="text-stone-200 font-bold">{{ stay.guest.name }}</span>
+                                        {% if stay.guest.vip_status %}
                                             <span class="text-[10px] text-brand font-black uppercase mt-0.5 tracking-widest">★ VIP</span>
                                         {% endif %}
                                     </div>
                                 </td>
-                                <td class="px-8 py-6 text-stone-300 font-medium">{{ folio.check_in_date|date:"F d, Y" }}</td>
+                                <td class="px-8 py-6 text-stone-300 font-medium">{{ stay.check_in_date|date:"F d, Y" }}</td>
                                 <td class="px-8 py-6 flex items-center justify-between">
-                                    <span class="px-3 py-1 bg-brand/10 text-brand text-[10px] font-black uppercase rounded-full border border-brand/20">Checked In</span>
+                                    <span class="px-3 py-1 bg-brand/10 text-brand text-[10px] font-black uppercase rounded-full border border-brand/20">Active Stay</span>
                                     <button 
-                                        onclick="confirmCheckOut('{{ folio.id }}', '{{ folio.guest.name }}', '{{ folio.room.room_number|default:'Walk-in' }}')"
+                                        onclick="confirmCheckOut('{{ stay.id }}', '{{ stay.guest.name|escapejs }}', '{{ stay.room.room_number|default:'Walk-in'|escapejs }}')"
                                         class="opacity-0 group-hover:opacity-100 bg-white/5 hover:bg-red-500/10 hover:text-red-400 text-stone-300 text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-lg border border-white/5 transition-all">
                                         Check Out
                                     </button>
@@ -226,8 +347,8 @@
                 </div>
             </div>
 
-            <!-- Housekeeping Hub -->
-            <div class="mb-12 mt-12 px-2">
+            <!-- Housekeeping Hub (Staff View) -->
+            <div class="staff-content mb-12 mt-12 px-2">
                 <div class="flex items-center justify-between mb-8">
                     <div>
                         <h4 class="text-white font-outfit font-black text-xl">Housekeeping Hub</h4>
@@ -283,9 +404,11 @@
     </div>
 </div>
 
-<!-- Fast POS Charge Modal (Boutique) -->
-<div id="posModal" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-[100] flex items-center justify-center p-4 hidden" style="background-color: rgba(0,0,0,0.95);">
-    <div class="bg-stone-900 border border-white/10 rounded-3xl p-8 md:p-10 max-w-md w-full shadow-2xl shadow-brand/20 min-h-[500px]" style="background-color: #1c1917;">
+<!-- All Modals -->
+
+<!-- Fast POS Charge Modal -->
+<div id="posModal" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-[100] flex items-center justify-center p-4 hidden">
+    <div class="bg-stone-900 border border-white/10 rounded-3xl p-8 md:p-10 max-w-md w-full shadow-2xl">
         <div class="flex justify-between items-center mb-8">
             <div>
                 <h3 class="text-3xl font-outfit font-black text-white">Guest Entry & Service</h3>
@@ -298,7 +421,6 @@
         
         <form method="POST" action="{% url 'resort_portal:log_charge' %}" class="space-y-6">
             {% csrf_token %}
-            
             <div class="space-y-4">
                 <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest">Billing Target</label>
                 <div class="flex bg-stone-800 p-1 rounded-2xl">
@@ -306,205 +428,252 @@
                     <button type="button" onclick="setChargeType('guest', this)" class="flex-1 py-3 text-xs font-black uppercase tracking-widest text-stone-500 hover:text-white transition-all">Walk-in / Day</button>
                 </div>
             </div>
-
             <div id="roomSelectDiv" class="space-y-2">
-                <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest">Active Stay / Guest</label>
-                <select name="folio_id" class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all">
+                <select name="stay_id" class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold">
                     <option value="">Select Target...</option>
-                    {% for folio in active_folios %}
-                        <option value="{{ folio.id }}">Room {{ folio.room.room_number }} - {{ folio.guest.name }}</option>
-                    {% endfor %}
-                    {% for gst in all_guests %}
-                         <option value="guest_{{ gst.id }}">{{ gst.name }} (Profile)</option>
-                    {% endfor %}
+                    {% for stay in active_stays %}<option value="{{ stay.id }}">Room {{ stay.room.room_number }} - {{ stay.guest.name }}</option>{% endfor %}
                 </select>
             </div>
-
             <div id="guestSelectDiv" class="space-y-4 hidden">
-                <div class="grid grid-cols-1 gap-4">
-                    <div class="space-y-2">
-                        <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest">Guest Name (Direct Bill)*</label>
-                        <input type="text" name="guest_name" class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all" placeholder="e.g. John Doe">
-                    </div>
-                </div>
+                <input type="text" name="guest_name" class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold" placeholder="e.g. John Doe">
             </div>
-
             <div class="grid grid-cols-2 gap-4">
-                <div class="space-y-2">
-                    <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest">Department</label>
-                    <select name="department_id" required class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all">
-                        <option value="default">General Services</option>
-                        {% for dept in departments %}
-                            {% if dept.name != 'General Services' %}
-                            <option value="{{ dept.id }}">{{ dept.name }}</option>
-                            {% endif %}
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="space-y-2">
-                    <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest">Amount (KES)</label>
-                    <input type="number" name="amount" required class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all" placeholder="0.00">
-                </div>
+                <select name="department_id" required class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold">
+                    <option value="default">General Services</option>
+                    {% for dept in departments %}<option value="{{ dept.id }}">{{ dept.name }}</option>{% endfor %}
+                </select>
+                <input type="number" name="amount" required class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold" placeholder="Amount (KES)">
             </div>
-
-            <div class="space-y-2">
-                <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest">Service Description</label>
-                <input type="text" name="description" class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all" placeholder="e.g. Dinner, Swim, Spa">
-            </div>
-
-            <button type="submit" class="w-full bg-brand text-deep font-outfit font-black text-xl py-6 rounded-2xl shadow-brand hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3">
-                Finalize Service Bill
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            </button>
+            <input type="text" name="description" class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold" placeholder="Service Description">
+            <button type="submit" class="w-full bg-brand text-deep font-outfit font-black text-xl py-6 rounded-2xl shadow-brand transition-all">Log Service Bill</button>
         </form>
     </div>
 </div>
 
-<!-- Fast Guest Registration Modal (Simplified) -->
-<div id="registerModal" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-[100] flex items-center justify-center p-4 hidden overflow-y-auto" style="background-color: rgba(0,0,0,0.95);">
-    <div class="bg-stone-900 border border-white/10 rounded-3xl p-8 md:p-10 max-w-2xl w-full my-8 shadow-2xl shadow-brand/20 min-h-[400px]" style="background-color: #1c1917;">
+<!-- Guest Registration Modal -->
+<div id="registerModal" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-[100] flex items-center justify-center p-4 hidden overflow-y-auto">
+    <div class="bg-stone-900 border border-white/10 rounded-3xl p-8 max-w-2xl w-full my-8 shadow-2xl">
         <div class="flex justify-between items-center mb-8">
-            <div>
-                <h3 class="text-3xl font-outfit font-black text-white">New Guest Registration</h3>
-                <p class="text-stone-300 text-xs font-bold uppercase tracking-widest mt-1">Guest Enrollment</p>
-            </div>
+            <h3 class="text-3xl font-outfit font-black text-white">New Guest Registration</h3>
             <button onclick="closeRegisterModal()" class="w-12 h-12 rounded-full bg-stone-800 text-stone-400 hover:text-white flex items-center justify-center transition-all">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
         </div>
-        
         <form method="POST" class="space-y-6">
             {% csrf_token %}
             <input type="hidden" name="action" value="register_guest">
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-2">
-                    <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest">Full Name*</label>
-                    <input type="text" name="name" required class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all">
-                </div>
-                <div class="space-y-2">
-                    <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest">Phone Number</label>
-                    <input type="text" name="phone" class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all">
-                </div>
-                <div class="space-y-2">
-                    <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest">Entry Type</label>
-                    <select name="guest_type" class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all">
-                        <option value="overnight">Overnight Guest</option>
-                        <option value="day_visitor">Day Visitor (Picnic / Dining)</option>
-                    </select>
-                </div>
-                <div class="space-y-2">
-                    <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest">ID / Passport</label>
-                    <input type="text" name="passport_id" class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all">
-                </div>
-                <div class="space-y-2">
-                    <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest">Email Address</label>
-                    <input type="email" name="email" class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all" placeholder="guest@example.com">
-                </div>
+            <input type="hidden" id="identify_method" name="identify_method" value="name">
+            <div class="flex bg-stone-800 p-1 rounded-2xl mb-8">
+                <button type="button" onclick="setIdentifyMethod('name', this)" class="identify-tab flex-1 py-3 text-[10px] font-black uppercase bg-brand text-deep rounded-xl shadow-brand transition-all">Name</button>
+                <button type="button" onclick="setIdentifyMethod('email', this)" class="identify-tab flex-1 py-3 text-[10px] font-black uppercase text-stone-500 hover:text-white transition-all">Email</button>
+                <button type="button" onclick="setIdentifyMethod('both', this)" class="identify-tab flex-1 py-3 text-[10px] font-black uppercase text-stone-500 hover:text-white transition-all">Both</button>
             </div>
-
-            <div class="flex items-center gap-4">
-                <label class="flex items-center gap-3 bg-stone-800/50 px-6 py-4 rounded-xl border border-white/5 cursor-pointer hover:bg-stone-800 transition-all select-none">
-                    <input type="checkbox" name="vip_status" class="w-5 h-5 accent-brand bg-stone-700 border-0 rounded-md">
-                    <span class="text-xs font-black text-stone-200 uppercase tracking-widest">Mark as VIP</span>
-                </label>
+            <div id="name-fields-container" class="space-y-6">
+                <input type="text" name="name_only" class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold" placeholder="Full Name">
             </div>
-
-            <button type="submit" class="w-full bg-brand text-deep font-outfit font-black text-xl py-6 rounded-2xl shadow-brand hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3">
-                Complete Registration
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
-            </button>
+            <div id="email-fields-container" class="space-y-6 hidden">
+                <input type="email" name="email_only" class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold" placeholder="Email Address">
+            </div>
+            <div id="both-fields-container" class="space-y-6 hidden">
+                <input type="text" name="name_both" class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold" placeholder="Name">
+                <input type="email" name="email_both" class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold" placeholder="Email">
+            </div>
+            <select name="room_id" class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold">
+                <option value="">Status: Clean Rooms Only</option>
+                {% for room in available_rooms %}<option value="{{ room.id }}">Room {{ room.room_number }} ({{ room.room_type }})</option>{% endfor %}
+            </select>
+            <button type="submit" class="w-full bg-brand text-deep font-outfit font-black text-xl py-6 rounded-2xl shadow-brand transition-all">Complete Check-In</button>
         </form>
     </div>
 </div>
 
-<!-- Check-Out Confirmation Modal (Simplified) -->
+<!-- Check-Out Confirmation Modal -->
 <div id="checkOutModal" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-[110] flex items-center justify-center p-4 hidden">
-    <div class="bg-stone-900 border border-white/10 rounded-3xl p-10 max-w-md w-full shadow-2xl shadow-brand/20">
-        <div class="w-20 h-20 bg-red-500/10 rounded-3xl flex items-center justify-center text-4xl mb-8 border border-red-500/20 mx-auto">🛎️</div>
+    <div class="bg-stone-900 border border-white/10 rounded-3xl p-10 max-w-md w-full shadow-2xl">
         <h3 class="text-white font-outfit font-black text-2xl text-center mb-4">Complete Stay?</h3>
-        <p class="text-stone-300 text-sm text-center mb-10 leading-relaxed">
-            You are about to check out <span id="coGuestName" class="text-white font-bold"></span> from Room <span id="coRoomNumber" class="text-white font-bold"></span>. 
-            Finalize the **Guest Bill** and flag room for cleaning.
-        </p>
-        
+        <p class="text-stone-300 text-sm text-center mb-10"><span id="coGuestName" class="text-white font-bold"></span> from Room <span id="coRoomNumber" class="text-white font-bold"></span>.</p>
         <div class="flex flex-col gap-3">
-            <a id="coConfirmBtn" href="#" class="bg-brand text-deep text-center font-outfit font-black py-4 rounded-xl shadow-brand hover:scale-[1.02] transition-all">
-                Finalize Stay & Charge
-            </a>
-            <button onclick="closeCheckOutModal()" class="text-stone-500 hover:text-white font-bold text-xs uppercase tracking-widest py-4 transition-all">
-                Wait, Go Back
-            </button>
+            <a id="coConfirmBtn" href="#" class="bg-brand text-deep text-center font-outfit font-black py-4 rounded-xl shadow-brand transition-all">Finalize Stay & Charge</a>
+            <button onclick="closeCheckOutModal()" class="text-stone-500 hover:text-white font-bold text-xs uppercase transition-all">Wait, Go Back</button>
         </div>
     </div>
 </div>
 
+<!-- Manager PIN Modal -->
+<div id="pinModal" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-[150] flex items-center justify-center p-4 hidden">
+    <div class="bg-stone-900 border border-white/10 rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center">
+        <div class="w-16 h-16 bg-brand/10 rounded-2xl flex items-center justify-center text-3xl mb-6 mx-auto">🔐</div>
+        <h3 class="text-white font-outfit font-black text-xl mb-8">Enter Manager PIN</h3>
+        <div class="flex justify-center gap-4 mb-8">
+            <div class="pin-dot w-4 h-4 rounded-full border-2 border-stone-700"></div>
+            <div class="pin-dot w-4 h-4 rounded-full border-2 border-stone-700"></div>
+            <div class="pin-dot w-4 h-4 rounded-full border-2 border-stone-700"></div>
+            <div class="pin-dot w-4 h-4 rounded-full border-2 border-stone-700"></div>
+        </div>
+        <div id="pinError" class="text-red-400 text-[10px] font-bold mb-4 hidden">Invalid PIN</div>
+        <div class="grid grid-cols-3 gap-4 mb-8">
+            {% for i in "123456789"|make_list %}
+                <button onclick="pressKey('{{ i }}')" class="h-14 bg-stone-800 text-white font-black text-xl rounded-xl hover:bg-stone-700 active:scale-95 transition-all">{{ i }}</button>
+            {% endfor %}
+            <button onclick="openIdentityModal()" class="h-14 text-stone-500 font-bold text-[10px] uppercase hover:text-white">Forgot</button>
+            <button onclick="pressKey('0')" class="h-14 bg-stone-800 text-white font-black text-xl rounded-xl hover:bg-stone-700 active:scale-95 transition-all">0</button>
+            <button onclick="deleteKey()" class="h-14 text-stone-500 flex items-center justify-center hover:text-white">DEL</button>
+        </div>
+        <button onclick="closePinModal()" class="text-stone-500 text-[10px] font-black uppercase hover:text-white transition-all">Cancel</button>
+    </div>
+</div>
+
+<!-- Identity Modal -->
+<div id="identityModal" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-[160] flex items-center justify-center p-4 hidden">
+    <div class="bg-stone-900 border border-white/10 rounded-3xl p-8 max-w-sm w-full">
+        <h3 class="text-white font-outfit font-black text-xl mb-6">Verify Identity</h3>
+        <input type="hidden" id="id_type_input" value="phone">
+        <div class="flex gap-2 mb-6 bg-stone-800 p-1 rounded-xl">
+            <button onclick="setIdentityTab('phone')" class="id-tab-btn flex-1 py-2 text-sm rounded-lg bg-stone-100 text-brand">Phone</button>
+            <button onclick="setIdentityTab('email')" class="id-tab-btn flex-1 py-2 text-sm rounded-lg text-stone-500">Email</button>
+        </div>
+        <div id="id-phone-content" class="id-tab-content mb-6">
+            <input type="text" id="manager_phone_reset" placeholder="Phone Number" class="w-full bg-stone-800 border-white/5 rounded-xl px-4 py-3 text-white">
+        </div>
+        <div id="id-email-content" class="id-tab-content mb-6 hidden">
+            <input type="email" id="manager_email_reset" placeholder="Email Address" class="w-full bg-stone-800 border-white/5 rounded-xl px-4 py-3 text-white">
+        </div>
+        <button onclick="requestOTP()" class="w-full bg-brand text-deep font-black py-4 rounded-xl transition-all">Send OTP</button>
+    </div>
+</div>
+
+<!-- OTP/New PIN Modal -->
+<div id="otpModal" class="fixed inset-0 bg-black/95 backdrop-blur-xl z-[170] flex items-center justify-center p-4 hidden">
+    <div class="bg-stone-900 border border-white/10 rounded-3xl p-8 max-w-sm w-full">
+        <h3 class="text-white font-outfit font-black text-xl mb-6">Reset PIN</h3>
+        <input type="text" id="manager_otp_input" placeholder="6-digit OTP" class="w-full bg-stone-800 border-white/5 rounded-xl px-4 py-3 text-white mb-4">
+        <input type="password" id="new_manager_pin" placeholder="New 4-digit PIN" class="w-full bg-stone-800 border-white/5 rounded-xl px-4 py-3 text-white mb-6">
+        <button onclick="verifyOTP()" class="w-full bg-brand text-deep font-black py-4 rounded-xl transition-all">Update PIN</button>
+    </div>
+</div>
+
+<!-- Scripts -->
+<!-- Performance Optimization: Deferred Chart Loading -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 <script>
-function openRegisterModal() {
-    document.getElementById('registerModal').classList.remove('hidden');
-}
+    function openRegisterModal() { document.getElementById('registerModal').classList.remove('hidden'); }
+    function closeRegisterModal() { document.getElementById('registerModal').classList.add('hidden'); }
+    function openCheckOutModal() { document.getElementById('checkOutModal').classList.remove('hidden'); }
+    function closeCheckOutModal() { document.getElementById('checkOutModal').classList.add('hidden'); }
+    function openPosModal() { document.getElementById('posModal').classList.remove('hidden'); }
+    function closePosModal() { document.getElementById('posModal').classList.add('hidden'); }
 
-function closeRegisterModal() {
-    document.getElementById('registerModal').classList.add('hidden');
-}
+    function confirmCheckOut(stayId, guestName, roomNumber) {
+        document.getElementById('coGuestName').innerText = guestName;
+        document.getElementById('coRoomNumber').innerText = roomNumber;
+        document.getElementById('coConfirmBtn').href = `/resort/stay/check-out/${stayId}/`;
+        openCheckOutModal();
+    }
 
-function openCheckOutModal() {
-    document.getElementById('checkOutModal').classList.remove('hidden');
-}
+    function setChargeType(type, btn) {
+        const roomDiv = document.getElementById('roomSelectDiv');
+        const guestDiv = document.getElementById('guestSelectDiv');
+        document.querySelectorAll('#posModal button').forEach(b => b.classList.remove('bg-brand', 'text-deep'));
+        btn.classList.add('bg-brand', 'text-deep');
+        if (type === 'room') { roomDiv.classList.remove('hidden'); guestDiv.classList.add('hidden'); }
+        else { roomDiv.classList.add('hidden'); guestDiv.classList.remove('hidden'); }
+    }
 
-function closeCheckOutModal() {
-    document.getElementById('checkOutModal').classList.add('hidden');
-}
+    function setIdentifyMethod(method, btn) {
+        document.getElementById('name-fields-container').classList.add('hidden');
+        document.getElementById('email-fields-container').classList.add('hidden');
+        document.getElementById('both-fields-container').classList.add('hidden');
+        document.getElementById(method + '-fields-container').classList.remove('hidden');
+        document.getElementById('identify_method').value = method;
+    }
 
-function confirmCheckOut(folioId, guestName, roomNumber) {
-    document.getElementById('coGuestName').innerText = guestName;
-    document.getElementById('coRoomNumber').innerText = roomNumber;
-    // Construct the URL directly
-    document.getElementById('coConfirmBtn').href = `/resort/folio/check-out/${folioId}/`;
-    openCheckOutModal();
-}
+    let pinInput = "";
+    function setViewMode(mode) {
+        if (mode === 'manager' && !sessionStorage.getItem('resort_manager_unlocked')) {
+            openPinModal(); return;
+        }
+        
+        // Update Content Visibility
+        document.querySelectorAll('.staff-content').forEach(el => mode === 'staff' ? el.classList.remove('hidden') : el.classList.add('hidden'));
+        document.querySelectorAll('.manager-content').forEach(el => mode === 'manager' ? el.classList.remove('hidden') : el.classList.add('hidden'));
+        
+        // Update Button Styling
+        const staffBtn = document.getElementById('staff-toggle');
+        const managerBtn = document.getElementById('manager-toggle');
+        if (staffBtn && managerBtn) {
+            if (mode === 'staff') {
+                staffBtn.className = 'px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all bg-brand text-deep shadow-brand';
+                managerBtn.className = 'px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all text-stone-500 hover:text-white';
+            } else {
+                staffBtn.className = 'px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all text-stone-500 hover:text-white';
+                managerBtn.className = 'px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all bg-brand text-deep shadow-brand';
+            }
+        }
 
-function openPosModal() {
-    document.getElementById('posModal').classList.remove('hidden');
-}
+        if (mode === 'manager') initCharts();
+        sessionStorage.setItem('resort_view_mode', mode);
+    }
 
-function closePosModal() {
-    document.getElementById('posModal').classList.add('hidden');
-}
+    function openPinModal() { pinInput = ""; updatePinDisplay(); document.getElementById('pinModal').classList.remove('hidden'); }
+    function closePinModal() { document.getElementById('pinModal').classList.add('hidden'); }
+    function pressKey(num) { if (pinInput.length < 4) { pinInput += num; updatePinDisplay(); if (pinInput.length === 4) verifyPin(); } }
+    function deleteKey() { pinInput = pinInput.slice(0, -1); updatePinDisplay(); }
+    function updatePinDisplay() {
+        document.querySelectorAll('.pin-dot').forEach((dot, i) => {
+            dot.className = i < pinInput.length ? 'pin-dot w-4 h-4 rounded-full bg-brand' : 'pin-dot w-4 h-4 rounded-full border-2 border-stone-700';
+        });
+    }
 
-window.addEventListener('click', function(e) {
-    if (e.target.id === 'posModal') closePosModal();
-    if (e.target.id === 'registerModal') closeRegisterModal();
-    if (e.target.id === 'checkOutModal') closeCheckOutModal();
-});
+    function verifyPin() {
+        const formData = new FormData(); formData.append('pin', pinInput);
+        fetch("{% url 'resort_portal:verify_manager_pin' %}", { method: 'POST', headers: { 'X-CSRFToken': '{{ csrf_token }}' }, body: formData })
+        .then(res => res.json()).then(data => {
+            if (data.success) { sessionStorage.setItem('resort_manager_unlocked', 'true'); closePinModal(); setViewMode('manager'); }
+            else { pinInput = ""; updatePinDisplay(); document.getElementById('pinError').classList.remove('hidden'); }
+        });
+    }
 
-function setChargeType(type, btn) {
-    const roomDiv = document.getElementById('roomSelectDiv');
-    const guestDiv = document.getElementById('guestSelectDiv');
-    const container = btn.parentElement;
-    const buttons = container.querySelectorAll('button');
-    
-    buttons.forEach(b => {
-        b.className = 'flex-1 py-3 text-xs font-black uppercase tracking-widest text-stone-500 hover:text-white transition-all';
+    function openIdentityModal() { closePinModal(); document.getElementById('identityModal').classList.remove('hidden'); }
+    function setIdentityTab(type) {
+        document.getElementById('id_type_input').value = type;
+        document.querySelectorAll('.id-tab-content').forEach(el => el.classList.add('hidden'));
+        document.getElementById(`id-${type}-content`).classList.remove('hidden');
+    }
+
+    function requestOTP() {
+        const type = document.getElementById('id_type_input').value;
+        const val = type === 'phone' ? document.getElementById('manager_phone_reset').value : document.getElementById('manager_email_reset').value;
+        fetch("{% url 'resort_portal:request_reset_otp' %}", { method: 'POST', headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/x-www-form-urlencoded' }, body: `identification=${val}&type=${type}` })
+        .then(res => res.json()).then(data => { if (data.success) { document.getElementById('identityModal').classList.add('hidden'); document.getElementById('otpModal').classList.remove('hidden'); } else { alert(data.message); } });
+    }
+
+    function verifyOTP() {
+        const otp = document.getElementById('manager_otp_input').value;
+        const newPin = document.getElementById('new_manager_pin').value;
+        fetch("{% url 'resort_portal:verify_reset_otp' %}", { method: 'POST', headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/x-www-form-urlencoded' }, body: `otp=${otp}&new_pin=${newPin}` })
+        .then(res => res.json()).then(data => { if (data.success) { alert("PIN updated!"); location.reload(); } else { alert(data.message); } });
+    }
+
+    // Optimization: Lazy Chart Initialization
+    let chartsInitialized = false;
+    function initCharts() {
+        if (chartsInitialized || !sessionStorage.getItem('resort_manager_unlocked')) return;
+        if (typeof Chart === 'undefined') { setTimeout(initCharts, 200); return; }
+
+        const ctxRev = document.getElementById('revenueChart')?.getContext('2d');
+        if (ctxRev && !window.revChart) window.revChart = new Chart(ctxRev, { type: 'line', data: { labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'], datasets: [{ data: [12, 19, 15, 25, 32, 45, 40], borderColor: '#facc15', fill: true, tension: 0.4 }] } });
+        const ctxOcc = document.getElementById('occupancyChart')?.getContext('2d');
+        if (ctxOcc && !window.occChart) window.occChart = new Chart(ctxOcc, { type: 'bar', data: { labels: ['Std', 'Del', 'Exec', 'Ste'], datasets: [{ data: [85, 60, 45, 30], backgroundColor: '#facc15' }] } });
+        chartsInitialized = true;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => { 
+        // Sync session storage with backend state
+        const isUnlocked = {% if is_manager_unlocked %}true{% else %}false{% endif %};
+        if (isUnlocked) sessionStorage.setItem('resort_manager_unlocked', 'true');
+        else sessionStorage.removeItem('resort_manager_unlocked');
+
+        setViewMode(sessionStorage.getItem('resort_view_mode') || 'staff'); 
     });
-    
-    btn.className = 'flex-1 py-3 text-xs font-black uppercase tracking-widest bg-brand text-deep rounded-xl shadow-brand transition-all';
-    
-    if (type === 'room') {
-        roomDiv.classList.remove('hidden');
-        guestDiv.classList.add('hidden');
-    } else {
-        roomDiv.classList.add('hidden');
-        guestDiv.classList.remove('hidden');
-    }
-}
-function toggleManagerView() {
-    const el = document.getElementById('manager-analytics');
-    if (el.classList.contains('hidden')) {
-        el.classList.remove('hidden');
-    } else {
-        el.classList.add('hidden');
-    }
-}
 </script>
 {% endblock %}

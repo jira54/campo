@@ -1,0 +1,136 @@
+{% extends 'resort_portal/base_section.html' %}
+
+{% block section_title %}Guest Operations{% endblock %}
+{% block breadcrumb %}Guests{% endblock %}
+{% block page_title %}Guest CRM & Stays{% endblock %}
+
+{% block section_tabs %}
+<a href="?tab=list" class="px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all {% if current_tab == 'list' %}bg-brand text-deep shadow-brand{% else %}bg-white/5 text-stone-500 hover:text-white{% endif %}">
+    In-House Guests
+</a>
+<a href="?tab=register" class="px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all {% if current_tab == 'register' %}bg-brand text-deep shadow-brand{% else %}bg-white/5 text-stone-500 hover:text-white{% endif %}">
+    New Registration
+</a>
+<a href="?tab=crm" class="px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all {% if current_tab == 'crm' %}bg-brand text-deep shadow-brand{% else %}bg-white/5 text-stone-500 hover:text-white{% endif %}">
+    Guest Directory
+</a>
+{% endblock %}
+
+{% block section_content %}
+{% if current_tab == 'list' %}
+    <!-- In-House Guest List -->
+    <div class="bg-white/[0.02] border border-white/5 rounded-3xl overflow-hidden">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="border-b border-white/5">
+                    <th class="px-6 py-4 text-[10px] font-black text-stone-500 uppercase tracking-widest">Room/Bill</th>
+                    <th class="px-6 py-4 text-[10px] font-black text-stone-500 uppercase tracking-widest">Guest Name</th>
+                    <th class="px-6 py-4 text-[10px] font-black text-stone-500 uppercase tracking-widest">Stay Period</th>
+                    <th class="px-6 py-4 text-[10px] font-black text-stone-500 uppercase tracking-widest">Status</th>
+                    <th class="px-6 py-4 text-[10px] font-black text-stone-500 uppercase tracking-widest text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">
+                {% for stay in active_folios %}
+                <tr class="hover:bg-white/[0.02] transition-colors group">
+                    <td class="px-6 py-5">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-brand/10 border border-brand/20 flex items-center justify-center text-brand font-black text-xs">
+                                {{ stay.room.room_number }}
+                            </div>
+                            <span class="text-stone-500 text-[10px] font-black uppercase tracking-widest">#{{ stay.id }}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-5">
+                        <div class="font-outfit font-bold text-white">{{ stay.guest.name }}</div>
+                        <div class="text-[10px] text-stone-500 mt-1 uppercase font-black tracking-widest">{{ stay.guest.phone }}</div>
+                    </td>
+                    <td class="px-6 py-5">
+                        <div class="text-stone-300 text-xs font-bold">{{ stay.check_in_date|date:"M d" }} — Present</div>
+                    </td>
+                    <td class="px-6 py-5">
+                        <span class="px-2 py-1 bg-emerald-500/10 text-emerald-500 text-[9px] font-black uppercase tracking-widest rounded-md border border-emerald-500/20">Active Stay</span>
+                    </td>
+                    <td class="px-6 py-5 text-right">
+                        <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="openOrderModal('guest', '{{ stay.guest.id }}', '{{ stay.guest.name }}')" class="px-3 py-1.5 bg-brand/10 text-brand text-[9px] font-black uppercase tracking-widest rounded-lg border border-brand/10 hover:bg-brand hover:text-deep transition-all">
+                                Add Order
+                            </button>
+                            <a href="{% url 'resort_portal:guest_detail' stay.guest.id %}" class="p-2 text-stone-400 hover:text-white transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            </a>
+                            <button onclick="confirmCheckOut({{ stay.id }})" class="px-3 py-1.5 bg-rose-500/10 text-rose-500 text-[9px] font-black uppercase tracking-widest rounded-lg border border-rose-500/10 hover:bg-rose-500 hover:text-white transition-all">
+                                Check Out
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-6 py-20 text-center">
+                        <div class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 grayscale">👤</div>
+                        <p class="text-stone-500 font-black text-[10px] uppercase tracking-[0.2em]">No Active Guests at the Moment</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% elif current_tab == 'register' %}
+    <!-- Guest Registration Form -->
+    <div class="max-w-2xl">
+        <div class="bg-white/[0.03] border border-white/5 p-8 rounded-3xl">
+            <h3 class="text-xl font-outfit font-black text-white mb-6">Property Registration</h3>
+            <form method="POST" action="?tab=register" class="space-y-6">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="register_guest">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-stone-500 uppercase tracking-widest px-1">Guest Full Name</label>
+                        <input type="text" name="name_only" required placeholder="John Doe" class="w-full bg-deep border border-white/10 rounded-2xl px-5 py-4 text-white focus:border-brand transition-all outline-none font-bold text-sm">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-stone-500 uppercase tracking-widest px-1">Phone Number</label>
+                        <input type="text" name="phone_name" placeholder="+254..." class="w-full bg-deep border border-white/10 rounded-2xl px-5 py-4 text-white focus:border-brand transition-all outline-none font-bold text-sm">
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-stone-500 uppercase tracking-widest px-1">Assign Room (Manual Entry)</label>
+                    <input type="text" name="manual_room" placeholder="e.g. 102B or VIP-A" class="w-full bg-deep border border-white/10 rounded-2xl px-5 py-4 text-white focus:border-brand transition-all outline-none font-bold text-sm">
+                    <p class="text-[9px] text-stone-600 font-bold px-1 uppercase tracking-widest">Type any room number freely. Leave blank for day visitor.</p>
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" class="w-full py-5 bg-brand text-deep font-outfit font-black text-xs uppercase tracking-[0.2em] rounded-2xl shadow-brand hover:scale-[1.01] transition-all">
+                        Complete Registration
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% elif current_tab == 'crm' %}
+    <!-- CRM Directory -->
+    <div class="bg-white/[0.02] border border-white/5 rounded-3xl p-10 text-center">
+        <div class="w-20 h-20 bg-brand/10 border border-brand/20 rounded-full flex items-center justify-center mx-auto mb-6 text-brand">
+            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        </div>
+        <h3 class="text-2xl font-outfit font-black text-white mb-2">Guest CRM Directory</h3>
+        <p class="text-stone-500 text-sm max-w-md mx-auto mb-8">Access historical records, preferences, and lifetime spend for all guests who have visited your property.</p>
+        <a href="{% url 'resort_portal:guest_index' %}" class="inline-flex items-center gap-2 px-8 py-4 bg-white/5 border border-white/10 text-white font-outfit font-black text-[10px] uppercase tracking-widest rounded-2xl hover:bg-white/10 transition-all">
+            Open Full Directory
+        </a>
+    </div>
+{% endif %}
+
+<script>
+    function confirmCheckOut(stayId) {
+        if (confirm('Are you sure you want to finalize this stay? A receipt will be generated.')) {
+            window.location.href = `/resort/stay/check-out/${stayId}/`;
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block title %}{% block section_title %}Resort Portal{% endblock %} - CampoPawa{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen bg-deep overflow-x-hidden">
+    <!-- Sidebar -->
+    {% include 'resort_portal/sidebar_resort.html' %}
+    
+    <!-- Main Section Content -->
+    <main class="flex-1 md:ml-72 p-4 md:p-8 min-h-screen">
+        <!-- Section Header -->
+        <header class="flex justify-between items-center mb-10 border-b border-white/10 pb-6">
+            <div>
+                <nav class="flex items-center gap-2 text-stone-500 text-[10px] font-black uppercase tracking-widest mb-2">
+                    <a href="{% url 'resort_portal:overview' %}" class="hover:text-brand transition-colors">Resort OS</a>
+                    <svg class="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+                    <span class="text-white">{% block breadcrumb %}Section{% endblock %}</span>
+                </nav>
+                <h1 class="text-3xl font-outfit font-black text-white tracking-tight">
+                    {% block page_title %}Section Overview{% endblock %}
+                </h1>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                {% block header_actions %}{% endblock %}
+            </div>
+        </header>
+
+        <!-- Internal Section Tabs -->
+        <div class="flex gap-2 mb-8 overflow-x-auto pb-2 scrollbar-hide">
+            {% block section_tabs %}{% endblock %}
+        </div>
+
+        <!-- Section Content -->
+        <div class="animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {% block section_content %}{% endblock %}
+        </div>
+    </main>
+</div>
+
+
+<!-- Global Service Entry Modal (Order/Amount) -->
+<div id="service-modal" class="fixed inset-0 bg-deep/95 backdrop-blur-2xl z-[100] flex items-center justify-center p-6 hidden">
+    <div class="max-w-md w-full animate-in fade-in zoom-in duration-300">
+        <div class="bg-white/[0.03] border border-white/10 p-10 rounded-[3rem] relative overflow-hidden">
+            <h2 id="modal-title" class="text-3xl font-outfit font-black text-white mb-2 tracking-tight">Service Entry</h2>
+            <p id="modal-subtitle" class="text-stone-400 text-sm font-medium mb-8">Log a charge for this session.</p>
+
+            <form action="{% url 'resort_portal:log_charge' %}" method="POST" class="space-y-6">
+                {% csrf_token %}
+                <input type="hidden" name="ref_type" id="modal-ref-type">
+                <input type="hidden" name="ref_id" id="modal-ref-id">
+                
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-stone-500 uppercase tracking-widest px-1">Description / Order</label>
+                    <input type="text" name="description" placeholder="e.g. 2x Mojitos" required class="w-full bg-deep border border-white/10 rounded-2xl px-5 py-4 text-white focus:border-brand transition-all outline-none font-bold text-sm">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black text-stone-500 uppercase tracking-widest px-1">Amount (KSh)</label>
+                    <input type="number" name="amount" placeholder="0.00" required class="w-full bg-deep border border-white/10 rounded-2xl px-5 py-4 text-white focus:border-brand transition-all outline-none font-bold text-sm">
+                </div>
+
+                <div class="flex items-center gap-4 pt-4">
+                    <button type="submit" class="flex-1 py-5 bg-brand text-deep font-outfit font-black text-xs uppercase tracking-[0.2em] rounded-2xl shadow-brand hover:scale-[1.02] transition-all">
+                        Log Charge
+                    </button>
+                    <button type="button" onclick="document.getElementById('service-modal').classList.add('hidden')" class="px-6 py-5 text-stone-500 hover:text-white font-black text-[10px] uppercase tracking-widest transition-colors">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openOrderModal(type, id, label) {
+        const modal = document.getElementById('service-modal');
+        const title = document.getElementById('modal-title');
+        const subtitle = document.getElementById('modal-subtitle');
+        const refType = document.getElementById('modal-ref-type');
+        const refId = document.getElementById('modal-ref-id');
+
+        refType.value = type;
+        refId.value = id;
+        title.innerText = type === 'guest' ? 'Guest Service' : 'Table Service';
+        subtitle.innerText = `Logging order for: ${label}`;
+        
+        modal.classList.remove('hidden');
+    }
+
+    function openSettleModal(type, id, label) {
+        const modal = document.getElementById('settle-modal');
+        const title = document.getElementById('settle-modal-title');
+        const refType = document.getElementById('settle-modal-ref-type');
+        const refId = document.getElementById('settle-modal-ref-id');
+
+        refType.value = type;
+        refId.value = id;
+        title.innerText = `Settle Bill: ${label}`;
+        
+        modal.classList.remove('hidden');
+    }
+</script>
+
+<!-- Global Settlement Modal -->
+<div id="settle-modal" class="fixed inset-0 bg-deep/98 backdrop-blur-3xl z-[110] flex items-center justify-center p-6 hidden">
+    <div class="max-w-md w-full animate-in fade-in slide-in-from-top-10 duration-500">
+        <div class="bg-white/[0.03] border border-white/10 p-10 rounded-[3rem] shadow-2xl">
+            <h2 id="settle-modal-title" class="text-3xl font-outfit font-black text-white mb-2 tracking-tight">Settle & Clear</h2>
+            <p class="text-stone-400 text-sm font-medium mb-8">Process payment to make this table/seat available.</p>
+
+            <form action="{% url 'resort_portal:settle_bill' %}" method="POST" class="space-y-6">
+                {% csrf_token %}
+                <input type="hidden" name="ref_type" id="settle-modal-ref-type">
+                <input type="hidden" name="ref_id" id="settle-modal-ref-id">
+                
+                <div class="space-y-4">
+                    <label class="text-[10px] font-black text-stone-500 uppercase tracking-widest px-1">Payment Method</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="cursor-pointer group">
+                            <input type="radio" name="payment_method" value="cash" checked class="hidden peer">
+                            <div class="p-4 bg-white/5 border border-white/10 rounded-2xl text-center group-hover:bg-white/10 peer-checked:bg-brand peer-checked:text-deep transition-all">
+                                <span class="text-lg block">💵</span>
+                                <span class="text-[10px] font-black uppercase tracking-widest">Cash</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer group">
+                            <input type="radio" name="payment_method" value="mpesa" class="hidden peer">
+                            <div class="p-4 bg-white/5 border border-white/10 rounded-2xl text-center group-hover:bg-white/10 peer-checked:bg-[#00D100] peer-checked:text-white transition-all">
+                                <span class="text-lg block">📱</span>
+                                <span class="text-[10px] font-black uppercase tracking-widest">M-Pesa</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer group">
+                            <input type="radio" name="payment_method" value="card" class="hidden peer">
+                            <div class="p-4 bg-white/5 border border-white/10 rounded-2xl text-center group-hover:bg-white/10 peer-checked:bg-blue-500 peer-checked:text-white transition-all">
+                                <span class="text-lg block">💳</span>
+                                <span class="text-[10px] font-black uppercase tracking-widest">Card</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer group">
+                            <input type="radio" name="payment_method" value="bank" class="hidden peer">
+                            <div class="p-4 bg-white/5 border border-white/10 rounded-2xl text-center group-hover:bg-white/10 peer-checked:bg-stone-200 peer-checked:text-deep transition-all">
+                                <span class="text-lg block">🏦</span>
+                                <span class="text-[10px] font-black uppercase tracking-widest">Bank</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 pt-6">
+                    <button type="submit" class="flex-1 py-5 bg-brand text-deep font-outfit font-black text-xs uppercase tracking-[0.2em] rounded-2xl shadow-xl hover:scale-[1.02] transition-all">
+                        Complete & Clear
+                    </button>
+                    <button type="button" onclick="document.getElementById('settle-modal').classList.add('hidden')" class="px-6 py-5 text-stone-500 hover:text-white font-black text-[10px] uppercase tracking-widest transition-colors">
+                        Close
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

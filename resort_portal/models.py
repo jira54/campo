@@ -100,54 +100,66 @@ class Department(models.Model):
     def __str__(self):
         return self.name
 
-class Folio(models.Model):
+class StayRecord(models.Model):
     STATUS_CHOICES = [
-        ('open', 'Checked-In (Open)'),
-        ('closed', 'Checked-Out (Closed)'),
+        ('open', 'Active'),
+        ('closed', 'Completed'),
         ('canceled', 'Canceled')
     ]
-    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='resort_folios')
-    resort_property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='folios')
-    guest = models.ForeignKey(ResortGuest, on_delete=models.CASCADE, related_name='folios')
-    room = models.ForeignKey(Room, on_delete=models.SET_NULL, null=True, blank=True, related_name='folios')
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='resort_stays')
+    resort_property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='stays')
+    guest = models.ForeignKey(ResortGuest, on_delete=models.CASCADE, related_name='stays')
+    room = models.ForeignKey(Room, on_delete=models.SET_NULL, null=True, blank=True, related_name='stays')
     
     check_in_date = models.DateField(default=timezone.now)
     check_out_date = models.DateField(null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
     
     def __str__(self):
-        return f"Folio #{self.id} - {self.guest.name} ({self.get_status_display()})"
+        return f"Stay #{self.id} - {self.guest.name} ({self.get_status_display()})"
 
-class FolioCharge(models.Model):
+class ServiceCharge(models.Model):
+    PAYMENT_METHODS = [
+        ('cash', 'Cash'),
+        ('mpesa', 'M-Pesa'),
+        ('card', 'Credit/Debit Card'),
+        ('bank', 'Bank Transfer'),
+    ]
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='resort_charges')
     resort_property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='charges', null=True, blank=True)
     
-    # If folio is null, it might be a Day Visitor or direct POS charge
-    folio = models.ForeignKey(Folio, on_delete=models.CASCADE, null=True, blank=True, related_name='charges')
+    # Linked to a stay or direct to guest
+    stay = models.ForeignKey(StayRecord, on_delete=models.CASCADE, null=True, blank=True, related_name='charges')
     guest = models.ForeignKey(ResortGuest, on_delete=models.SET_NULL, null=True, blank=True, related_name='all_charges')
     
     department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, related_name='charges')
     
+    # POS Tracking (for non-room guests)
+    table = models.ForeignKey('RestaurantTable', on_delete=models.SET_NULL, null=True, blank=True, related_name='charges')
+    seat = models.ForeignKey('BarSeat', on_delete=models.SET_NULL, null=True, blank=True, related_name='charges')
+    
     description = models.CharField(max_length=255) # e.g., "2x Mojitos" or "Room Rate Night 1"
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    is_paid = models.BooleanField(default=False) # True if paid instantly (walk-in), False if charged to Room
+    is_paid = models.BooleanField(default=False)
     
+    payment_method = models.CharField(max_length=20, choices=PAYMENT_METHODS, null=True, blank=True)
+    settled_at = models.DateTimeField(null=True, blank=True)
     logged_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        # Auto-link guest and property if Folio is present
-        if self.folio:
+        # Auto-link guest and property if Stay is present
+        if self.stay:
             if not self.guest:
-                self.guest = self.folio.guest
+                self.guest = self.stay.guest
             if not self.resort_property:
-                self.resort_property = self.folio.resort_property
+                self.resort_property = self.stay.resort_property
         elif self.guest and not self.resort_property:
             self.resort_property = self.guest.resort_property
             
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.amount} ({self.department.name if self.department else 'General'})"
+        return f"{self.amount} - {self.description} ({self.department.name if self.department else 'General'})"
 
 class HousekeepingLog(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='housekeeping_logs')
@@ -159,3 +171,107 @@ class HousekeepingLog(models.Model):
 
     def __str__(self):
         return f"Room {self.room.room_number}: {self.old_status} -> {self.new_status}"
+
+class RestaurantTable(models.Model):
+    STATUS_CHOICES = [('available', 'Available'), ('occupied', 'Occupied'), ('reserved', 'Reserved'), ('cleaning', 'Cleaning')]
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='restaurant_tables')
+    resort_property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='restaurant_tables')
+    table_number = models.CharField(max_length=10)
+    capacity = models.PositiveIntegerField(default=4)
+    table_type = models.CharField(max_length=50, default='Standard') # Standard, Booth, VIP, Deck
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='available')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Table {self.table_number} ({self.resort_property.name})"
+
+class BarSeat(models.Model):
+    STATUS_CHOICES = [('available', 'Available'), ('occupied', 'Occupied'), ('reserved', 'Reserved')]
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='bar_seats')
+    resort_property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='bar_seats')
+    seat_number = models.CharField(max_length=10)
+    seat_type = models.CharField(max_length=50, default='Bar Stool') # Stool, Booth, Lounge
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='available')
+
+    def __str__(self):
+        return f"Seat {self.seat_number} - {self.resort_property.name}"
+
+class EventSpace(models.Model):
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='event_spaces')
+    resort_property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='event_spaces')
+    name = models.CharField(max_length=100)
+    capacity = models.PositiveIntegerField()
+    space_type = models.CharField(max_length=50) # Conference, Garden, Ballroom
+    rate_per_day = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    def __str__(self):
+        return f"{self.name} ({self.resort_property.name})"
+
+class EventBooking(models.Model):
+    STATUS_CHOICES = [('pending', 'Pending'), ('confirmed', 'Confirmed'), ('active', 'Active'), ('completed', 'Completed'), ('canceled', 'Canceled')]
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='event_bookings')
+    resort_property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='event_bookings')
+    space = models.ForeignKey(EventSpace, on_delete=models.CASCADE, related_name='bookings')
+    title = models.CharField(max_length=200)
+    organizer_name = models.CharField(max_length=255)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    total_cost = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+
+    def __str__(self):
+        return f"{self.title} - {self.organizer_name}"
+
+class DayPass(models.Model):
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='day_passes')
+    resort_property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='day_passes')
+    name = models.CharField(max_length=100) # e.g. "Pool Pass", "Lunch & Swim"
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    includes_services = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.price}"
+
+class DayVisitor(models.Model):
+    STATUS_CHOICES = [('active', 'Active'), ('completed', 'Completed'), ('canceled', 'Canceled')]
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='day_visitors')
+    resort_property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='day_visitors')
+    name = models.CharField(max_length=100)
+    phone = models.CharField(max_length=50)
+    pass_type = models.ForeignKey(DayPass, on_delete=models.SET_NULL, null=True, blank=True)
+    number_of_guests = models.PositiveIntegerField(default=1)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
+    check_in_time = models.DateTimeField(auto_now_add=True)
+    check_out_time = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.status})"
+
+class Facility(models.Model):
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='resort_facilities')
+    resort_property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='facilities')
+    name = models.CharField(max_length=100) # Gym, Spa, Pool, Sauna
+    status = models.CharField(max_length=50, default='Open') # Open, Closed, Maintenance
+    
+    def __str__(self):
+        return self.name
+
+from django.conf import settings
+
+class UserActivity(models.Model):
+    CATEGORIES = [('guest', 'Guest Ops'), ('financial', 'Financial'), ('housekeeping', 'Housekeeping'), ('pos', 'Service/POS')]
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='resort_activities')
+    resort_property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='activities', null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    
+    action = models.CharField(max_length=255) # e.g. "Guest Checked In"
+    icon = models.CharField(max_length=10, default='✨')
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    category = models.CharField(max_length=20, choices=CATEGORIES, default='guest')
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.title} at {self.created_at}"

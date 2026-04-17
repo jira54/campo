@@ -97,6 +97,37 @@
 
             </div>
 
+            <!-- Security & Access -->
+            <div class="mt-12 max-w-2xl">
+                <div class="flex justify-between items-end border-b border-white/5 pb-4 mb-8">
+                    <h2 class="text-2xl font-outfit font-black text-white">Security & Access</h2>
+                    <span class="text-[10px] text-stone-500 font-bold uppercase tracking-widest">Manager Protected View</span>
+                </div>
+
+                <div class="bg-stone-900/50 border border-brand/20 rounded-3xl p-8">
+                    <div class="flex items-start gap-4 mb-6">
+                        <div class="h-10 w-10 bg-brand/10 border border-brand/20 rounded-xl flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-shield-halved text-brand"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-white font-bold mb-1">Manager Access PIN</h3>
+                            <p class="text-stone-500 text-sm">Set a 4-digit code to protect sensitive financial analytics from front-desk staff. Keep this code private.</p>
+                        </div>
+                    </div>
+
+                    <form method="POST" class="flex gap-4">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="set_pin">
+                        <input type="text" name="pin" maxlength="4" placeholder="e.g. 1234" 
+                               value="{{ request.user.resort_manager_pin|default_if_none:'' }}"
+                               class="flex-1 bg-stone-800 border border-white/5 rounded-xl px-4 py-4 text-white font-bold text-center tracking-widest text-2xl focus:outline-none focus:border-brand transition-all" required>
+                        <button type="submit" class="bg-brand text-deep font-outfit font-black px-8 py-4 rounded-xl hover:scale-[1.02] transition-all">
+                            {% if request.user.resort_manager_pin %}Update PIN{% else %}Set PIN{% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

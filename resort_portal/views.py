@@ -1,11 +1,20 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, Count, Q
-from django.utils import timezone
 import datetime
+from datetime import timedelta
+import random
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.core.mail import send_mail
+from django.utils import timezone
 
 from .decorators import resort_enterprise_required
-from .models import Room, Folio, FolioCharge, Department, HousekeepingLog
+from .models import (
+    Room, StayRecord, ServiceCharge, Department, HousekeepingLog,
+    RestaurantTable, BarSeat, EventSpace, EventBooking,
+    DayPass, DayVisitor, Facility, UserActivity, ResortGuest
+)
 
 def _get_active_property(request):
     """Internal helper to ensure property context is consistent in views."""
@@ -24,31 +33,83 @@ def _get_active_property(request):
 @login_required
 @resort_enterprise_required
 def _handle_guest_registration(request, vendor, current_prop):
-    """Internal helper for guest registration with simplified types."""
-    from .models import ResortGuest
-    name = request.POST.get('name')
-    phone = request.POST.get('phone')
-    email = request.POST.get('email', '')
-    gtype = request.POST.get('guest_type', 'overnight')
-    pid = request.POST.get('passport_id')
-    vip = request.POST.get('vip_status') == 'on'
+    """Internal helper for guest registration with flexible identification methods."""
+    from .models import ResortGuest, StayRecord, Room
+    from django.contrib import messages
     
-    if name:
-        guest = ResortGuest.objects.create(
+    method = request.POST.get('identify_method', 'name')
+    name = ''
+    phone = ''
+    email = ''
+    passport_id = ''
+    
+    if method == 'name':
+        name = request.POST.get('name_only')
+        phone = request.POST.get('phone_name')
+    elif method == 'email':
+        name = request.POST.get('name_email')
+        email = request.POST.get('email_only')
+    elif method == 'both':
+        name = request.POST.get('name_both')
+        email = request.POST.get('email_both')
+        phone = request.POST.get('phone_both')
+        passport_id = request.POST.get('passport_both')
+
+    gtype = request.POST.get('guest_type', 'overnight')
+    vip = request.POST.get('vip_status') == 'on'
+    room_id = request.POST.get('room_id')
+    manual_room_number = request.POST.get('manual_room')
+    
+    # Validation: Name is required for 'name' and 'both', Email for 'email'
+    if (method in ['name', 'both'] and not name) or (method == 'email' and not email):
+        messages.error(request, "Required identification fields missing.")
+        return None
+
+    guest = ResortGuest.objects.create(
+        vendor=vendor,
+        resort_property=current_prop,
+        name=name or email.split('@')[0], # Fallback for email-only
+        phone=phone or '',
+        email=email or '',
+        guest_type=gtype,
+        passport_id=passport_id or '',
+        vip_status=vip,
+        preferences=request.POST.get('preferences', '')
+    )
+    
+    # Handle check-in (Manual text entry takes priority)
+    target_room = None
+    if manual_room_number:
+        target_room = Room.objects.filter(vendor=vendor, resort_property=current_prop, room_number__iexact=manual_room_number.strip()).first()
+        if not target_room:
+            # Create the room record ON THE FLY if it doesn't exist (Operational Flexibility)
+            target_room = Room.objects.create(
+                vendor=vendor,
+                resort_property=current_prop,
+                room_number=manual_room_number.strip(),
+                status='vacant_clean'
+            )
+    elif room_id:
+        target_room = Room.objects.filter(vendor=vendor, id=room_id).first()
+
+    if target_room:
+        # Create Folio
+        Folio.objects.create(
             vendor=vendor,
             resort_property=current_prop,
-            name=name,
-            phone=phone,
-            email=email,
-            guest_type=gtype,
-            passport_id=pid,
-            vip_status=vip,
-            preferences=request.POST.get('preferences', '')
+            guest=guest,
+            room=target_room,
+            status='open'
         )
-        from django.contrib import messages
+        
+        # Mark room as occupied
+        target_room.status = 'occupied'
+        target_room.save()
+        messages.success(request, f"Guest {guest.name} registered and checked into Room {target_room.room_number}.")
+    else:
         messages.success(request, f"Guest {guest.name} registered successfully.")
-        return guest
-    return None
+        
+    return guest
 
 @login_required
 @resort_enterprise_required
@@ -60,9 +121,10 @@ def resort_dashboard(request):
         messages.warning(request, "Please set up a property to continue.")
         return redirect('resort_portal:setup')
 
-    from .models import ResortGuest, Department
+    from .models import ResortGuest, Department, ServiceCharge, Room, StayRecord
+    from django.db.models.functions import TruncDate
     
-    # Auto-initialize 'General Services' if no revenue centers exist for THIS property
+    # Auto-initialize 'General Services'
     if not Department.objects.filter(vendor=vendor, resort_property=current_prop).exists():
         Department.objects.create(vendor=vendor, resort_property=current_prop, name='General Services')
     
@@ -71,80 +133,285 @@ def resort_dashboard(request):
         if action == 'register_guest':
             _handle_guest_registration(request, vendor, current_prop)
     
+    # Date Range Logic
+    period = request.GET.get('period', 'today')
+    today = timezone.now().date()
+    
+    if period == 'today':
+        start_date = today
+        end_date = today
+        prev_start = start_date - datetime.timedelta(days=1)
+        prev_end = prev_start
+    elif period == 'week':
+        start_date = today - datetime.timedelta(days=7)
+        end_date = today
+        prev_start = start_date - datetime.timedelta(days=7)
+        prev_end = start_date - datetime.timedelta(days=1)
+    elif period == 'month':
+        start_date = today - datetime.timedelta(days=30)
+        end_date = today
+        prev_start = start_date - datetime.timedelta(days=30)
+        prev_end = start_date - datetime.timedelta(days=1)
+    else: # Default to today
+        start_date = today
+        end_date = today
+        prev_start = start_date - datetime.timedelta(days=1)
+        prev_end = prev_start
+
     try:
-        today = timezone.now().date()
+        # --- Current Period Metrics ---
+        charges_current = ServiceCharge.objects.filter(vendor=vendor, resort_property=current_prop, logged_at__date__range=[start_date, end_date])
+        total_rev = charges_current.aggregate(total=Sum('amount'))['total'] or 0
         
-        # Insights Engine: Room Status (Property-Specific)
         rooms = Room.objects.filter(vendor=vendor, resort_property=current_prop)
-        total_rooms = rooms.count()
-        occupied_rooms = rooms.filter(status='occupied').count()
-        dirty_rooms = rooms.filter(status__in=['vacant_dirty', 'cleaning', 'inspected']).count()
+        total_rooms_count = rooms.count()
+        num_days = (end_date - start_date).days + 1
+        total_capacity = total_rooms_count * num_days
         
-        occupancy_rate = round((occupied_rooms / total_rooms * 100) if total_rooms > 0 else 0)
+        # Stays in period
+        room_nights_sold = StayRecord.objects.filter(
+            vendor=vendor, 
+            resort_property=current_prop,
+            check_in_date__lte=end_date,
+            check_out_date__gte=start_date
+        ).count() if num_days > 0 else 0
         
-        # Insights Engine: Revenue Today (Property-Specific)
-        charges_today = FolioCharge.objects.filter(vendor=vendor, resort_property=current_prop, logged_at__date=today)
+        occ_rate = round((room_nights_sold / total_capacity * 100) if total_capacity > 0 else 0)
+        
+        # Room Revenue only
+        room_rev = charges_current.filter(department__name__icontains='Room').aggregate(total=Sum('amount'))['total'] or 0
+        adr = round(room_rev / room_nights_sold) if room_nights_sold > 0 else 0
+        revpar = round(room_rev / total_capacity) if total_capacity > 0 else 0
+        
+        # --- Previous Period Metrics (for Trends) ---
+        charges_prev = ServiceCharge.objects.filter(vendor=vendor, resort_property=current_prop, logged_at__date__range=[prev_start, prev_end])
+        prev_rev = charges_prev.aggregate(total=Sum('amount'))['total'] or 0
+        
+        def calc_trend(curr, prev):
+            if prev == 0: return 100 if curr > 0 else 0
+            return round(((curr - prev) / prev) * 100)
+
+        # Insights Engine: Revenue Today (Real-time simplified for summary)
+        charges_today = ServiceCharge.objects.filter(vendor=vendor, resort_property=current_prop, logged_at__date=today)
         total_revenue_today = charges_today.aggregate(total=Sum('amount'))['total'] or 0
         
         dept_revenue = (
-            charges_today.values('department__name')
+            charges_current.values('department__name')
             .annotate(revenue=Sum('amount'))
             .order_by('-revenue')
         )
         dept_revenue = [{'name': d['department__name'] or 'General', 'revenue': d['revenue']} for d in dept_revenue]
             
-        # Active Folios (Property-Specific)
-        active_folios = Folio.objects.filter(
+        # Active Stays
+        active_folios = StayRecord.objects.filter(
             vendor=vendor, 
             resort_property=current_prop, 
             status='open'
         ).select_related('guest', 'room').order_by('room__room_number')
         
-        # Day Visitors Today (Property-Specific)
-        day_visitors = ResortGuest.objects.filter(
+        # VIPs Arriving Today
+        vip_arrivals = StayRecord.objects.filter(
             vendor=vendor,
             resort_property=current_prop,
-            guest_type='day_visitor',
-            created_at__date=today
-        ).count()
-
-        # VIP Check-Ins Today (Property-Specific)
-        vip_arrivals = active_folios.filter(
             check_in_date=today,
             guest__vip_status=True
         ).count()
 
+        is_manager_unlocked = request.session.get('resort_manager_unlocked', False)
+
         context = {
-            'total_rooms': total_rooms,
-            'occupied_rooms': occupied_rooms,
-            'dirty_rooms': dirty_rooms,
-            'occupancy_rate': occupancy_rate,
-            'total_revenue_today': total_revenue_today,
-            'dept_revenue': dept_revenue,
+            'period': period,
+            'total_rooms': total_rooms_count,
+            'occupied_rooms': rooms.filter(status='occupied').count(),
+            'dirty_rooms': rooms.filter(status__in=['vacant_dirty', 'cleaning', 'inspected']).count(),
+            'occupancy_rate': occ_rate,
+            
+            # Gated Financial KPIs
+            'total_revenue': total_rev if is_manager_unlocked else 0,
+            'room_revenue': room_rev if is_manager_unlocked else 0,
+            'adr': adr if is_manager_unlocked else 0,
+            'revpar': revpar if is_manager_unlocked else 0,
+            'total_revenue_today': total_revenue_today if is_manager_unlocked else 0,
+            'dept_revenue': dept_revenue if is_manager_unlocked else [],
+            'rev_trend': calc_trend(total_rev, prev_rev) if is_manager_unlocked else 0,
+            
             'active_folios': active_folios,
             'vip_arrivals': vip_arrivals,
-            'day_visitors': day_visitors,
+            'available_rooms': rooms.filter(status='vacant_clean'),
+            'all_rooms': rooms.order_by('room_number'),
+            'dirty_room_list': rooms.filter(status__in=['vacant_dirty', 'cleaning', 'inspected']).order_by('room_number'),
             'departments': Department.objects.filter(vendor=vendor, resort_property=current_prop),
             'all_guests': ResortGuest.objects.filter(vendor=vendor, resort_property=current_prop).order_by('name'),
-            'dirty_room_list': rooms.filter(status__in=['vacant_dirty', 'cleaning', 'inspected']).order_by('room_number'),
+            'is_manager_unlocked': is_manager_unlocked
         }
     except Exception as e:
         context = {
-            'total_rooms': 0, 'occupied_rooms': 0, 'dirty_rooms': 0,
-            'occupancy_rate': 0, 'total_revenue_today': 0, 'dept_revenue': [],
-            'active_folios': [], 'vip_arrivals': 0, 'day_visitors': 0,
-            'departments': [], 'all_guests': [], 'dirty_room_list': [],
-            'critical_error': str(e)
+            'critical_error': str(e),
+            'total_rooms': 0, 'occupancy_rate': 0, 'total_revenue': 0, 'dept_revenue': []
         }
     
-    # Add available rooms for check-in
-    available_rooms = rooms.filter(status='clean')
-    context['available_rooms'] = available_rooms
-    context['all_rooms'] = rooms.order_by('room_number')
-    
-    # Use simplified template if requested
     template_name = 'resort_portal/dashboard-simple.html' if request.GET.get('simple') == 'true' else 'resort_portal/dashboard.html'
     return render(request, template_name, context)
+
+@login_required
+@resort_enterprise_required
+def overview(request):
+    """New Modular Overview Hub."""
+    vendor = request.user
+    current_prop = _get_active_property(request)
+    if not current_prop:
+        from django.contrib import messages
+        messages.warning(request, "Please set up a property to continue.")
+        return redirect('resort_portal:setup')
+
+    is_manager_unlocked = request.session.get('resort_manager_unlocked', False)
+    today = timezone.now().date()
+    
+    # Financials (Gated)
+    total_revenue_today = 0
+    if is_manager_unlocked:
+        total_revenue_today = ServiceCharge.objects.filter(
+            vendor=vendor, resort_property=current_prop, logged_at__date=today
+        ).aggregate(total=Sum('amount'))['total'] or 0
+
+    # Operational KPI
+    occupied_count = Room.objects.filter(vendor=vendor, resort_property=current_prop, status='occupied').count()
+    dirty_count = Room.objects.filter(vendor=vendor, resort_property=current_prop, status__in=['vacant_dirty', 'cleaning']).count()
+    
+    # Activity Feed
+    activities = UserActivity.objects.filter(vendor=vendor, resort_property=current_prop).order_by('-created_at')[:8]
+    
+    # Arrival Alerts
+    arrivals_today = StayRecord.objects.filter(vendor=vendor, resort_property=current_prop, check_in_date=today).count()
+    vip_arrivals = ResortGuest.objects.filter(vendor=vendor, resort_property=current_prop, vip_status=True, stays__check_in_date=today).count()
+
+    context = {
+        'total_revenue_today': total_revenue_today,
+        'occupied_rooms': occupied_count,
+        'dirty_rooms': dirty_count,
+        'arrivals_today': arrivals_today,
+        'vip_arrivals': vip_arrivals,
+        'activities': activities,
+        'is_manager_unlocked': is_manager_unlocked,
+        'active_property': current_prop
+    }
+    return render(request, 'resort_portal/overview.html', context)
+
+@login_required
+def legacy_overview_redirect(request):
+    return redirect('resort_portal:overview')
+
+@login_required
+@resort_enterprise_required
+def guests_section(request):
+    """Modular Guest CRM & Registration Hub."""
+    vendor = request.user
+    current_prop = _get_active_property(request)
+    tab = request.GET.get('tab', 'list')
+    
+    if request.method == 'POST' and request.POST.get('action') == 'register_guest':
+        _handle_guest_registration(request, vendor, current_prop)
+
+    guests = ResortGuest.objects.filter(vendor=vendor, resort_property=current_prop).order_by('-created_at')
+    active_folios = StayRecord.objects.filter(vendor=vendor, resort_property=current_prop, status='open')
+    
+    context = {
+        'current_tab': tab,
+        'guests': guests,
+        'active_folios': active_folios,
+        'available_rooms': Room.objects.filter(vendor=vendor, resort_property=current_prop, status='vacant_clean'),
+    }
+    return render(request, 'resort_portal/guests_section.html', context)
+
+@login_required
+@resort_enterprise_required
+def rooms_section(request):
+    """Housekeeping & Room Readiness Hub."""
+    vendor = request.user
+    current_prop = _get_active_property(request)
+    rooms = Room.objects.filter(vendor=vendor, resort_property=current_prop).order_by('room_number')
+    
+    context = {
+        'rooms': rooms,
+        'housekeeping_queue': rooms.filter(status__in=['vacant_dirty', 'cleaning', 'inspected']),
+    }
+    return render(request, 'resort_portal/rooms_section.html', context)
+
+@login_required
+@resort_enterprise_required
+def restaurant_section(request):
+    """POS & Table Management Hub."""
+    vendor = request.user
+    current_prop = _get_active_property(request)
+    tables = RestaurantTable.objects.filter(vendor=vendor, resort_property=current_prop).order_by('table_number')
+    
+    # Logic for Active Bills list (for the POS Hub)
+    active_bills = []
+    occupied_tables = tables.filter(status='occupied')
+    for table in occupied_tables:
+        total = ServiceCharge.objects.filter(vendor=vendor, table=table, is_paid=False).aggregate(total=Sum('amount'))['total'] or 0
+        active_bills.append({'ref_id': table.id, 'name': f"Table {table.table_number}", 'total': total})
+
+    context = {'tables': tables, 'active_bills': active_bills}
+    return render(request, 'resort_portal/restaurant_section.html', context)
+
+@login_required
+@resort_enterprise_required
+def bar_section(request):
+    """Bar Tabs & Seating Hub."""
+    vendor = request.user
+    current_prop = _get_active_property(request)
+    seats = BarSeat.objects.filter(vendor=vendor, resort_property=current_prop).order_by('seat_number')
+    
+    # Logic for Active Bills list
+    active_bills = []
+    occupied_seats = seats.filter(status='occupied')
+    for seat in occupied_seats:
+        total = ServiceCharge.objects.filter(vendor=vendor, seat=seat, is_paid=False).aggregate(total=Sum('amount'))['total'] or 0
+        active_bills.append({'ref_id': seat.id, 'name': f"Seat {seat.seat_number}", 'total': total})
+
+    context = {'seats': seats, 'active_bills': active_bills}
+    return render(request, 'resort_portal/bar_section.html', context)
+
+@login_required
+@resort_enterprise_required
+def events_section(request):
+    """Event Bookings & Space Readiness Hub."""
+    vendor = request.user
+    current_prop = _get_active_property(request)
+    spaces = EventSpace.objects.filter(vendor=vendor, resort_property=current_prop)
+    bookings = EventBooking.objects.filter(vendor=vendor, resort_property=current_prop).order_by('start_date')
+    
+    context = {'spaces': spaces, 'bookings': bookings}
+    return render(request, 'resort_portal/events_section.html', context)
+
+@login_required
+@resort_enterprise_required
+def day_visitors_section(request):
+    """Day-Visitor (Non-Resident) Check-in Hub."""
+    vendor = request.user
+    current_prop = _get_active_property(request)
+    visitors = DayVisitor.objects.filter(vendor=vendor, resort_property=current_prop, status='active')
+    passes = DayPass.objects.filter(vendor=vendor, resort_property=current_prop, is_active=True)
+    
+    context = {'visitors': visitors, 'passes': passes}
+    return render(request, 'resort_portal/day_visitors_section.html', context)
+
+@login_required
+@resort_enterprise_required
+def reports_section(request):
+    """Management Financial & Analytics Hub (Manager Only PIN Gated)."""
+    if not request.session.get('resort_manager_unlocked'):
+        return redirect('resort_portal:overview')
+    
+    # Financial context aggregation logic here...
+    return render(request, 'resort_portal/reports_section.html', {})
+
+@login_required
+@resort_enterprise_required
+def settings_section(request):
+    """Property & Security Control Hub."""
+    return render(request, 'resort_portal/settings_section.html', {})
 
 @login_required
 @resort_enterprise_required
@@ -181,6 +448,16 @@ def resort_setup(request):
         elif action == 'delete_room':
             room_id = request.POST.get('id')
             Room.objects.filter(vendor=vendor, resort_property=current_prop, id=room_id).delete()
+        elif action == 'set_pin':
+            pin = request.POST.get('pin')
+            if pin and len(pin) == 4 and pin.isdigit():
+                vendor.resort_manager_pin = pin
+                vendor.save()
+                from django.contrib import messages
+                messages.success(request, "Manager PIN updated successfully.")
+            else:
+                from django.contrib import messages
+                messages.error(request, "Invalid PIN. Must be 4 digits.")
 
     departments = Department.objects.filter(vendor=vendor, resort_property=current_prop)
     rooms = Room.objects.filter(vendor=vendor, resort_property=current_prop).order_by('room_number')
@@ -195,66 +472,134 @@ def resort_setup(request):
 @login_required
 @resort_enterprise_required
 def log_charge(request):
-    """Simplified Service Billing: Directly to Bill or Walk-in Profile."""
-    from .models import Folio, FolioCharge, Department, ResortGuest
+    """Refined Operational Service Billing Supporting Table/Seat/Guest Modal."""
+    from .models import StayRecord, ServiceCharge, Department, ResortGuest, RestaurantTable, BarSeat, UserActivity
+    from django.contrib import messages
     vendor = request.user
     
     if request.method == 'POST':
-        folio_id = request.POST.get('folio_id')
-        guest_name = request.POST.get('guest_name')
-        dept_id = request.POST.get('department_id')
+        ref_type = request.POST.get('ref_type') # 'guest', 'table', 'seat'
+        ref_id = request.POST.get('ref_id')
         amount = request.POST.get('amount')
         desc = request.POST.get('description')
         
-        if amount:
+        if amount and ref_id:
             try:
-                folio = None
                 guest = None
-                
-                if folio_id:
-                    if folio_id.startswith('guest_'):
-                        # Direct charge to a Guest Profile (no active room stay)
-                        g_id = folio_id.split('_')[1]
-                        guest = ResortGuest.objects.get(vendor=vendor, id=g_id)
-                    else:
-                        # Charge to an active Room Folio (Stay)
-                        folio = Folio.objects.get(vendor=vendor, id=folio_id, status='open')
-                        guest = folio.guest
-                elif guest_name:
-                    # Quick Walk-in Creation
-                    active_prop = _get_active_property(request)
-                    guest, _ = ResortGuest.objects.get_or_create(
-                        vendor=vendor,
-                        resort_property=active_prop,
-                        name=guest_name,
-                        defaults={'guest_type': 'day_visitor'}
-                    )
-                
-                if dept_id == 'default':
-                    dept = Department.objects.filter(vendor=vendor, resort_property=folio.resort_property if folio else _get_active_property(request)).first()
-                else:
-                    dept = Department.objects.get(vendor=vendor, id=dept_id)
+                stay = None
+                table = None
+                seat = None
+                dept_name = 'General Services'
+                active_prop = _get_active_property(request)
 
-                FolioCharge.objects.create(
+                if ref_type == 'guest':
+                    guest = ResortGuest.objects.get(vendor=vendor, id=ref_id)
+                    stay = guest.stays.filter(status='open').first()
+                elif ref_type == 'table':
+                    table = RestaurantTable.objects.get(vendor=vendor, id=ref_id)
+                    table.status = 'occupied'
+                    table.save()
+                    dept_name = 'Main Restaurant'
+                elif ref_type == 'seat':
+                    seat = BarSeat.objects.get(vendor=vendor, id=ref_id)
+                    seat.status = 'occupied'
+                    seat.save()
+                    dept_name = 'Pool Bar'
+
+                # Get or Create Department
+                dept, _ = Department.objects.get_or_create(
+                    vendor=vendor, resort_property=active_prop, name=dept_name
+                )
+
+                ServiceCharge.objects.create(
                     vendor=vendor,
-                    resort_property=folio.resort_property if folio else _get_active_property(request),
-                    folio=folio,
+                    resort_property=active_prop,
+                    stay=stay,
                     guest=guest,
+                    table=table,
+                    seat=seat,
                     department=dept,
                     amount=amount,
                     description=desc,
-                    is_paid=False if folio else True # Direct guest charges are assumed paid at POS
+                    is_paid=False if stay else True # Charged to room if guest is in-house
                 )
-            except (Department.DoesNotExist, Folio.DoesNotExist, ResortGuest.DoesNotExist):
-                pass
                 
-    return redirect('resort_portal:dashboard')
+                # Log Activity
+                UserActivity.objects.create(
+                    vendor=vendor,
+                    resort_property=active_prop,
+                    user=request.user,
+                    title="Service Order Logged",
+                    description=f"Charged KSh {amount} for {desc} (Ref: {ref_type} {ref_id})",
+                    category='pos',
+                    icon='💳'
+                )
+                
+                messages.success(request, f"KSh {amount} charged for {desc}")
+            except Exception as e:
+                messages.error(request, f"Error logging charge: {str(e)}")
+                
+    return redirect(request.META.get('HTTP_REFERER', 'resort_portal:overview'))
+
+@login_required
+@resort_enterprise_required
+def settle_bill(request):
+    """Process payment and clear the table/seat."""
+    from .models import ServiceCharge, RestaurantTable, BarSeat, UserActivity
+    from django.contrib import messages
+    vendor = request.user
+    
+    if request.method == 'POST':
+        ref_type = request.POST.get('ref_type')
+        ref_id = request.POST.get('ref_id')
+        pay_method = request.POST.get('payment_method')
+        
+        try:
+            active_prop = _get_active_property(request)
+            charges = []
+            location_name = ""
+
+            if ref_type == 'table':
+                table = RestaurantTable.objects.get(vendor=vendor, id=ref_id)
+                charges = ServiceCharge.objects.filter(vendor=vendor, table=table, is_paid=False)
+                table.status = 'available'
+                table.save()
+                location_name = f"Table {table.table_number}"
+            elif ref_type == 'seat':
+                seat = BarSeat.objects.get(vendor=vendor, id=ref_id)
+                charges = ServiceCharge.objects.filter(vendor=vendor, seat=seat, is_paid=False)
+                seat.status = 'available'
+                seat.save()
+                location_name = f"Seat {seat.seat_number}"
+
+            total_paid = 0
+            for charge in charges:
+                total_paid += charge.amount
+                charge.is_paid = True
+                charge.payment_method = pay_method
+                charge.settled_at = timezone.now()
+                charge.save()
+
+            UserActivity.objects.create(
+                vendor=vendor,
+                resort_property=active_prop,
+                user=request.user,
+                title="Bill Settled",
+                description=f"Collected KSh {total_paid} via {pay_method.upper()} for {location_name}",
+                category='finance',
+                icon='💰'
+            )
+            messages.success(request, f"Payment of KSh {total_paid} recorded for {location_name}. Table is now available.")
+        except Exception as e:
+            messages.error(request, f"Settle failed: {str(e)}")
+
+    return redirect(request.META.get('HTTP_REFERER', 'resort_portal:overview'))
 
 @login_required
 @resort_enterprise_required
 def guest_index(request):
     """Strategic Guest CRM Hub."""
-    from .models import ResortGuest, Folio
+    from .models import ResortGuest, StayRecord
     vendor = request.user
     current_prop = _get_active_property(request)
     
@@ -266,7 +611,7 @@ def guest_index(request):
     # Segment Counts
     segment_counts = {
         'all': guests.count(),
-        'active': guests.filter(folios__status='open').distinct().count(),
+        'active': guests.filter(stays__status='open').distinct().count(),
         'vip': guests.filter(vip_status=True).count(),
         'loyal': guests.filter(total_stays__gte=5).count(),
         'at_risk': 0, 
@@ -288,7 +633,7 @@ def guest_index(request):
 
     if segment:
         if segment == 'active':
-            guests = guests.filter(folios__status='open').distinct()
+            guests = guests.filter(stays__status='open').distinct()
         elif segment == 'vip':
             guests = guests.filter(vip_status=True)
         elif segment == 'loyal':
@@ -296,8 +641,8 @@ def guest_index(request):
         elif segment == 'at_risk':
             six_months_ago = timezone.now().date() - datetime.timedelta(days=180)
             guests = guests.filter(
-                folios__status='closed',
-                folios__check_out_date__lt=six_months_ago
+                stays__status='closed',
+                stays__check_out_date__lt=six_months_ago
             ).distinct()
 
     return render(request, 'resort_portal/guest_list.html', {
@@ -313,15 +658,15 @@ def guest_index(request):
 def guest_detail(request, guest_id):
     """360-degree View of a Guest Personal Journey."""
     from django.shortcuts import get_object_or_404
-    from .models import ResortGuest, FolioCharge
+    from .models import ResortGuest, ServiceCharge
     vendor = request.user
     guest = get_object_or_404(ResortGuest, vendor=vendor, id=guest_id)
     
     # Stay Records
-    folios = guest.folios.all().order_by('-check_in_date')
+    stays = guest.stays.all().order_by('-check_in_date')
     
     # Financial Intelligence
-    all_charges = FolioCharge.objects.filter(guest=guest, vendor=vendor).order_by('-logged_at')
+    all_charges = ServiceCharge.objects.filter(guest=guest, vendor=vendor).order_by('-logged_at')
     total_lifetime_spend = all_charges.aggregate(total=Sum('amount'))['total'] or 0
     
     if request.method == 'POST':
@@ -335,7 +680,7 @@ def guest_detail(request, guest_id):
 
     context = {
         'guest': guest,
-        'folios': folios,
+        'stays': stays,
         'all_charges': all_charges,
         'total_lifetime_spend': total_lifetime_spend,
     }
@@ -356,46 +701,46 @@ def mark_room_clean(request, room_id):
     messages.success(request, f"Room {room.room_number} is now marked as Vacant (Clean).")
     
     from django.shortcuts import redirect
-    return redirect('resort_portal:dashboard')
+    return redirect('resort_portal:overview')
 
 @login_required
 @resort_enterprise_required
-def check_out_folio(request, folio_id):
-    """The Grand Finale: Finalize billing and housekeeping."""
+def check_out_folio(request, stay_id):
+    """Finalize billing for a resident guest stay."""
     from django.shortcuts import get_object_or_404, redirect
-    from .models import Folio, Room
+    from .models import StayRecord, Room
     
     vendor = request.user
-    folio = get_object_or_404(Folio, vendor=vendor, id=folio_id, status='open')
+    stay = get_object_or_404(StayRecord, vendor=vendor, id=stay_id, status='open')
     
     # 1. Archive the stay
-    folio.status = 'closed'
-    folio.check_out_date = timezone.now().date()
-    folio.save()
+    stay.status = 'closed'
+    stay.check_out_date = timezone.now().date()
+    stay.save()
     
     # Update Guest Lifetime Stays
-    folio.guest.total_stays += 1
-    folio.guest.save()
+    stay.guest.total_stays += 1
+    stay.guest.save()
     
     # 2. Flag Room for Housekeeping
-    if folio.room:
-        folio.room.status = 'vacant_dirty'
-        folio.room.save()
+    if stay.room:
+        stay.room.status = 'vacant_dirty'
+        stay.room.save()
         
     # 3. Calculate Final Toll
-    charges = folio.charges.all()
+    charges = stay.charges.all()
     total = charges.aggregate(total=Sum('amount'))['total'] or 0
     
     # 4. Dispatch Receipt (Only if Guest has Email)
-    if folio.guest.email:
+    if stay.guest.email:
         try:
             from django.template.loader import render_to_string
             from django.utils.html import strip_tags
             from django.core.mail import send_mail
             
             subject = f"Receipt: Your Stay at {vendor.business_name}"
-            html_message = render_to_string('resort_portal/folio_receipt_email.html', {
-                'folio': folio,
+            html_message = render_to_string('resort_portal/bill_receipt_email.html', {
+                'stay': stay,
                 'charges': charges,
                 'total': total,
                 'vendor': vendor,
@@ -406,15 +751,15 @@ def check_out_folio(request, folio_id):
                 subject,
                 plain_message,
                 None, # Uses DEFAULT_FROM_EMAIL
-                [folio.guest.email],
+                [stay.guest.email],
                 html_message=html_message,
                 fail_silently=True
             )
-            messages.success(request, f"Digital receipt sent to {folio.guest.email}")
+            messages.success(request, f"Digital receipt sent to {stay.guest.email}")
         except Exception:
             messages.warning(request, "Check-out successful, but receipt email failed to send.")
     
-    messages.success(request, f"Guest {folio.guest.name} checked out. Room {folio.room.room_number if folio.room else 'N/A'} is now flagged for cleaning.")
+    messages.success(request, f"Guest {stay.guest.name} checked out. Room {stay.room.room_number if stay.room else 'N/A'} is now flagged for cleaning.")
     
     return redirect('resort_portal:dashboard')
 @login_required
@@ -454,4 +799,110 @@ def inspect_room(request, room_id):
     HousekeepingLog.objects.create(room=room, old_status=old_status, new_status='vacant_clean', staff_name=request.user.name, notes="Inspected and Approved")
     from django.contrib import messages
     messages.success(request, f"Room {room.room_number} inspected and marked Clean.")
+    return redirect('resort_portal:dashboard')
+
+@login_required
+@resort_enterprise_required
+@require_POST
+def verify_manager_pin(request):
+    pin = request.POST.get('pin')
+    vendor = request.user
+    
+    if vendor.resort_manager_pin == pin:
+        # Mark session as unlocked for this login
+        request.session['resort_manager_unlocked'] = True
+        return JsonResponse({'success': True})
+    
+    return JsonResponse({'success': False, 'message': 'Invalid PIN'})
+
+
+@login_required
+@resort_enterprise_required
+@require_POST
+def request_pin_reset_otp(request):
+    identification = request.POST.get('identification', '').strip()
+    ident_type = request.POST.get('type', 'phone') # 'phone' or 'email'
+    vendor = request.user
+    
+    # Check if identification matches current vendor
+    match = False
+    if ident_type == 'phone' and vendor.phone_number == identification:
+        match = True
+    elif ident_type == 'email' and vendor.email == identification:
+        match = True
+        
+    if not match:
+        return JsonResponse({'success': False, 'message': f'Identification does not match our records for this {ident_type}.'})
+    
+    # Generate 6-digit OTP
+    otp = f"{random.randint(100000, 999999)}"
+    vendor.resort_otp = otp
+    vendor.resort_otp_expiry = timezone.now() + timedelta(minutes=10)
+    vendor.save()
+    
+    # Send OTP
+    success = False
+    if ident_type == 'phone':
+        try:
+            import africastalking
+            africastalking.initialize(
+                username=getattr(settings, 'AT_USERNAME', 'sandbox'),
+                api_key=getattr(settings, 'AT_API_KEY', '')
+            )
+            sms = africastalking.SMS
+            message = f"Your CampoPawa Resort Manager Reset Code is: {otp}. Valid for 10 minutes."
+            sms.send(message, [vendor.phone_number], sender_id=getattr(settings, 'AT_SENDER_ID', 'CampoPawa'))
+            success = True
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Failed to send SMS: {str(e)}'})
+    else:
+        try:
+            send_mail(
+                'Resort Manager Reset Code',
+                f'Your CampoPawa Resort Manager Reset Code is: {otp}. Valid for 10 minutes.',
+                settings.DEFAULT_FROM_EMAIL,
+                [vendor.email],
+                fail_silently=False,
+            )
+            success = True
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'Failed to send Email: {str(e)}'})
+            
+    return JsonResponse({'success': success})
+
+
+@login_required
+@resort_enterprise_required
+@require_POST
+def verify_pin_reset_otp(request):
+    otp = request.POST.get('otp', '').strip()
+    new_pin = request.POST.get('new_pin', '').strip()
+    vendor = request.user
+    
+    if not vendor.resort_otp or vendor.resort_otp != otp:
+        return JsonResponse({'success': False, 'message': 'Invalid reset code.'})
+        
+    if vendor.resort_otp_expiry < timezone.now():
+        return JsonResponse({'success': False, 'message': 'Code has expired.'})
+        
+    if len(new_pin) != 4 or not new_pin.isdigit():
+        return JsonResponse({'success': False, 'message': 'New PIN must be 4 digits.'})
+        
+    # Success: Save new PIN and clear OTP
+    vendor.resort_manager_pin = new_pin
+    vendor.resort_otp = None
+    vendor.resort_otp_expiry = None
+    vendor.save()
+    
+    request.session['resort_manager_unlocked'] = True
+    return JsonResponse({'success': True})
+
+@login_required
+@resort_enterprise_required
+def lock_manager_dashboard(request):
+    """Explicitly clear the manager authorization session state."""
+    if 'resort_manager_unlocked' in request.session:
+        del request.session['resort_manager_unlocked']
+    from django.contrib import messages
+    messages.info(request, "Manager view has been locked.")
     return redirect('resort_portal:dashboard')

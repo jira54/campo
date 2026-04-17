@@ -1,0 +1,84 @@
+{% extends 'resort_portal/base_section.html' %}
+{% block section_title %}Bar & Lounge{% endblock %}
+{% block breadcrumb %}Bar{% endblock %}
+{% block page_title %}Bar Hub{% endblock %}
+{% block section_content %}
+<div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+    {% for seat in seats %}
+        <div class="relative group">
+            <button onclick="{% if seat.status == 'occupied' %}showSeatActions('{{ seat.id }}', '{{ seat.seat_number }}'){% else %}openOrderModal('seat', '{{ seat.id }}', 'Seat {{ seat.seat_number }}'){% endif %}" class="w-full p-4 bg-white/[0.03] border border-white/5 rounded-2xl text-center group hover:border-brand/30 transition-all">
+                <span class="text-xs font-black text-stone-500 block mb-1">#{{ seat.seat_number }}</span>
+                <div class="text-2xl mb-2 group-hover:scale-110 transition-transform {% if seat.status == 'occupied' %}grayscale-0{% else %}grayscale opacity-50{% endif %}">
+                    🍹
+                </div>
+                <span class="px-2 py-0.5 {% if seat.status == 'occupied' %}bg-brand text-deep font-black{% else %}bg-brand/10 text-brand{% endif %} text-[8px] font-black uppercase tracking-widest rounded-md border border-brand/10">
+                    {{ seat.get_status_display }}
+                </span>
+            </button>
+
+            <!-- Seat Action Overlay -->
+            <div id="seat-actions-{{ seat.id }}" class="hidden absolute inset-0 bg-deep/95 rounded-2xl z-10 flex flex-col items-center justify-center p-2 space-y-2 animate-fade-in">
+                <button onclick="openOrderModal('seat', '{{ seat.id }}', 'Seat {{ seat.seat_number }}')" class="w-full py-2 bg-white/5 text-white text-[8px] font-black uppercase tracking-widest rounded-lg hover:bg-white/10 transition-colors">
+                    Add Order
+                </button>
+                <button onclick="openSettleModal('seat', '{{ seat.id }}', 'Seat {{ seat.seat_number }}')" class="w-full py-2 bg-brand text-deep text-[8px] font-black uppercase tracking-widest rounded-lg hover:scale-105 transition-transform">
+                    Settle
+                </button>
+                <button onclick="hideSeatActions('{{ seat.id }}')" class="text-[7px] text-stone-500 uppercase font-black hover:text-white transition-colors">
+                    Back
+                </button>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-span-full p-20 bg-white/[0.02] border border-white/5 rounded-3xl text-center">
+            <div class="text-5xl mb-4 grayscale opacity-30">🍹</div>
+            <h3 class="text-xl font-outfit font-black text-stone-500 uppercase tracking-widest">Bar Seating Not Configured</h3>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="mt-10 p-8 bg-brand/5 border border-brand/10 rounded-3xl">
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h3 class="text-brand font-outfit font-black text-xl mb-1">Active Bar Bills</h3>
+            <p class="text-stone-500 text-[10px] uppercase font-bold tracking-widest">Ongoing Bar Transactions</p>
+        </div>
+        <div class="text-right">
+            <span class="text-stone-500 text-[10px] font-black uppercase tracking-widest block">Open Tabs</span>
+            <span class="text-white font-outfit font-black text-2xl">{{ active_bills|length }}</span>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {% for bill in active_bills %}
+        <div class="p-4 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-between group hover:border-brand/30 transition-all">
+            <div class="flex items-center space-x-4">
+                <div class="w-10 h-10 bg-brand/10 rounded-xl flex items-center justify-center text-brand font-black">
+                    S
+                </div>
+                <div>
+                    <h4 class="text-white font-outfit font-black">{{ bill.name }}</h4>
+                    <span class="text-brand font-outfit font-black text-sm">KSh {{ bill.total }}</span>
+                </div>
+            </div>
+            <button onclick="openSettleModal('seat', '{{ bill.ref_id }}', '{{ bill.name }}')" class="px-4 py-2 bg-brand text-deep font-outfit font-black text-[9px] uppercase tracking-widest rounded-lg hover:scale-105 transition-transform">
+                Settle Tab
+            </button>
+        </div>
+        {% empty %}
+        <div class="col-span-full p-12 text-center border-2 border-dashed border-white/5 rounded-3xl">
+            <p class="text-stone-500 font-bold uppercase tracking-widest text-[10px]">No active bar tabs</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    function showSeatActions(id, name) {
+        document.getElementById(`seat-actions-${id}`).classList.remove('hidden');
+    }
+    function hideSeatActions(id) {
+        document.getElementById(`seat-actions-${id}`).classList.add('hidden');
+    }
+</script>
+{% endblock %}

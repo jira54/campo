@@ -139,7 +139,13 @@ class ServiceCharge(models.Model):
     seat = models.ForeignKey('BarSeat', on_delete=models.SET_NULL, null=True, blank=True, related_name='charges')
     
     description = models.CharField(max_length=255) # e.g., "2x Mojitos" or "Room Rate Night 1"
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, help_text="Total amount charged (VAT inclusive)")
+    
+    # KRA Compliance / VAT Engine fields
+    tax_rate    = models.DecimalField(max_digits=5, decimal_places=2, default=16.00)
+    tax_amount  = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    net_amount  = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    
     is_paid = models.BooleanField(default=False)
     
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHODS, null=True, blank=True)
@@ -155,6 +161,14 @@ class ServiceCharge(models.Model):
                 self.resort_property = self.stay.resort_property
         elif self.guest and not self.resort_property:
             self.resort_property = self.guest.resort_property
+            
+        # VAT Engine Logic (KRA compliant inclusive calculation)
+        if self.amount and self.tax_rate:
+            from decimal import Decimal, ROUND_HALF_UP
+            # Formula: Net = Gross / (1 + Rate/100)
+            divisor = Decimal('1.0') + (self.tax_rate / Decimal('100.0'))
+            self.net_amount = (self.amount / divisor).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+            self.tax_amount = (self.amount - self.net_amount).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
             
         super().save(*args, **kwargs)
 

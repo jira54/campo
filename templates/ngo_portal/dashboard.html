@@ -64,9 +64,12 @@
 
                 <div class="bg-brand rounded-3xl p-8 shadow-brand group relative overflow-hidden">
                     <div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform"></div>
-                    <p class="text-deep/60 text-[10px] font-black uppercase tracking-widest mb-4 relative z-10">Data Integrity</p>
-                    <h3 class="text-6xl font-black text-deep tracking-tighter relative z-10">99.8%</h3>
-                    <p class="text-deep font-black text-[10px] mt-8 uppercase tracking-widest relative z-10">Sync Latency: < 2ms</p>
+                    <p class="text-deep/60 text-[10px] font-black uppercase tracking-widest mb-4 relative z-10">Outcome & Impact Index</p>
+                    <div class="flex items-baseline gap-2 relative z-10">
+                        <h3 class="text-6xl font-black text-deep tracking-tighter">{{ impact_rate }}%</h3>
+                        <span class="text-deep/60 text-[10px] uppercase font-black tracking-widest">Success Rate</span>
+                    </div>
+                    <p class="text-deep font-black text-[10px] mt-8 uppercase tracking-widest relative z-10">Verified Outcomes: {{ positive_outcomes }} / {{ total_outcomes }}</p>
                 </div>
             </div>
 
@@ -86,7 +89,7 @@
                                 <span class="text-white font-black">{{ stat.count }}</span>
                             </div>
                             <div class="w-full bg-stone-800 rounded-full h-1 overflow-hidden">
-                                <div class="bg-brand h-full rounded-full" style="width: {% widthratio stat.count total_beneficiaries 100 %}%"></div>
+                                <div class="bg-brand h-full rounded-full" data-dynamic-width="{% widthratio stat.count total_beneficiaries 100 %}%"></div>
                             </div>
                         </div>
                         {% endfor %}
@@ -124,7 +127,7 @@
                             </div>
                             <div class="flex items-center gap-4">
                                 <div class="flex-1 bg-stone-800 rounded-full h-1.5 overflow-hidden">
-                                    <div class="bg-brand h-full rounded-full transition-all duration-1000" style="width: {{ p.progress }}%"></div>
+                                    <div class="bg-brand h-full rounded-full transition-all duration-1000" data-dynamic-width="{{ p.progress }}%"></div>
                                 </div>
                                 <span class="text-white font-black text-xs">{{ p.progress }}%</span>
                             </div>

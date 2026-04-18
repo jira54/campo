@@ -19,6 +19,12 @@ def ngo_dashboard(request):
         active_programs = Program.objects.filter(vendor=vendor, is_active=True).count()
         total_interventions = Intervention.objects.filter(vendor=vendor).count()
         
+        # 0. Impact: Positive Outcomes
+        from .models import Outcome
+        total_outcomes = Outcome.objects.filter(vendor=vendor).count()
+        positive_outcomes = Outcome.objects.filter(vendor=vendor, is_goal_met=True).count()
+        impact_rate = round((positive_outcomes / total_outcomes * 100)) if total_outcomes > 0 else 0
+        
         # 1. Demographics: Gender Diversity Index
         gender_stats = Beneficiary.objects.filter(vendor=vendor).values('sex').annotate(count=Count('sex'))
         
@@ -44,6 +50,9 @@ def ngo_dashboard(request):
             'total_beneficiaries': total_beneficiaries,
             'active_programs': active_programs,
             'total_interventions': total_interventions,
+            'total_outcomes': total_outcomes,
+            'positive_outcomes': positive_outcomes,
+            'impact_rate': impact_rate,
             'gender_stats': gender_stats,
             'vulnerability_stats': vulnerability_stats,
             'regional_stats': regional_stats,

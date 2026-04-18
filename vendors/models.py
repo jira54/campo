@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.hashers import make_password, check_password
 from datetime import timedelta
 
 
@@ -60,6 +61,7 @@ class Vendor(AbstractBaseUser, PermissionsMixin):
     physical_address  = models.TextField(blank=True, default='', help_text="Business physical location for tax/invoice compliance")
     
     mpesa_till_number = models.CharField(max_length=20, blank=True, default='', help_text="Used for C2B live payment tracking")
+    kra_pin           = models.CharField(max_length=15, blank=True, default='', help_text="KRA Personal Identification Number for Tax Compliance")
     email             = models.EmailField(unique=True)
     is_active         = models.BooleanField(default=True)
     is_staff          = models.BooleanField(default=False)
@@ -70,7 +72,7 @@ class Vendor(AbstractBaseUser, PermissionsMixin):
     has_onboarding_completed = models.BooleanField(default=False)
     
     # --- Resort Security ---
-    resort_manager_pin = models.CharField(max_length=4, blank=True, null=True, help_text="4-digit PIN for sensitive manager analytics")
+    resort_manager_pin = models.CharField(max_length=128, blank=True, null=True, help_text="Hashed 4-digit PIN for sensitive manager analytics")
     resort_otp        = models.CharField(max_length=6, blank=True, null=True)
     resort_otp_expiry = models.DateTimeField(null=True, blank=True)
     
@@ -81,6 +83,11 @@ class Vendor(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['business_name', 'owner_name', 'phone_number']
+
+    def set_manager_pin(self, raw_pin):
+        """Hashes the 4-digit PIN before saving."""
+        self.resort_manager_pin = make_password(raw_pin)
+        self.save()
 
     def __str__(self):
         return self.business_name

@@ -79,3 +79,26 @@ class Intervention(models.Model):
 
     def __str__(self):
         return f"{self.activity_type} - {self.beneficiary.unique_system_id}"
+
+
+class Outcome(models.Model):
+    INTERVENTION_STATUS_CHOICES = [
+        ('significant_improvement', 'Significant Improvement'),
+        ('stable', 'Stable / Progressing'),
+        ('at_risk', 'At Risk / No Change'),
+        ('declined', 'Declined / Regression'),
+    ]
+
+    intervention = models.OneToOneField(Intervention, on_delete=models.CASCADE, related_name='outcome')
+    beneficiary  = models.ForeignKey(Beneficiary, on_delete=models.CASCADE, related_name='outcomes')
+    vendor       = models.ForeignKey('vendors.Vendor', on_delete=models.CASCADE, related_name='ngo_outcomes')
+    
+    status       = models.CharField(max_length=50, choices=INTERVENTION_STATUS_CHOICES, default='stable')
+    is_goal_met  = models.BooleanField(default=False, help_text="Did this intervention achieve the intended program outcome?")
+    narrative    = models.TextField(blank=True, help_text="Detailed explanation of the change observed in the beneficiary.")
+    
+    verified_at  = models.DateField(default=timezone.now)
+    created_at   = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Outcome: {self.intervention.activity_type} ({self.get_status_display()})"

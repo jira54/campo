@@ -8,6 +8,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.core.mail import send_mail
 from django.utils import timezone
+from django.contrib.auth.hashers import check_password, make_password
 
 from .decorators import resort_enterprise_required
 from .models import (
@@ -161,7 +162,14 @@ def resort_dashboard(request):
     try:
         # --- Current Period Metrics ---
         charges_current = ServiceCharge.objects.filter(vendor=vendor, resort_property=current_prop, logged_at__date__range=[start_date, end_date])
-        total_rev = charges_current.aggregate(total=Sum('amount'))['total'] or 0
+        aggregates = charges_current.aggregate(
+            total=Sum('amount'),
+            tax=Sum('tax_amount'),
+            net=Sum('net_amount')
+        )
+        total_rev = aggregates['total'] or 0
+        total_tax = aggregates['tax'] or 0
+        total_net = aggregates['net'] or 0
         
         rooms = Room.objects.filter(vendor=vendor, resort_property=current_prop)
         total_rooms_count = rooms.count()
@@ -193,7 +201,9 @@ def resort_dashboard(request):
 
         # Insights Engine: Revenue Today (Real-time simplified for summary)
         charges_today = ServiceCharge.objects.filter(vendor=vendor, resort_property=current_prop, logged_at__date=today)
-        total_revenue_today = charges_today.aggregate(total=Sum('amount'))['total'] or 0
+        aggregates_today = charges_today.aggregate(total=Sum('amount'), tax=Sum('tax_amount'))
+        total_revenue_today = aggregates_today['total'] or 0
+        total_tax_today = aggregates_today['tax'] or 0
         
         dept_revenue = (
             charges_current.values('department__name')
@@ -228,10 +238,13 @@ def resort_dashboard(request):
             
             # Gated Financial KPIs
             'total_revenue': total_rev if is_manager_unlocked else 0,
+            'total_tax': total_tax if is_manager_unlocked else 0,
+            'total_net': total_net if is_manager_unlocked else 0,
             'room_revenue': room_rev if is_manager_unlocked else 0,
             'adr': adr if is_manager_unlocked else 0,
             'revpar': revpar if is_manager_unlocked else 0,
             'total_revenue_today': total_revenue_today if is_manager_unlocked else 0,
+            'total_tax_today': total_tax_today if is_manager_unlocked else 0,
             'dept_revenue': dept_revenue if is_manager_unlocked else [],
             'rev_trend': calc_trend(total_rev, prev_rev) if is_manager_unlocked else 0,
             
@@ -808,7 +821,7 @@ def verify_manager_pin(request):
     pin = request.POST.get('pin')
     vendor = request.user
     
-    if vendor.resort_manager_pin == pin:
+    if vendor.resort_manager_pin and check_password(pin, vendor.resort_manager_pin):
         # Mark session as unlocked for this login
         request.session['resort_manager_unlocked'] = True
         return JsonResponse({'success': True})
@@ -888,8 +901,8 @@ def verify_pin_reset_otp(request):
     if len(new_pin) != 4 or not new_pin.isdigit():
         return JsonResponse({'success': False, 'message': 'New PIN must be 4 digits.'})
         
-    # Success: Save new PIN and clear OTP
-    vendor.resort_manager_pin = new_pin
+    # Success: Save new hashed PIN and clear OTP
+    vendor.resort_manager_pin = make_password(new_pin)
     vendor.resort_otp = None
     vendor.resort_otp_expiry = None
     vendor.save()

@@ -109,7 +109,7 @@
                                         <span class="text-gold font-bold text-xs">{{ promo.response_rate }}%</span>
                                     </div>
                                     <div class="w-full bg-navy border border-gold border-opacity-20 rounded h-2">
-                                        <div class="bg-gold h-2 rounded" style="width: {{ promo.response_rate }}%"></div>
+                                        <div class="bg-gold h-2 rounded" data-dynamic-width="{{ promo.response_rate }}%"></div>
                                     </div>
                                 </div>
                             {% endif %}

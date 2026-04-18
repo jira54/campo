@@ -1,4 +1,4 @@
-{% extends 'vendors/base.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
 
@@ -48,7 +48,7 @@
 
         <div class="w-full bg-gray-200 h-3 rounded mt-3">
 
-          <div class="bg-gradient-to-r from-sky-500 to-emerald-400 h-3 rounded" style="width: {{ item.percent }}%"></div>
+          <div class="bg-gradient-to-r from-sky-500 to-emerald-400 h-3 rounded" data-dynamic-width="{{ item.percent|default:0 }}%"></div>
 
         </div>
 

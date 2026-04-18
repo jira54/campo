@@ -1,4 +1,4 @@
-{% extends 'vendors/base.html' %}
+{% extends 'base.html' %}
 {% load static %}
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'vendors.css' %}">
@@ -105,10 +105,12 @@
     </div>
   </div>
 
-  <script>
+    <script id="customers-data" type="application/json">{{ customers_json|default:'[]'|safe }}</script>
+    <script>
     // Quick client-side helper: show matched customer name and visit count as user types
     (function(){
-      const raw = {{ customers_json|default:'[]'|safe }};
+      const dataNode = document.getElementById('customers-data');
+      const raw = dataNode ? JSON.parse(dataNode.textContent) : [];
       const customers = Array.isArray(raw) ? raw : [];
       const phoneInput = document.getElementById('phone');
       const nameInput = document.getElementById('name');

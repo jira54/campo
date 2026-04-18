@@ -101,16 +101,26 @@
 
             <!-- Strategic KPI Grid (Manager View) -->
             <div class="manager-content hidden grid grid-cols-1 md:grid-cols-4 gap-6 mb-12 animate-in fade-in zoom-in-95 duration-700">
-                <div class="bg-stone-900/50 border border-white/5 rounded-3xl p-6 relative overflow-hidden">
-                    <p class="text-stone-500 text-[10px] uppercase tracking-widest font-black mb-4">Total Revenue</p>
-                    <div class="flex items-baseline gap-2">
-                        <h3 class="text-3xl font-outfit font-black text-white tracking-tighter">KES {{ total_revenue|floatformat:0 }}</h3>
-                        <span class="text-[10px] font-black {% if rev_trend >= 0 %}text-emerald-400{% else %}text-red-400{% endif %}">
-                            {{ rev_trend|yesno:"+,-" }}{{ rev_trend }}%
-                        </span>
+                <div class="bg-stone-900/50 border border-brand/20 rounded-3xl p-6 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-4">
+                        <span class="text-[8px] bg-brand/20 text-brand px-2 py-1 rounded-full font-black animate-pulse">KRA COMPLIANT</span>
                     </div>
-                    <div class="mt-4 h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                        <div class="bg-brand h-full" style="width: 65%"></div>
+                    <p class="text-stone-500 text-[10px] uppercase tracking-widest font-black mb-4">Financial Health</p>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-[9px] text-stone-500 font-bold uppercase mb-1">Gross Revenue (Total)</p>
+                            <h3 class="text-2xl font-outfit font-black text-white tracking-tighter">KES {{ total_revenue|floatformat:0 }}</h3>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/5">
+                            <div>
+                                <p class="text-[8px] text-stone-500 font-bold uppercase mb-1">Tax Liability (16%)</p>
+                                <p class="text-sm font-outfit font-bold text-red-400">KES {{ total_tax|floatformat:0 }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[8px] text-stone-500 font-bold uppercase mb-1">Net Revenue</p>
+                                <p class="text-sm font-outfit font-bold text-emerald-400">KES {{ total_net|floatformat:0 }}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -121,7 +131,7 @@
                         <span class="text-[10px] font-black text-stone-500">Period Avg</span>
                     </div>
                     <div class="mt-4 h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                        <div class="bg-brand h-full" style="width: {{ occupancy_rate }}%"></div>
+                        <div class="bg-brand h-full" data-dynamic-width="{{ occupancy_rate }}%"></div>
                     </div>
                 </div>
 
@@ -161,7 +171,10 @@
                             <span class="text-sm align-top mr-1 font-bold text-brand">KES</span>{{ total_revenue_today|floatformat:0 }}
                         </h3>
                     </div>
-                    <p class="text-stone-300 text-[9px] mt-4 font-bold">Real-time sales</p>
+                    <div class="flex items-center justify-between mt-4">
+                        <p class="text-stone-300 text-[9px] font-bold">Real-time sales</p>
+                        <span class="text-[8px] text-stone-500 font-black px-2 py-0.5 bg-white/5 rounded">Excl: {{ total_tax_today|floatformat:0 }} Tax</span>
+                    </div>
                 </div>
 
                 <div class="bg-stone-900/50 border border-white/5 rounded-3xl p-6 flex flex-col justify-between">
@@ -333,7 +346,10 @@
                                 <td class="px-8 py-6 flex items-center justify-between">
                                     <span class="px-3 py-1 bg-brand/10 text-brand text-[10px] font-black uppercase rounded-full border border-brand/20">Active Stay</span>
                                     <button 
-                                        onclick="confirmCheckOut('{{ stay.id }}', '{{ stay.guest.name|escapejs }}', '{{ stay.room.room_number|default:'Walk-in'|escapejs }}')"
+                                        data-stay-id="{{ stay.id }}"
+                                        data-guest-name="{{ stay.guest.name|escapejs }}"
+                                        data-room-number="{{ stay.room.room_number|default:'Walk-in'|escapejs }}"
+                                        onclick="confirmCheckOut(this.dataset.stayId, this.dataset.guestName, this.dataset.roomNumber)"
                                         class="opacity-0 group-hover:opacity-100 bg-white/5 hover:bg-red-500/10 hover:text-red-400 text-stone-300 text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-lg border border-white/5 transition-all">
                                         Check Out
                                     </button>
@@ -404,6 +420,9 @@
     </div>
 </div>
 
+<!-- Hidden state container for JS -->
+<div id="dashboard-state" data-is-unlocked="{{ is_manager_unlocked|yesno:'true,false' }}" class="hidden"></div>
+
 <!-- All Modals -->
 
 <!-- Fast POS Charge Modal -->
@@ -442,8 +461,11 @@
                     <option value="default">General Services</option>
                     {% for dept in departments %}<option value="{{ dept.id }}">{{ dept.name }}</option>{% endfor %}
                 </select>
-                <input type="number" name="amount" required class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold" placeholder="Amount (KES)">
+                <input type="number" step="0.01" name="amount" required
+                    class="w-full bg-stone-800 border-none rounded-xl py-4 px-5 text-white font-outfit text-xl focus:ring-2 focus:ring-brand outline-none" 
+                    placeholder="0.00">
             </div>
+            <p class="text-[8px] text-stone-500 mt-2 ml-1 uppercase font-black tracking-widest">Pricing is VAT Inclusive (16%)</p>
             <input type="text" name="description" class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold" placeholder="Service Description">
             <button type="submit" class="w-full bg-brand text-deep font-outfit font-black text-xl py-6 rounded-2xl shadow-brand transition-all">Log Service Bill</button>
         </form>
@@ -669,7 +691,8 @@
 
     document.addEventListener('DOMContentLoaded', () => { 
         // Sync session storage with backend state
-        const isUnlocked = {% if is_manager_unlocked %}true{% else %}false{% endif %};
+        const stateEl = document.getElementById('dashboard-state');
+        const isUnlocked = stateEl ? stateEl.dataset.isUnlocked === 'true' : false;
         if (isUnlocked) sessionStorage.setItem('resort_manager_unlocked', 'true');
         else sessionStorage.removeItem('resort_manager_unlocked');
 

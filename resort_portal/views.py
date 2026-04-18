@@ -297,7 +297,7 @@ def overview(request):
     
     # Arrival Alerts
     arrivals_today = StayRecord.objects.filter(vendor=vendor, resort_property=current_prop, check_in_date=today).count()
-    vip_arrivals = ResortGuest.objects.filter(vendor=vendor, resort_property=current_prop, vip_status=True, stays__check_in_date=today).count()
+    vip_arrivals = ResortGuest.objects.filter(vendor=vendor, resort_property=current_prop, vip_status=True, folios__check_in_date=today).count()
 
     context = {
         'total_revenue_today': total_revenue_today,

@@ -3,7 +3,7 @@
 {% block breadcrumb %}Bar{% endblock %}
 {% block page_title %}Bar Hub{% endblock %}
 {% block section_content %}
-<div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
     {% for seat in seats %}
         <div class="relative group">
             <button onclick="{% if seat.status == 'occupied' %}showSeatActions('{{ seat.id }}', '{{ seat.seat_number }}'){% else %}openOrderModal('seat', '{{ seat.id }}', 'Seat {{ seat.seat_number }}'){% endif %}" class="w-full p-4 bg-white/[0.03] border border-white/5 rounded-2xl text-center group hover:border-brand/30 transition-all">

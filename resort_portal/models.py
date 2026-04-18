@@ -108,7 +108,7 @@ class StayRecord(models.Model):
     ]
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='resort_stays')
     resort_property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='stays')
-    guest = models.ForeignKey(ResortGuest, on_delete=models.CASCADE, related_name='stays')
+    guest = models.ForeignKey(ResortGuest, on_delete=models.CASCADE, related_name='folios')
     room = models.ForeignKey(Room, on_delete=models.SET_NULL, null=True, blank=True, related_name='stays')
     
     check_in_date = models.DateField(default=timezone.now)

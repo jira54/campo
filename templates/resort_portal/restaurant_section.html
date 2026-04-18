@@ -5,7 +5,7 @@
 {% block page_title %}Table Management{% endblock %}
 
 {% block section_content %}
-<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
     {% for table in tables %}
         <div class="relative group">
             <button onclick="{% if table.status == 'occupied' %}showTableActions('{{ table.id }}', '{{ table.table_number }}'){% else %}openOrderModal('table', '{{ table.id }}', 'Table {{ table.table_number }}'){% endif %}" class="w-full p-6 bg-white/[0.03] border border-white/5 rounded-3xl text-center hover:bg-white/[0.05] hover:border-brand/30 transition-all">

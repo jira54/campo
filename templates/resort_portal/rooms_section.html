@@ -38,7 +38,7 @@
 
     <!-- Room Grid -->
     <div class="lg:col-span-3">
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {% for room in rooms %}
                 <div class="relative bg-white/[0.02] border {% if room.status == 'vacant_clean' %}border-emerald-500/20 bg-emerald-500/[0.02]{% elif room.status == 'vacant_dirty' %}border-rose-500/20 bg-rose-500/[0.02]{% elif room.status == 'cleaning' %}border-amber-500/20 bg-amber-500/[0.02]{% else %}border-white/5{% endif %} p-5 rounded-3xl group transition-all hover:scale-[1.02]">
                     <div class="flex justify-between items-start mb-4">

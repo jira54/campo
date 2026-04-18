@@ -138,14 +138,13 @@
             {% csrf_token %}
             <input type="hidden" name="action" value="register_guest">
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-2">
                     <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest">Guest Full Name*</label>
-                    <input type="text" name="name" required class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all">
+                    <input type="text" name="name_only" required class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all">
                 </div>
                 <div class="space-y-2">
                     <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest">Phone Number</label>
-                    <input type="text" name="phone" class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all">
+                    <input type="text" name="phone_name" class="w-full bg-stone-800/50 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all">
                 </div>
                 <!-- ... Rest of the common fields ... -->
                 <div class="space-y-2">

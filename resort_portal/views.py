@@ -9,6 +9,7 @@ from django.views.decorators.http import require_POST
 from django.core.mail import send_mail
 from django.utils import timezone
 from django.contrib.auth.hashers import check_password, make_password
+from vendors.models import Vendor
 
 from .decorators import resort_enterprise_required
 from .models import (
@@ -45,15 +46,15 @@ def _handle_guest_registration(request, vendor, current_prop):
     passport_id = ''
     
     if method == 'name':
-        name = request.POST.get('name_only')
-        phone = request.POST.get('phone_name')
+        name = request.POST.get('name_only') or request.POST.get('name')
+        phone = request.POST.get('phone_name') or request.POST.get('phone')
     elif method == 'email':
-        name = request.POST.get('name_email')
-        email = request.POST.get('email_only')
+        name = request.POST.get('name_email') or request.POST.get('name')
+        email = request.POST.get('email_only') or request.POST.get('email')
     elif method == 'both':
-        name = request.POST.get('name_both')
-        email = request.POST.get('email_both')
-        phone = request.POST.get('phone_both')
+        name = request.POST.get('name_both') or request.POST.get('name')
+        email = request.POST.get('email_both') or request.POST.get('email')
+        phone = request.POST.get('phone_both') or request.POST.get('phone')
         passport_id = request.POST.get('passport_both')
 
     gtype = request.POST.get('guest_type', 'overnight')
@@ -94,8 +95,8 @@ def _handle_guest_registration(request, vendor, current_prop):
         target_room = Room.objects.filter(vendor=vendor, id=room_id).first()
 
     if target_room:
-        # Create Folio
-        Folio.objects.create(
+        # Create StayRecord
+        StayRecord.objects.create(
             vendor=vendor,
             resort_property=current_prop,
             guest=guest,
@@ -248,7 +249,7 @@ def resort_dashboard(request):
             'dept_revenue': dept_revenue if is_manager_unlocked else [],
             'rev_trend': calc_trend(total_rev, prev_rev) if is_manager_unlocked else 0,
             
-            'active_folios': active_folios,
+            'active_stays': active_folios,
             'vip_arrivals': vip_arrivals,
             'available_rooms': rooms.filter(status='vacant_clean'),
             'all_rooms': rooms.order_by('room_number'),
@@ -464,8 +465,7 @@ def resort_setup(request):
         elif action == 'set_pin':
             pin = request.POST.get('pin')
             if pin and len(pin) == 4 and pin.isdigit():
-                vendor.resort_manager_pin = pin
-                vendor.save()
+                vendor.set_manager_pin(pin)
                 from django.contrib import messages
                 messages.success(request, "Manager PIN updated successfully.")
             else:
@@ -507,7 +507,7 @@ def log_charge(request):
 
                 if ref_type == 'guest':
                     guest = ResortGuest.objects.get(vendor=vendor, id=ref_id)
-                    stay = guest.stays.filter(status='open').first()
+                    stay = guest.folios.filter(status='open').first()
                 elif ref_type == 'table':
                     table = RestaurantTable.objects.get(vendor=vendor, id=ref_id)
                     table.status = 'occupied'
@@ -624,7 +624,7 @@ def guest_index(request):
     # Segment Counts
     segment_counts = {
         'all': guests.count(),
-        'active': guests.filter(stays__status='open').distinct().count(),
+        'active': guests.filter(folios__status='open').distinct().count(),
         'vip': guests.filter(vip_status=True).count(),
         'loyal': guests.filter(total_stays__gte=5).count(),
         'at_risk': 0, 
@@ -646,7 +646,7 @@ def guest_index(request):
 
     if segment:
         if segment == 'active':
-            guests = guests.filter(stays__status='open').distinct()
+            guests = guests.filter(folios__status='open').distinct()
         elif segment == 'vip':
             guests = guests.filter(vip_status=True)
         elif segment == 'loyal':
@@ -654,8 +654,8 @@ def guest_index(request):
         elif segment == 'at_risk':
             six_months_ago = timezone.now().date() - datetime.timedelta(days=180)
             guests = guests.filter(
-                stays__status='closed',
-                stays__check_out_date__lt=six_months_ago
+                folios__status='closed',
+                folios__check_out_date__lt=six_months_ago
             ).distinct()
 
     return render(request, 'resort_portal/guest_list.html', {
@@ -676,7 +676,7 @@ def guest_detail(request, guest_id):
     guest = get_object_or_404(ResortGuest, vendor=vendor, id=guest_id)
     
     # Stay Records
-    stays = guest.stays.all().order_by('-check_in_date')
+    stays = guest.folios.all().order_by('-check_in_date')
     
     # Financial Intelligence
     all_charges = ServiceCharge.objects.filter(guest=guest, vendor=vendor).order_by('-logged_at')

@@ -3,22 +3,23 @@
 
 {% block section_title %}Overview Dashboard{% endblock %}
 {% block breadcrumb %}Overview{% endblock %}
-{% block page_title %}Property Health{% endblock %}
+{% block page_title %}Property Performance Insights{% endblock %}
 
 {% block header_actions %}
 <div class="flex items-center gap-4">
     <div id="staff-controls" class="{% if is_manager_unlocked %}hidden{% endif %}">
-        <button onclick="document.getElementById('pin-modal').classList.remove('hidden')" class="px-4 py-2 bg-brand text-deep font-outfit font-black text-[10px] uppercase tracking-widest rounded-xl shadow-brand hover:scale-105 transition-all">
+        <button onclick="document.getElementById('pin-modal').classList.remove('hidden')" class="px-5 py-2.5 bg-brand text-deep font-outfit font-black text-[10px] uppercase tracking-[0.2em] rounded-xl shadow-brand hover:scale-105 transition-all">
             Unlock Manager View
         </button>
     </div>
     {% if is_manager_unlocked %}
-    <div class="flex items-center gap-3">
-        <span class="px-3 py-1 bg-brand/10 text-brand text-[9px] font-black uppercase tracking-widest rounded-full border border-brand/20 animate-pulse">
-            Manager Session Active
-        </span>
-        <a href="{% url 'resort_portal:lock_manager' %}" class="px-4 py-2 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white border border-rose-500/20 font-outfit font-black text-[10px] uppercase tracking-widest rounded-xl transition-all">
-            Lock Dashboard
+    <div class="flex items-center gap-4">
+        <div class="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center gap-2">
+            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span class="text-emerald-400 text-[9px] font-black uppercase tracking-widest">Manager Session Active</span>
+        </div>
+        <a href="{% url 'resort_portal:lock_manager' %}" class="px-5 py-2.5 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white border border-rose-500/20 font-outfit font-black text-[10px] uppercase tracking-widest rounded-xl transition-all">
+            Lock
         </a>
     </div>
     {% endif %}
@@ -26,147 +27,139 @@
 {% endblock %}
 
 {% block section_content %}
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-    <!-- Occupancy Card -->
-    <div class="bg-white/[0.03] border border-white/5 p-6 rounded-3xl group hover:border-brand/40 transition-all duration-500">
-        <div class="flex justify-between items-start mb-4">
-            <div class="w-12 h-12 rounded-2xl bg-brand/10 flex items-center justify-center text-brand">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-            </div>
-            <span class="text-[10px] font-black text-brand uppercase tracking-widest">{{ occupied_rooms }}/{{ active_property.rooms.count }}</span>
+
+<!-- PIN Setup Status Alert -->
+{% if not request.user.resort_manager_pin %}
+<div class="mb-10 bg-amber-500/10 border border-amber-500/20 p-6 rounded-2xl flex items-center justify-between gap-6 group hover:bg-amber-500/15 transition-all">
+    <div class="flex items-center gap-6">
+        <div class="w-16 h-16 rounded-2xl bg-amber-500 flex items-center justify-center text-deep text-3xl shadow-amber-500/20">!</div>
+        <div>
+            <h3 class="text-amber-400 font-outfit font-black text-lg mb-1">Security Setup Required</h3>
+            <p class="text-stone-300 text-sm">Set your Manager PIN to unlock financial analytics and protect sensitive data.</p>
         </div>
-        <h3 class="text-stone-400 text-[10px] font-black uppercase tracking-widest mb-1">Occupancy</h3>
-        <p class="text-3xl font-outfit font-black text-white leading-none mb-4">
-            {% if active_property.rooms.count > 0 %}
-                {{ occupied_rooms|divide:active_property.rooms.count|multiply:100|floatformat:0 }}%
-            {% else %}
-                0%
-            {% endif %}
+    </div>
+    <a href="{% url 'resort_portal:security' %}" class="bg-amber-500 hover:bg-amber-400 text-deep font-bold px-6 py-3 rounded-xl transition-all flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        Set PIN Now
+    </a>
+</div>
+{% endif %}
+
+<!-- At-a-Glance Strategic Insights -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+    <!-- Occupancy -->
+    <div class="glass-box premium-border p-8 rounded-[2.5rem] relative overflow-hidden group">
+        <div class="absolute -right-4 -top-4 w-32 h-32 bg-brand/5 blur-3xl rounded-full group-hover:bg-brand/10 transition-all"></div>
+        <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-brand"></span>
+            Occupancy Pulse
         </p>
-        <div class="h-1 bg-white/5 rounded-full overflow-hidden">
-            <div class="h-full bg-brand" style="width: {% if active_property.rooms.count > 0 %}{{ occupied_rooms|divide:active_property.rooms.count|multiply:100 }}{% else %}0{% endif %}%"></div>
+        <div class="space-y-1">
+            <p class="text-4xl font-outfit font-black text-white tracking-tighter">
+                {% if active_property.rooms.count > 0 %}{{ occupied_rooms|divide:active_property.rooms.count|multiply:100|floatformat:0 }}%{% else %}0%{% endif %}
+            </p>
+            <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest">{{ occupied_rooms }} / {{ active_property.rooms.count }} Rooms Booked</p>
         </div>
     </div>
 
-    <!-- Revenue Card (Gated) -->
-    <div class="bg-white/[0.03] border border-white/5 p-6 rounded-3xl group hover:border-emerald-500/40 transition-all duration-500">
-        <div class="flex justify-between items-start mb-4">
-            <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            </div>
-            {% if not is_manager_unlocked %}
-                <span class="text-[9px] font-black text-rose-500 uppercase py-1 px-2 bg-rose-500/10 rounded-lg">Locked</span>
-            {% endif %}
-        </div>
-        <h3 class="text-stone-400 text-[10px] font-black uppercase tracking-widest mb-1">Today's Billing</h3>
-        <p class="text-3xl font-outfit font-black text-white leading-none">
-            {% if is_manager_unlocked %}
-                KSh {{ total_revenue_today|floatformat:0 }}
-            {% else %}
-                ••••••
-            {% endif %}
+    <!-- Revenue (Green Highlighted as requested) -->
+    <div class="glass-box premium-border p-8 rounded-[2.5rem] relative overflow-hidden group border-emerald-500/10">
+        <div class="absolute -right-4 -top-4 w-32 h-32 bg-emerald-500/10 blur-3xl rounded-full group-hover:bg-emerald-500/20 transition-all"></div>
+        <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            Strategic Yield
         </p>
+        <div class="space-y-1">
+            <p class="text-4xl font-outfit font-black text-emerald-400 tracking-tighter">
+                {% if is_manager_unlocked %}KSh {{ total_revenue_today|floatformat:0 }}{% else %}<span class="text-stone-600">Locked</span>{% endif %}
+            </p>
+            <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Today's Revenue Flow</p>
+        </div>
     </div>
 
-    <!-- VIP / Priority Card -->
-    <div class="bg-white/[0.03] border border-white/5 p-6 rounded-3xl group hover:border-amber-500/40 transition-all duration-500">
-        <div class="flex justify-between items-start mb-4">
-            <div class="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
-            </div>
-            <span class="text-[10px] font-black text-amber-500 uppercase tracking-widest">{{ vip_arrivals }} VIPs</span>
-        </div>
-        <h3 class="text-stone-400 text-[10px] font-black uppercase tracking-widest mb-1">Priority Arrivals</h3>
-        <p class="text-3xl font-outfit font-black text-white leading-none">
-            {{ arrivals_today }} <span class="text-sm font-bold text-stone-500">Total</span>
+    <!-- Arrivals (Orange/White wording) -->
+    <div class="glass-box premium-border p-8 rounded-[2.5rem] relative overflow-hidden group">
+        <div class="absolute -right-4 -top-4 w-32 h-32 bg-orange-500/5 blur-3xl rounded-full group-hover:bg-orange-500/10 transition-all"></div>
+        <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-orange-400"></span>
+            Arrival Matrix
         </p>
+        <div class="space-y-1">
+            <p class="text-4xl font-outfit font-black text-white tracking-tighter">{{ arrivals_today }} <span class="text-xs text-orange-400">Arrived</span></p>
+            <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest">{{ vip_arrivals }} VIP Protocols Pending</p>
+        </div>
     </div>
 
-    <!-- Housekeeping Card -->
-    <div class="bg-white/[0.03] border border-white/5 p-6 rounded-3xl group hover:border-fuchsia-500/40 transition-all duration-500">
-        <div class="flex justify-between items-start mb-4">
-            <div class="w-12 h-12 rounded-2xl bg-fuchsia-500/10 flex items-center justify-center text-fuchsia-500">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86 .517l-.618.309a6 6 0 01-3.86.517l-1.464-.293a2 2 0 01-1.285-1.285l-.293-1.464a6 6 0 01.517-3.86l.309-.618a6 6 0 00.517-3.86l-.477-2.387a2 2 0 00-.547-1.022L7.428 5.428"/></svg>
-            </div>
-            <span class="text-[10px] font-black text-fuchsia-500 uppercase tracking-widest">{{ dirty_rooms }} Pending</span>
-        </div>
-        <h3 class="text-stone-400 text-[10px] font-black uppercase tracking-widest mb-1">Room Readiness</h3>
-        <p class="text-3xl font-outfit font-black text-white leading-none">
-            {{ dirty_rooms }} <span class="text-sm font-bold text-stone-500">Units</span>
+    <!-- Housekeeping -->
+    <div class="glass-box premium-border p-8 rounded-[2.5rem] relative overflow-hidden group">
+        <div class="absolute -right-4 -top-4 w-32 h-32 bg-teal-500/5 blur-3xl rounded-full group-hover:bg-teal-500/10 transition-all"></div>
+        <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
+            Service Flow
         </p>
+        <div class="space-y-1">
+            <p class="text-4xl font-outfit font-black text-white tracking-tighter">{{ dirty_rooms }} <span class="text-xs text-teal-400">Dirty</span></p>
+            <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Rooms Awaiting Turnaround</p>
+        </div>
     </div>
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
-    <!-- Activity Feed -->
-    <div class="lg:col-span-2">
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-xl font-outfit font-black text-white tracking-tight">Recent Activity</h2>
-            <button class="text-stone-500 hover:text-brand text-[10px] font-black uppercase tracking-widest transition-colors">View All Feed</button>
+<!-- Operational Navigation -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+    <a href="{% url 'resort_portal:guests' %}?tab=register" class="group relative p-10 glass-box premium-border rounded-[3rem] overflow-hidden transition-all hover:scale-[1.01] active:scale-95 shadow-xl">
+        <div class="absolute inset-0 bg-emerald-500/0 group-hover:bg-emerald-500/5 transition-all"></div>
+        <div class="relative z-10 flex items-center justify-between">
+            <div class="space-y-2">
+                <h4 class="text-3xl font-outfit font-black text-white tracking-tight">Initiate Check-in</h4>
+                <p class="text-emerald-400 text-xs font-bold uppercase tracking-widest">Register New Arrival &rarr;</p>
+            </div>
+            <div class="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">🛎️</div>
         </div>
-        <div class="bg-white/[0.02] border border-white/5 rounded-3xl overflow-hidden">
-            {% for act in activities %}
-            <div class="flex gap-4 p-5 hover:bg-white/[0.03] transition-colors border-b border-white/5 last:border-0">
-                <div class="w-10 h-10 rounded-xl bg-deep flex items-center justify-center text-xl shrink-0">
+    </a>
+    
+    <a href="{% url 'resort_portal:rooms' %}" class="group relative p-10 glass-box premium-border rounded-[3rem] overflow-hidden transition-all hover:scale-[1.01] active:scale-95 shadow-xl">
+        <div class="absolute inset-0 bg-brand/0 group-hover:bg-brand/5 transition-all"></div>
+        <div class="relative z-10 flex items-center justify-between">
+            <div class="space-y-2">
+                <h4 class="text-3xl font-outfit font-black text-white tracking-tight">Room Inventory</h4>
+                <p class="text-brand text-xs font-bold uppercase tracking-widest">Audit Status & Availability &rarr;</p>
+            </div>
+            <div class="w-16 h-16 rounded-full bg-brand/10 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">🏠</div>
+        </div>
+    </a>
+</div>
+
+<!-- Recent Strategic Activity -->
+<div class="glass-box premium-border rounded-[3rem] overflow-hidden">
+    <div class="p-8 border-b border-white/5 flex items-center justify-between">
+        <h3 class="text-xl font-outfit font-black text-white tracking-tight">Operational Intelligence</h3>
+        <span class="text-[10px] font-black text-stone-500 uppercase tracking-widest">Live Audit Feed</span>
+    </div>
+    <div class="max-h-[400px] overflow-y-auto custom-scrollbar">
+        {% for act in activities %}
+        <div class="p-8 border-b border-white/5 last:border-0 hover:bg-white/[0.02] transition-colors group">
+            <div class="flex items-start gap-6">
+                <div class="w-14 h-14 rounded-2xl bg-stone-800 flex items-center justify-center text-2xl group-hover:bg-brand group-hover:text-deep transition-all">
                     {{ act.icon }}
                 </div>
-                <div>
-                    <h4 class="text-stone-200 font-bold text-sm">{{ act.title }}</h4>
-                    <p class="text-stone-500 text-xs mt-1">{{ act.description }}</p>
-                    <div class="flex items-center gap-3 mt-2">
-                        <span class="text-[9px] font-black text-stone-600 uppercase tracking-widest">{{ act.created_at|timesince }} ago</span>
-                        <span class="w-1 h-1 rounded-full bg-stone-700"></span>
-                        <span class="text-[9px] font-black text-brand uppercase tracking-widest">{{ act.get_category_display }}</span>
+                <div class="flex-1">
+                    <div class="flex items-center justify-between mb-1">
+                        <h4 class="text-white font-black text-lg">{{ act.title }}</h4>
+                        <span class="text-[9px] font-black text-stone-500 uppercase tracking-[0.2em]">{{ act.created_at|timesince }} ago</span>
                     </div>
-                </div>
-            </div>
-            {% empty %}
-            <div class="p-10 text-center">
-                <div class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 grayscale">✨</div>
-                <p class="text-stone-500 font-black text-[10px] uppercase tracking-[0.2em]">All Inventory is Pristine</p>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-
-    <!-- Quick Ops -->
-    <div>
-        <h2 class="text-xl font-outfit font-black text-white tracking-tight mb-6">Quick Service</h2>
-        <div class="space-y-4">
-            <a href="{% url 'resort_portal:guests' %}?tab=register" class="flex items-center justify-between p-5 bg-brand text-deep rounded-3xl hover:scale-[1.02] transition-all shadow-brand group">
-                <div>
-                    <h4 class="font-outfit font-black text-lg leading-tight">Fast Check-in</h4>
-                    <p class="text-[10px] font-bold opacity-70 uppercase tracking-widest">New Guest Entry</p>
-                </div>
-                <svg class="w-6 h-6 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-            </a>
-
-            <div class="bg-white/[0.02] border border-white/5 p-6 rounded-3xl">
-                <h4 class="text-white font-black text-[10px] uppercase tracking-widest mb-4">Jump to Section</h4>
-                <div class="grid grid-cols-2 gap-3">
-                    <a href="{% url 'resort_portal:restaurant' %}" class="p-3 rounded-xl bg-white/5 hover:bg-white/10 text-center transition-all group">
-                        <span class="block text-xl mb-1 group-hover:scale-110 transition-transform">🍽️</span>
-                        <span class="text-[10px] font-bold text-stone-300">Dining</span>
-                    </a>
-                    <a href="{% url 'resort_portal:bar' %}" class="p-3 rounded-xl bg-white/5 hover:bg-white/10 text-center transition-all group">
-                        <span class="block text-xl mb-1 group-hover:scale-110 transition-transform">🍹</span>
-                        <span class="text-[10px] font-bold text-stone-300">Bar</span>
-                    </a>
-                    <a href="{% url 'resort_portal:events' %}" class="p-3 rounded-xl bg-white/5 hover:bg-white/10 text-center transition-all group">
-                        <span class="block text-xl mb-1 group-hover:scale-110 transition-transform">🎭</span>
-                        <span class="text-[10px] font-bold text-stone-300">Events</span>
-                    </a>
-                    <a href="{% url 'resort_portal:day_visitors' %}" class="p-3 rounded-xl bg-white/5 hover:bg-white/10 text-center transition-all group">
-                        <span class="block text-xl mb-1 group-hover:scale-110 transition-transform">🏊</span>
-                        <span class="text-[10px] font-bold text-stone-300">Visitors</span>
-                    </a>
+                    <p class="text-stone-400 text-sm font-medium leading-relaxed">{{ act.description }}</p>
                 </div>
             </div>
         </div>
+        {% empty %}
+        <div class="p-20 text-center">
+            <p class="text-stone-500 italic text-sm font-medium">Digital silence. No strategic events recorded today.</p>
+        </div>
+        {% endfor %}
     </div>
 </div>
 
-<!-- PIN Verification Modal (Phase 6 Logic) -->
+<!-- PIN Verification Modal -->
 {% include 'resort_portal/modals/pin_verification.html' %}
 
 {% endblock %}

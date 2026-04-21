@@ -1,36 +1,28 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, Count, Q
-import datetime
-from datetime import timedelta
-import random
+from django.utils import timezone
+from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.core.mail import send_mail
-from django.utils import timezone
-from django.contrib.auth.hashers import check_password, make_password
-from vendors.models import Vendor
-
-from .decorators import resort_enterprise_required
+from django.contrib.auth.hashers import make_password, check_password
+import random, string
+from datetime import timedelta
+from vendors.decorators import premium_required as resort_enterprise_required
 from .models import (
     Room, StayRecord, ServiceCharge, Department, HousekeepingLog,
     RestaurantTable, BarSeat, EventSpace, EventBooking,
-    DayPass, DayVisitor, Facility, UserActivity, ResortGuest
+    DayPass, DayVisitor, Facility, UserActivity, ResortGuest,
+    ManagerAuth
+)
+from .utils import (
+    get_active_property, validate_guest_registration_data, 
+    get_dashboard_metrics, log_user_activity, calculate_trend,
+    clear_dashboard_cache, get_or_create_department
 )
 
-def _get_active_property(request):
-    """Internal helper to ensure property context is consistent in views."""
-    from vendors.models import Property
-    prop_id = request.session.get('current_property_id')
-    if prop_id:
-        prop = Property.objects.filter(vendor=request.user, id=prop_id).first()
-        if prop: return prop
-    
-    prop = Property.objects.filter(vendor=request.user, is_default=True).first() or \
-           Property.objects.filter(vendor=request.user).first()
-    if prop:
-        request.session['current_property_id'] = prop.id
-    return prop
+# Note: _get_active_property moved to utils.py as get_active_property()
 
 @login_required
 @resort_enterprise_required
@@ -117,15 +109,12 @@ def _handle_guest_registration(request, vendor, current_prop):
 @resort_enterprise_required
 def resort_dashboard(request):
     vendor = request.user
-    current_prop = _get_active_property(request)
+    current_prop = get_active_property(request)
     if not current_prop:
         from django.contrib import messages
         messages.warning(request, "Please set up a property to continue.")
         return redirect('resort_portal:setup')
 
-    from .models import ResortGuest, Department, ServiceCharge, Room, StayRecord
-    from django.db.models.functions import TruncDate
-    
     # Auto-initialize 'General Services'
     if not Department.objects.filter(vendor=vendor, resort_property=current_prop).exists():
         Department.objects.create(vendor=vendor, resort_property=current_prop, name='General Services')
@@ -135,133 +124,73 @@ def resort_dashboard(request):
         if action == 'register_guest':
             _handle_guest_registration(request, vendor, current_prop)
     
-    # Date Range Logic
     period = request.GET.get('period', 'today')
-    today = timezone.now().date()
+    is_manager_unlocked = request.session.get('resort_manager_unlocked', False)
     
-    if period == 'today':
-        start_date = today
-        end_date = today
-        prev_start = start_date - datetime.timedelta(days=1)
-        prev_end = prev_start
-    elif period == 'week':
-        start_date = today - datetime.timedelta(days=7)
-        end_date = today
-        prev_start = start_date - datetime.timedelta(days=7)
-        prev_end = start_date - datetime.timedelta(days=1)
-    elif period == 'month':
-        start_date = today - datetime.timedelta(days=30)
-        end_date = today
-        prev_start = start_date - datetime.timedelta(days=30)
-        prev_end = start_date - datetime.timedelta(days=1)
-    else: # Default to today
-        start_date = today
-        end_date = today
-        prev_start = start_date - datetime.timedelta(days=1)
-        prev_end = prev_start
-
     try:
-        # --- Current Period Metrics ---
-        charges_current = ServiceCharge.objects.filter(vendor=vendor, resort_property=current_prop, logged_at__date__range=[start_date, end_date])
-        aggregates = charges_current.aggregate(
-            total=Sum('amount'),
-            tax=Sum('tax_amount'),
-            net=Sum('net_amount')
-        )
-        total_rev = aggregates['total'] or 0
-        total_tax = aggregates['tax'] or 0
-        total_net = aggregates['net'] or 0
+        # Get metrics using utils (with caching)
+        metrics = get_dashboard_metrics(vendor, current_prop, period)
         
-        rooms = Room.objects.filter(vendor=vendor, resort_property=current_prop)
-        total_rooms_count = rooms.count()
-        num_days = (end_date - start_date).days + 1
-        total_capacity = total_rooms_count * num_days
+        # Calculate previous period for trend
+        from datetime import timedelta
+        today = timezone.now().date()
+        if period == 'today':
+            prev_start = today - timedelta(days=1)
+            prev_end = prev_start
+        elif period == 'week':
+            prev_start = today - timedelta(days=14)
+            prev_end = today - timedelta(days=8)
+        else:  # month
+            prev_start = today - timedelta(days=60)
+            prev_end = today - timedelta(days=31)
         
-        # Stays in period
-        room_nights_sold = StayRecord.objects.filter(
-            vendor=vendor, 
-            resort_property=current_prop,
-            check_in_date__lte=end_date,
-            check_out_date__gte=start_date
-        ).count() if num_days > 0 else 0
+        prev_metrics = get_dashboard_metrics(vendor, current_prop, f"custom_{prev_start}_{prev_end}")
+        rev_trend = calculate_trend(metrics['total_revenue'], prev_metrics['total_revenue'])
         
-        occ_rate = round((room_nights_sold / total_capacity * 100) if total_capacity > 0 else 0)
-        
-        # Room Revenue only
-        room_rev = charges_current.filter(department__name__icontains='Room').aggregate(total=Sum('amount'))['total'] or 0
-        adr = round(room_rev / room_nights_sold) if room_nights_sold > 0 else 0
-        revpar = round(room_rev / total_capacity) if total_capacity > 0 else 0
-        
-        # --- Previous Period Metrics (for Trends) ---
-        charges_prev = ServiceCharge.objects.filter(vendor=vendor, resort_property=current_prop, logged_at__date__range=[prev_start, prev_end])
-        prev_rev = charges_prev.aggregate(total=Sum('amount'))['total'] or 0
-        
-        def calc_trend(curr, prev):
-            if prev == 0: return 100 if curr > 0 else 0
-            return round(((curr - prev) / prev) * 100)
-
-        # Insights Engine: Revenue Today (Real-time simplified for summary)
-        charges_today = ServiceCharge.objects.filter(vendor=vendor, resort_property=current_prop, logged_at__date=today)
-        aggregates_today = charges_today.aggregate(total=Sum('amount'), tax=Sum('tax_amount'))
-        total_revenue_today = aggregates_today['total'] or 0
-        total_tax_today = aggregates_today['tax'] or 0
-        
-        dept_revenue = (
-            charges_current.values('department__name')
-            .annotate(revenue=Sum('amount'))
-            .order_by('-revenue')
-        )
-        dept_revenue = [{'name': d['department__name'] or 'General', 'revenue': d['revenue']} for d in dept_revenue]
-            
-        # Active Stays
-        active_folios = StayRecord.objects.filter(
-            vendor=vendor, 
-            resort_property=current_prop, 
-            status='open'
-        ).select_related('guest', 'room').order_by('room__room_number')
-        
-        # VIPs Arriving Today
-        vip_arrivals = StayRecord.objects.filter(
-            vendor=vendor,
-            resort_property=current_prop,
-            check_in_date=today,
-            guest__vip_status=True
-        ).count()
-
-        is_manager_unlocked = request.session.get('resort_manager_unlocked', False)
-
         context = {
             'period': period,
-            'total_rooms': total_rooms_count,
-            'occupied_rooms': rooms.filter(status='occupied').count(),
-            'dirty_rooms': rooms.filter(status__in=['vacant_dirty', 'cleaning', 'inspected']).count(),
-            'occupancy_rate': occ_rate,
+            'is_manager_unlocked': is_manager_unlocked,
             
             # Gated Financial KPIs
-            'total_revenue': total_rev if is_manager_unlocked else 0,
-            'total_tax': total_tax if is_manager_unlocked else 0,
-            'total_net': total_net if is_manager_unlocked else 0,
-            'room_revenue': room_rev if is_manager_unlocked else 0,
-            'adr': adr if is_manager_unlocked else 0,
-            'revpar': revpar if is_manager_unlocked else 0,
-            'total_revenue_today': total_revenue_today if is_manager_unlocked else 0,
-            'total_tax_today': total_tax_today if is_manager_unlocked else 0,
-            'dept_revenue': dept_revenue if is_manager_unlocked else [],
-            'rev_trend': calc_trend(total_rev, prev_rev) if is_manager_unlocked else 0,
+            'total_revenue': metrics['total_revenue'] if is_manager_unlocked else 0,
+            'total_tax': metrics['total_tax'] if is_manager_unlocked else 0,
+            'total_net': metrics['total_net'] if is_manager_unlocked else 0,
+            'room_revenue': metrics['room_revenue'] if is_manager_unlocked else 0,
+            'adr': metrics['adr'] if is_manager_unlocked else 0,
+            'revpar': metrics['revpar'] if is_manager_unlocked else 0,
+            'total_revenue_today': metrics['total_revenue_today'] if is_manager_unlocked else 0,
+            'total_tax_today': metrics['total_tax_today'] if is_manager_unlocked else 0,
+            'dept_revenue': metrics['dept_revenue'] if is_manager_unlocked else [],
+            'rev_trend': rev_trend if is_manager_unlocked else 0,
             
-            'active_stays': active_folios,
-            'vip_arrivals': vip_arrivals,
-            'available_rooms': rooms.filter(status='vacant_clean'),
-            'all_rooms': rooms.order_by('room_number'),
-            'dirty_room_list': rooms.filter(status__in=['vacant_dirty', 'cleaning', 'inspected']).order_by('room_number'),
+            # Operational KPIs (always visible)
+            'total_rooms': metrics['total_rooms'],
+            'occupied_rooms': metrics['occupied_rooms'],
+            'dirty_rooms': metrics['dirty_rooms'],
+            'occupancy_rate': metrics['occupancy_rate'],
+            'active_stays': metrics['active_stays'],
+            'vip_arrivals': metrics['vip_arrivals'],
+            'available_rooms': metrics['available_rooms'],
+            'all_rooms': metrics['all_rooms'],
+            'dirty_room_list': metrics['dirty_room_list'],
             'departments': Department.objects.filter(vendor=vendor, resort_property=current_prop),
             'all_guests': ResortGuest.objects.filter(vendor=vendor, resort_property=current_prop).order_by('name'),
-            'is_manager_unlocked': is_manager_unlocked
         }
+        
     except Exception as e:
+        import logging
+        logging.error(f"Critical error in resort_dashboard: {e}")
         context = {
             'critical_error': str(e),
-            'total_rooms': 0, 'occupancy_rate': 0, 'total_revenue': 0, 'dept_revenue': []
+            'period': period,
+            'is_manager_unlocked': False,
+            'total_rooms': 0, 'occupancy_rate': 0, 'total_revenue': 0, 'dept_revenue': [],
+            'active_stays': StayRecord.objects.none(),
+            'available_rooms': Room.objects.none(),
+            'all_rooms': Room.objects.none(),
+            'dirty_room_list': Room.objects.none(),
+            'departments': Department.objects.none(),
+            'all_guests': ResortGuest.objects.none(),
         }
     
     template_name = 'resort_portal/dashboard-simple.html' if request.GET.get('simple') == 'true' else 'resort_portal/dashboard.html'
@@ -272,7 +201,7 @@ def resort_dashboard(request):
 def overview(request):
     """New Modular Overview Hub."""
     vendor = request.user
-    current_prop = _get_active_property(request)
+    current_prop = get_active_property(request)
     if not current_prop:
         from django.contrib import messages
         messages.warning(request, "Please set up a property to continue.")
@@ -320,7 +249,7 @@ def legacy_overview_redirect(request):
 def guests_section(request):
     """Modular Guest CRM & Registration Hub."""
     vendor = request.user
-    current_prop = _get_active_property(request)
+    current_prop = get_active_property(request)
     tab = request.GET.get('tab', 'list')
     
     if request.method == 'POST' and request.POST.get('action') == 'register_guest':
@@ -342,7 +271,7 @@ def guests_section(request):
 def rooms_section(request):
     """Housekeeping & Room Readiness Hub."""
     vendor = request.user
-    current_prop = _get_active_property(request)
+    current_prop = get_active_property(request)
     rooms = Room.objects.filter(vendor=vendor, resort_property=current_prop).order_by('room_number')
     
     context = {
@@ -356,7 +285,7 @@ def rooms_section(request):
 def restaurant_section(request):
     """POS & Table Management Hub."""
     vendor = request.user
-    current_prop = _get_active_property(request)
+    current_prop = get_active_property(request)
     tables = RestaurantTable.objects.filter(vendor=vendor, resort_property=current_prop).order_by('table_number')
     
     # Logic for Active Bills list (for the POS Hub)
@@ -374,7 +303,7 @@ def restaurant_section(request):
 def bar_section(request):
     """Bar Tabs & Seating Hub."""
     vendor = request.user
-    current_prop = _get_active_property(request)
+    current_prop = get_active_property(request)
     seats = BarSeat.objects.filter(vendor=vendor, resort_property=current_prop).order_by('seat_number')
     
     # Logic for Active Bills list
@@ -392,7 +321,7 @@ def bar_section(request):
 def events_section(request):
     """Event Bookings & Space Readiness Hub."""
     vendor = request.user
-    current_prop = _get_active_property(request)
+    current_prop = get_active_property(request)
     spaces = EventSpace.objects.filter(vendor=vendor, resort_property=current_prop)
     bookings = EventBooking.objects.filter(vendor=vendor, resort_property=current_prop).order_by('start_date')
     
@@ -404,7 +333,7 @@ def events_section(request):
 def day_visitors_section(request):
     """Day-Visitor (Non-Resident) Check-in Hub."""
     vendor = request.user
-    current_prop = _get_active_property(request)
+    current_prop = get_active_property(request)
     visitors = DayVisitor.objects.filter(vendor=vendor, resort_property=current_prop, status='active')
     passes = DayPass.objects.filter(vendor=vendor, resort_property=current_prop, is_active=True)
     
@@ -423,6 +352,67 @@ def reports_section(request):
 
 @login_required
 @resort_enterprise_required
+def security_settings(request):
+    """Dedicated Security Settings Hub."""
+    vendor = request.user
+    
+    # Check if manager authentication is set up
+    if not hasattr(vendor, 'manager_auth'):
+        # Redirect to setup if no manager auth exists
+        from django.contrib import messages
+        messages.info(request, "Please set up your manager account first.")
+        return redirect('resort_portal:manager_setup')
+    
+    manager_auth = vendor.manager_auth
+    
+    # If account is not verified, redirect to verification
+    if not manager_auth.is_verified:
+        from django.contrib import messages
+        messages.warning(request, "Please verify your manager account to access security settings.")
+        return redirect('resort_portal:manager_verify')
+    
+    # Check if manager is authenticated in this session
+    if not request.session.get('manager_authenticated'):
+        from django.contrib import messages
+        messages.warning(request, "Please log in to access security settings.")
+        return redirect('resort_portal:manager_login')
+    
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'set_pin':
+            pin = request.POST.get('pin')
+            pin_confirm = request.POST.get('pin_confirm')
+            
+            # Enhanced validation
+            if not pin or not pin_confirm:
+                from django.contrib import messages
+                messages.error(request, "Both PIN fields are required.")
+            elif pin != pin_confirm:
+                from django.contrib import messages
+                messages.error(request, "PINs do not match. Please try again.")
+            elif len(pin) != 4 or not pin.isdigit():
+                from django.contrib import messages
+                messages.error(request, "PIN must be exactly 4 digits.")
+            else:
+                # Check for weak PINs
+                weak_pins = ['1234', '0000', '1111', '2222', '3333', '4444', '5555', '6666', '7777', '8888', '9999', '0123', '4321']
+                sequential_patterns = ['0123', '1234', '2345', '3456', '4567', '5678', '6789', '9876', '8765', '7654', '6543', '5432', '4321', '3210']
+                
+                if pin in weak_pins or pin in sequential_patterns:
+                    from django.contrib import messages
+                    messages.error(request, "This PIN is too common and insecure. Please choose a more secure PIN that isn't sequential or repeating.")
+                    return render(request, 'resort_portal/security.html')
+                
+                vendor.set_manager_pin(pin)
+                log_user_activity(vendor, None, request.user, "Manager PIN Updated", f"Manager PIN was {'set' if not request.user.resort_manager_pin else 'updated'}", 'security', 'shield')
+                
+                from django.contrib import messages
+                messages.success(request, "Manager PIN updated successfully.")
+    
+    return render(request, 'resort_portal/security.html')
+
+@login_required
+@resort_enterprise_required
 def settings_section(request):
     """Property & Security Control Hub."""
     return render(request, 'resort_portal/settings_section.html', {})
@@ -432,7 +422,7 @@ def settings_section(request):
 def resort_setup(request):
     """Configuration Hub for Rooms and Departments."""
     vendor = request.user
-    current_prop = _get_active_property(request)
+    current_prop = get_active_property(request)
     if not current_prop:
         # If no property, we must create one
         from vendors.models import Property
@@ -462,15 +452,6 @@ def resort_setup(request):
         elif action == 'delete_room':
             room_id = request.POST.get('id')
             Room.objects.filter(vendor=vendor, resort_property=current_prop, id=room_id).delete()
-        elif action == 'set_pin':
-            pin = request.POST.get('pin')
-            if pin and len(pin) == 4 and pin.isdigit():
-                vendor.set_manager_pin(pin)
-                from django.contrib import messages
-                messages.success(request, "Manager PIN updated successfully.")
-            else:
-                from django.contrib import messages
-                messages.error(request, "Invalid PIN. Must be 4 digits.")
 
     departments = Department.objects.filter(vendor=vendor, resort_property=current_prop)
     rooms = Room.objects.filter(vendor=vendor, resort_property=current_prop).order_by('room_number')
@@ -503,7 +484,7 @@ def log_charge(request):
                 table = None
                 seat = None
                 dept_name = 'General Services'
-                active_prop = _get_active_property(request)
+                active_prop = get_active_property(request)
 
                 if ref_type == 'guest':
                     guest = ResortGuest.objects.get(vendor=vendor, id=ref_id)
@@ -568,7 +549,7 @@ def settle_bill(request):
         pay_method = request.POST.get('payment_method')
         
         try:
-            active_prop = _get_active_property(request)
+            active_prop = get_active_property(request)
             charges = []
             location_name = ""
 
@@ -614,7 +595,7 @@ def guest_index(request):
     """Strategic Guest CRM Hub."""
     from .models import ResortGuest, StayRecord
     vendor = request.user
-    current_prop = _get_active_property(request)
+    current_prop = get_active_property(request)
     
     if request.method == 'POST' and request.POST.get('action') == 'register_guest':
         _handle_guest_registration(request, vendor, current_prop)
@@ -919,3 +900,248 @@ def lock_manager_dashboard(request):
     from django.contrib import messages
     messages.info(request, "Manager view has been locked.")
     return redirect('resort_portal:dashboard')
+
+# Manager Authentication Views
+def generate_verification_code():
+    """Generate 6-digit verification code."""
+    return ''.join(random.choices(string.digits, k=6))
+
+def send_verification_email(email, code, vendor_name):
+    """Send verification code via email."""
+    subject = f"Manager Account Verification - {vendor_name}"
+    message = f"""
+Your verification code for {vendor_name} is: {code}
+
+This code will expire in 15 minutes.
+
+If you didn't request this, please ignore this email.
+"""
+    try:
+        send_mail(
+            subject,
+            message,
+            'noreply@campopawa.com',
+            [email],
+            fail_silently=False,
+        )
+        return True
+    except Exception as e:
+        import logging
+        logging.error(f"Failed to send verification email: {e}")
+        return False
+
+def manager_auth_setup(request):
+    """Initial manager authentication setup."""
+    vendor = request.user
+    
+    # Check if already set up
+    if hasattr(vendor, 'manager_auth') and vendor.manager_auth.is_verified:
+        return redirect('resort_portal:manager_login')
+    
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        phone = request.POST.get('phone', '')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+        
+        # Validation
+        if not email or not password or not confirm_password:
+            messages.error(request, "All fields are required.")
+        elif password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+        elif len(password) < 8:
+            messages.error(request, "Password must be at least 8 characters.")
+        else:
+            # Create or update manager auth
+            manager_auth, created = ManagerAuth.objects.get_or_create(
+                vendor=vendor,
+                defaults={
+                    'email': email,
+                    'phone': phone,
+                    'password_hash': make_password(password),
+                    'verification_code': generate_verification_code(),
+                    'verification_expires': timezone.now() + timedelta(minutes=15),
+                }
+            )
+            
+            if not created:
+                manager_auth.email = email
+                manager_auth.phone = phone
+                manager_auth.password_hash = make_password(password)
+                manager_auth.verification_code = generate_verification_code()
+                manager_auth.verification_expires = timezone.now() + timedelta(minutes=15)
+                manager_auth.is_verified = False
+                manager_auth.save()
+            
+            # Send verification email
+            if send_verification_email(email, manager_auth.verification_code, vendor.business_name):
+                messages.success(request, "Verification code sent to your email.")
+                return redirect('resort_portal:manager_verify')
+            else:
+                messages.error(request, "Failed to send verification email. Please try again.")
+    
+    return render(request, 'resort_portal/auth/setup.html')
+
+def manager_verify(request):
+    """Verify manager account with email code."""
+    vendor = request.user
+    
+    if not hasattr(vendor, 'manager_auth'):
+        return redirect('resort_portal:manager_setup')
+    
+    manager_auth = vendor.manager_auth
+    
+    # Check if verification expired
+    if timezone.now() > manager_auth.verification_expires:
+        messages.error(request, "Verification code expired. Please request a new one.")
+        return redirect('resort_portal:manager_setup')
+    
+    if request.method == 'POST':
+        code = request.POST.get('verification_code')
+        
+        if code == manager_auth.verification_code:
+            manager_auth.is_verified = True
+            manager_auth.verification_code = ''
+            manager_auth.verification_expires = None
+            manager_auth.save()
+            
+            messages.success(request, "Account verified successfully! You can now log in.")
+            return redirect('resort_portal:manager_login')
+        else:
+            messages.error(request, "Invalid verification code.")
+    
+    return render(request, 'resort_portal/auth/verify.html')
+
+def manager_login(request):
+    """Manager login with email and password."""
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        
+        try:
+            vendor = Vendor.objects.get(manager_auth__email=email)
+            manager_auth = vendor.manager_auth
+            
+            # Check if account is locked
+            if manager_auth.is_locked():
+                messages.error(request, "Account locked due to too many failed attempts. Try again later.")
+                return render(request, 'resort_portal/auth/login.html')
+            
+            # Check if account is verified
+            if not manager_auth.is_verified:
+                messages.error(request, "Account not verified. Please check your email.")
+                return render(request, 'resort_portal/auth/login.html')
+            
+            # Verify password
+            if check_password(password, manager_auth.password_hash):
+                # Successful login
+                manager_auth.reset_failed_attempts()
+                request.session['manager_authenticated'] = True
+                request.session['manager_vendor_id'] = vendor.id
+                request.session['manager_login_time'] = timezone.now().isoformat()
+                
+                log_user_activity(vendor, None, request.user, "Manager Login", "Manager successfully logged in", 'security', 'shield')
+                
+                messages.success(request, f"Welcome back, {vendor.business_name}!")
+                return redirect('resort_portal:overview')
+            else:
+                # Failed login
+                manager_auth.increment_failed_attempts()
+                remaining_attempts = 5 - manager_auth.failed_attempts
+                messages.error(request, f"Invalid password. {remaining_attempts} attempts remaining.")
+                
+        except Vendor.DoesNotExist:
+            messages.error(request, "No account found with this email.")
+    
+    return render(request, 'resort_portal/auth/login.html')
+
+def manager_logout(request):
+    """Manager logout."""
+    if request.session.get('manager_authenticated'):
+        vendor_id = request.session.get('manager_vendor_id')
+        try:
+            vendor = Vendor.objects.get(id=vendor_id)
+            log_user_activity(vendor, None, request.user, "Manager Logout", "Manager logged out", 'security', 'shield')
+        except Vendor.DoesNotExist:
+            pass
+    
+    # Clear manager session
+    request.session.pop('manager_authenticated', None)
+    request.session.pop('manager_vendor_id', None)
+    request.session.pop('manager_login_time', None)
+    request.session.pop('resort_manager_unlocked', None)  # Clear old PIN session
+    
+    messages.info(request, "Logged out successfully.")
+    return redirect('resort_portal:manager_login')
+
+def manager_forgot_password(request):
+    """Forgot password - send verification code."""
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        
+        try:
+            vendor = Vendor.objects.get(manager_auth__email=email)
+            manager_auth = vendor.manager_auth
+            
+            # Generate new verification code
+            manager_auth.verification_code = generate_verification_code()
+            manager_auth.verification_expires = timezone.now() + timedelta(minutes=15)
+            manager_auth.save()
+            
+            if send_verification_email(email, manager_auth.verification_code, vendor.business_name):
+                messages.success(request, "Password reset code sent to your email.")
+                request.session['reset_email'] = email
+                return redirect('resort_portal:manager_reset_password')
+            else:
+                messages.error(request, "Failed to send reset email. Please try again.")
+                
+        except Vendor.DoesNotExist:
+            messages.error(request, "No account found with this email.")
+    
+    return render(request, 'resort_portal/auth/forgot.html')
+
+def manager_reset_password(request):
+    """Reset password with verification code."""
+    email = request.session.get('reset_email')
+    
+    if not email:
+        return redirect('resort_portal:manager_forgot_password')
+    
+    try:
+        vendor = Vendor.objects.get(manager_auth__email=email)
+        manager_auth = vendor.manager_auth
+        
+        # Check if verification expired
+        if timezone.now() > manager_auth.verification_expires:
+            messages.error(request, "Reset code expired. Please request a new one.")
+            return redirect('resort_portal:manager_forgot_password')
+        
+        if request.method == 'POST':
+            code = request.POST.get('verification_code')
+            password = request.POST.get('password')
+            confirm_password = request.POST.get('confirm_password')
+            
+            if code != manager_auth.verification_code:
+                messages.error(request, "Invalid verification code.")
+            elif password != confirm_password:
+                messages.error(request, "Passwords do not match.")
+            elif len(password) < 8:
+                messages.error(request, "Password must be at least 8 characters.")
+            else:
+                # Reset password
+                manager_auth.password_hash = make_password(password)
+                manager_auth.verification_code = ''
+                manager_auth.verification_expires = None
+                manager_auth.save()
+                
+                # Clear session
+                request.session.pop('reset_email', None)
+                
+                messages.success(request, "Password reset successfully! You can now log in.")
+                return redirect('resort_portal:manager_login')
+        
+        return render(request, 'resort_portal/auth/reset.html', {'email': email})
+        
+    except Vendor.DoesNotExist:
+        messages.error(request, "Invalid session. Please try again.")
+        return redirect('resort_portal:manager_forgot_password')

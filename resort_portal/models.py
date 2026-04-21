@@ -273,6 +273,117 @@ class Facility(models.Model):
 
 from django.conf import settings
 
+class ResortSettings(models.Model):
+    """Centralized configuration for resort operations."""
+    vendor = models.OneToOneField(Vendor, on_delete=models.CASCADE, related_name='resort_settings')
+    resort_property = models.ForeignKey('vendors.Property', on_delete=models.CASCADE, related_name='settings', null=True, blank=True)
+    
+    # Financial Settings
+    default_tax_rate = models.DecimalField(max_digits=5, decimal_places=2, default=16.00, help_text="Default VAT rate for calculations")
+    currency_code = models.CharField(max_length=3, default='KES', help_text="Currency code for display")
+    currency_symbol = models.CharField(max_length=5, default='KSh', help_text="Currency symbol for display")
+    
+    # Department Configuration
+    default_department_names = models.JSONField(
+        default=dict, 
+        help_text="Default department names for auto-creation"
+    )
+    
+    # Operational Settings
+    auto_checkout_time = models.TimeField(default='10:00', help_text="Default check-out time")
+    auto_checkin_time = models.TimeField(default='14:00', help_text="Default check-in time")
+    housekeeping_alert_threshold = models.PositiveIntegerField(default=5, help_text="Alert when dirty rooms exceed this number")
+    
+    # Display Settings
+    dashboard_refresh_interval = models.PositiveIntegerField(default=300, help_text="Dashboard auto-refresh interval in seconds")
+    enable_vip_alerts = models.BooleanField(default=True, help_text="Show VIP arrival alerts")
+    enable_revenue_alerts = models.BooleanField(default=True, help_text="Show revenue milestone alerts")
+    
+    # Security Settings
+    pin_expiry_days = models.PositiveIntegerField(default=90, help_text="Days after which PIN should be changed")
+    max_login_attempts = models.PositiveIntegerField(default=3, help_text="Maximum failed login attempts before lockout")
+    
+    # Email Settings
+    enable_email_receipts = models.BooleanField(default=True, help_text="Send email receipts on check-out")
+    receipt_email_template = models.TextField(blank=True, help_text="Custom email template for receipts")
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = "Resort Settings"
+        verbose_name_plural = "Resort Settings"
+    
+    def __str__(self):
+        return f"Settings for {self.vendor.business_name}"
+    
+    @classmethod
+    def get_settings(cls, vendor, property_obj=None):
+        """Get or create settings for vendor/property."""
+        settings, created = cls.objects.get_or_create(
+            vendor=vendor,
+            resort_property=property_obj,
+            defaults={
+                'default_department_names': {
+                    'accommodation': 'Room Revenue',
+                    'restaurant': 'Main Restaurant', 
+                    'bar': 'Pool Bar',
+                    'spa': 'Spa & Wellness',
+                    'events': 'Events & Functions'
+                }
+            }
+        )
+        return settings
+
+class ManagerAuth(models.Model):
+    """Manager authentication and verification system."""
+    vendor = models.OneToOneField(Vendor, on_delete=models.CASCADE, related_name='manager_auth')
+    email = models.EmailField(help_text="Manager email for verification")
+    phone = models.CharField(max_length=20, blank=True, help_text="Manager phone for verification")
+    password_hash = models.CharField(max_length=255, help_text="Hashed manager password")
+    is_verified = models.BooleanField(default=False, help_text="Email/phone verification status")
+    verification_code = models.CharField(max_length=6, blank=True, help_text="Email/phone verification code")
+    verification_expires = models.DateTimeField(null=True, blank=True, help_text="Verification code expiry")
+    failed_attempts = models.PositiveIntegerField(default=0, help_text="Failed login attempts")
+    locked_until = models.DateTimeField(null=True, blank=True, help_text="Account lockout expiry")
+    last_login = models.DateTimeField(null=True, blank=True, help_text="Last successful login")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = "Manager Authentication"
+        verbose_name_plural = "Manager Authentication"
+    
+    def __str__(self):
+        return f"Manager Auth for {self.vendor.business_name}"
+    
+    def is_locked(self):
+        """Check if account is locked due to failed attempts."""
+        if self.locked_until:
+            from django.utils import timezone
+            return timezone.now() < self.locked_until
+        return False
+    
+    def can_attempt_login(self):
+        """Check if user can attempt login."""
+        return not self.is_locked() and self.failed_attempts < 5
+    
+    def increment_failed_attempts(self):
+        """Increment failed login attempts and lock if needed."""
+        self.failed_attempts += 1
+        if self.failed_attempts >= 5:
+            from django.utils import timezone, timedelta
+            self.locked_until = timezone.now() + timedelta(minutes=30)
+        self.save()
+    
+    def reset_failed_attempts(self):
+        """Reset failed attempts after successful login."""
+        self.failed_attempts = 0
+        self.locked_until = None
+        from django.utils import timezone
+        self.last_login = timezone.now()
+        self.save()
+
 class UserActivity(models.Model):
     CATEGORIES = [('guest', 'Guest Ops'), ('financial', 'Financial'), ('housekeeping', 'Housekeeping'), ('pos', 'Service/POS')]
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='resort_activities')

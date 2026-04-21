@@ -1,0 +1,60 @@
+<!-- KPI Cards Component -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+    <!-- Occupancy -->
+    <div class="glass-box premium-border p-8 rounded-[2.5rem] relative overflow-hidden group">
+        <div class="absolute -right-4 -top-4 w-32 h-32 bg-brand/5 blur-3xl rounded-full group-hover:bg-brand/10 transition-all"></div>
+        <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-brand"></span>
+            Occupancy Pulse
+        </p>
+        <div class="space-y-1">
+            <p class="text-4xl font-outfit font-black text-white tracking-tighter">
+                {{ occupancy_rate }}%
+            </p>
+            <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest">{{ occupied_rooms }} / {{ total_rooms }} Rooms Booked</p>
+        </div>
+    </div>
+
+    <!-- Revenue (Green Highlighted) -->
+    <div class="glass-box premium-border p-8 rounded-[2.5rem] relative overflow-hidden group border-emerald-500/10">
+        <div class="absolute -right-4 -top-4 w-32 h-32 bg-emerald-500/10 blur-3xl rounded-full group-hover:bg-emerald-500/20 transition-all"></div>
+        <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            Strategic Yield
+        </p>
+        <div class="space-y-1">
+            <p class="text-4xl font-outfit font-black text-emerald-400 tracking-tighter">
+                {% if is_manager_unlocked %}KSh {{ total_revenue_today|floatformat:0 }}{% else %}<span class="text-stone-600">Locked</span>{% endif %}
+            </p>
+            <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Today's Revenue Flow</p>
+        </div>
+    </div>
+
+    <!-- Arrivals (Orange/White wording) -->
+    <div class="glass-box premium-border p-8 rounded-[2.5rem] relative overflow-hidden group">
+        <div class="absolute -right-4 -top-4 w-32 h-32 bg-orange-500/5 blur-3xl rounded-full group-hover:bg-orange-500/10 transition-all"></div>
+        <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-orange-400"></span>
+            Arrival Matrix
+        </p>
+        <div class="space-y-1">
+            <p class="text-4xl font-outfit font-black text-white tracking-tighter">
+                {% if active_stays.count %}{{ active_stays.count }}{% else %}0{% endif %} <span class="text-xs text-orange-400">Active</span>
+            </p>
+            <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest">{{ vip_arrivals }} VIP Protocols Pending</p>
+        </div>
+    </div>
+
+    <!-- Housekeeping -->
+    <div class="glass-box premium-border p-8 rounded-[2.5rem] relative overflow-hidden group">
+        <div class="absolute -right-4 -top-4 w-32 h-32 bg-teal-500/5 blur-3xl rounded-full group-hover:bg-teal-500/10 transition-all"></div>
+        <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-6 flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
+            Service Flow
+        </p>
+        <div class="space-y-1">
+            <p class="text-4xl font-outfit font-black text-white tracking-tighter">{{ dirty_rooms }} <span class="text-xs text-teal-400">Dirty</span></p>
+            <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Rooms Awaiting Turnaround</p>
+        </div>
+    </div>
+</div>

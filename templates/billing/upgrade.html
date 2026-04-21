@@ -7,46 +7,61 @@
 <div class="flex min-h-screen bg-deep overflow-hidden">
     {% include 'partials/sidebar.html' %}
 
-    <div class="flex-1 h-screen overflow-y-auto overflow-x-hidden relative">
-        <!-- Background Accents -->
-        <div class="absolute top-0 right-0 w-96 h-96 bg-brand/5 blur-[120px] pointer-events-none"></div>
-        <div class="absolute bottom-0 left-0 w-64 h-64 bg-brand/5 blur-[100px] pointer-events-none"></div>
+    <div class="flex-1 h-screen overflow-y-auto overflow-x-hidden relative selection:bg-brand selection:text-deep">
+        <!-- Sophisticated Background Engine -->
+        <div class="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
+            <div class="absolute -top-40 -left-40 w-[800px] h-[800px] bg-brand/5 blur-[120px] rounded-full"></div>
+            <div class="absolute top-1/2 -right-40 w-[600px] h-[600px] bg-magic-blue/5 blur-[100px] rounded-full"></div>
+            <div class="absolute -bottom-40 left-1/4 w-[700px] h-[700px] bg-stone-500/5 blur-[120px] rounded-full"></div>
+        </div>
 
-        <div class="p-6 md:p-10 pb-24 max-w-7xl mx-auto">
+        <div class="p-6 md:p-10 pb-24 max-w-7xl mx-auto relative z-10">
             
             <!-- Header section -->
-            <div class="mb-12">
-                <div class="flex items-center justify-between gap-4 mb-8">
-                    <a href="{% url 'vendors:dashboard' %}" class="glass-box premium-border px-6 py-3 rounded-xl text-stone-400 font-bold hover:text-white transition-all flex items-center gap-2">
-                        ← Exit to Operations
+            <div class="mb-4 md:mb-16">
+                <div class="flex items-center justify-between gap-4 mb-8 md:mb-12">
+                    <a href="{% url 'vendors:dashboard' %}" class="glass-box premium-border px-5 py-2.5 rounded-xl text-stone-400 font-bold hover:text-white transition-all flex items-center gap-2 text-xs uppercase tracking-widest">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                        Exit to Operations
                     </a>
-                    <div class="px-4 py-1.5 bg-brand/10 border border-brand/20 rounded-full">
+                    <div class="px-5 py-2 bg-brand/10 border border-brand/20 rounded-full shadow-[0_0_20px_rgba(197,160,89,0.1)]">
                         <span class="text-[10px] font-black uppercase tracking-[0.2em] text-brand">Current Tier: {{ current_plan|upper }}</span>
                     </div>
                 </div>
 
                 <div class="text-center">
-                    <h1 class="text-4xl md:text-6xl font-outfit font-black text-white tracking-tight mb-4">
-                        CHOOSE YOUR <span class="text-brand">PLAN</span>.
+                    <div class="inline-flex items-center gap-2 px-6 py-2 bg-brand/10 border border-brand/20 rounded-full mb-4 md:mb-8 shadow-[0_0_20px_rgba(197,160,89,0.1)]">
+                        <span class="w-1.5 h-1.5 rounded-full bg-brand animate-pulse"></span>
+                        <span class="text-[10px] font-black uppercase tracking-[0.3em] text-brand">Institutional Roadmap</span>
+                    </div>
+                    <h1 class="text-5xl md:text-7xl font-outfit font-black text-white tracking-tight mb-6 leading-tight">
+                        CHOOSE YOUR <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand via-magic-blue to-white">PLAN.</span>
                     </h1>
-                    <p class="text-stone-500 font-medium text-lg">Scalable intelligence for MSMEs, NGOs, and Resorts.</p>
+                    <p class="text-stone-400 font-medium text-xl max-w-2xl mx-auto">Scalable intelligence for MSMEs, NGOs, and Resorts.</p>
                 </div>
             </div>
 
+            <!-- Mobile Plan Switcher -->
+            <div class="md:hidden max-w-sm mx-auto mb-10 p-1 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl flex">
+                <button onclick="switchPlan('standard')" id="btn-standard" class="flex-1 py-3 px-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all bg-stone-800 text-stone-300">Basic</button>
+                <button onclick="switchPlan('retail')" id="btn-retail" class="flex-1 py-3 px-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all text-stone-500">Retail</button>
+                <button onclick="switchPlan('enterprise')" id="btn-enterprise" class="flex-1 py-3 px-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all text-stone-500">Elite</button>
+            </div>
+
             <!-- Modern Plans Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            <div id="plans-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-8 md:mb-16">
                 <!-- Free Tier -->
-                <div class="glass-box premium-border rounded-[2.5rem] p-8 flex flex-col justify-between transition-all hover:-translate-y-1">
+                <div id="plan-standard" class="glass-box premium-border rounded-[2.5rem] p-8 md:p-10 flex flex-col justify-between hover:bg-white/[0.02] h-auto min-h-[480px] md:h-[520px] transition-all hover:-translate-y-1">
                     <div>
-                        <div class="flex justify-between items-start mb-6">
-                            <h3 class="text-2xl font-outfit font-black text-white px-4 py-1 bg-white/5 rounded-full">Free</h3>
-                            <span class="text-stone-600 font-black text-[10px] uppercase tracking-widest mt-2">Operational Base</span>
+                        <div class="flex justify-between items-start mb-8">
+                            <h3 class="text-xl font-black text-stone-400 uppercase tracking-widest">Standard</h3>
+                            <span class="text-stone-600 font-black text-[10px] uppercase tracking-widest mt-1">Operational Base</span>
                         </div>
-                        <div class="mb-8">
-                            <span class="text-5xl font-outfit font-black text-white">KES 0</span>
-                            <p class="text-stone-500 text-sm mt-1">Foundational insights</p>
+                        <div class="mb-10">
+                            <span class="text-6xl font-outfit font-black text-white tracking-tighter">KES 0</span>
+                            <p class="text-stone-500 text-sm mt-2 font-medium">Foundational insights</p>
                         </div>
-                        <ul class="space-y-4 mb-10">
+                        <ul class="space-y-4 mb-10 border-t border-white/5 pt-10">
                             <li class="flex items-center gap-3 text-stone-300 text-sm">
                                 <div class="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xs">✓</div>
                                 20 active customers
@@ -56,32 +71,31 @@
                                 Basic dashboard
                             </li>
                             <li class="flex items-center gap-3 text-stone-500 text-sm line-through">
-                                <div class="w-5 h-5 rounded-full bg-white/5 flex items-center justify-center text-stone-700 text-xs">✗</div>
+                                <div class="w-5 h-5 rounded-full bg-white/5 flex items-center justify-center text-stone-700 text-xs text-[8px]">✗</div>
                                 SMS/WhatsApp Automations
                             </li>
                         </ul>
                     </div>
                     {% if current_plan == 'free' %}
-                        <button disabled class="w-full bg-stone-800 text-stone-500 font-black py-4 rounded-2xl cursor-not-allowed">Active Tier</button>
+                        <button disabled class="w-full bg-stone-800 text-stone-500 font-black py-4 rounded-2xl cursor-not-allowed uppercase tracking-widest text-[10px]">Active Tier</button>
                     {% else %}
-                        <a href="{% url 'vendors:dashboard' %}" class="w-full bg-white/5 text-white font-black py-4 rounded-2xl text-center hover:bg-white/10 transition-all">Select Tier</a>
+                        <a href="{% url 'vendors:dashboard' %}" class="w-full border border-white/10 text-white font-black py-4 rounded-2xl text-center hover:bg-white/5 transition-all uppercase tracking-widest text-[10px]">Select Tier</a>
                     {% endif %}
                 </div>
 
                 <!-- MSME Retail Pro -->
-                <div class="glass-box premium-border border-brand/50 rounded-[2.5rem] p-8 flex flex-col justify-between transition-all hover:-translate-y-2 relative shadow-[0_0_50px_rgba(197,160,89,0.15)] bg-gradient-to-br from-stone-900/50 to-brand/10">
-                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-brand text-deep px-6 py-1.5 rounded-full font-black text-[10px] uppercase tracking-widest shadow-brand">Most Strategic</div>
+                <div id="plan-retail" class="glass-box premium-border border-stone-800 rounded-[3rem] p-10 md:p-12 flex flex-col justify-between relative shadow-2xl bg-gradient-to-br from-stone-900/40 to-stone-800/10 h-auto min-h-[520px] md:h-[560px] group hover:border-brand/40 transition-all hover:-translate-y-2 hidden md:flex">
                     <div>
-                        <div class="flex justify-between items-start mb-6">
-                            <h3 class="text-2xl font-outfit font-black text-white">Retail Pro</h3>
-                            <span class="text-brand font-black text-[10px] uppercase tracking-widest mt-2">Scale MSME</span>
+                        <div class="flex justify-between items-start mb-8">
+                            <h4 class="text-lg font-black text-stone-300 group-hover:text-brand transition-colors uppercase tracking-widest">Retail Pro</h4>
+                            <span class="text-brand font-black text-[10px] uppercase tracking-widest mt-1">Scale MSME</span>
                         </div>
-                        <div class="mb-8">
-                            <span class="text-5xl font-outfit font-black text-white">KES 700</span>
-                            <span class="text-stone-500 text-sm">/mo</span>
-                            <p class="text-stone-400 text-sm mt-1">Growth engine for retailers</p>
+                        <div class="mb-10">
+                            <span class="text-6xl font-outfit font-black text-white tracking-tighter">KES 700</span>
+                            <span class="text-stone-600 font-bold ml-2">/mo</span>
+                            <p class="text-stone-400 text-sm mt-2 font-medium">Growth engine for retailers</p>
                         </div>
-                        <ul class="space-y-4 mb-10">
+                        <ul class="space-y-4 mb-10 border-t border-stone-800 pt-10">
                             <li class="flex items-center gap-3 text-white text-sm font-bold">
                                 <div class="w-5 h-5 rounded-full bg-brand/20 flex items-center justify-center text-brand text-xs">✓</div>
                                 Unlimited customers
@@ -97,83 +111,90 @@
                         </ul>
                     </div>
                     {% if current_plan == 'premium' or current_plan == 'premium_retail' %}
-                        <button disabled class="w-full bg-stone-800 text-stone-500 font-black py-4 rounded-2xl cursor-not-allowed">Active Tier</button>
+                        <button disabled class="w-full bg-stone-800 text-stone-500 font-black py-4 rounded-2xl cursor-not-allowed uppercase tracking-widest text-[10px]">Active Tier</button>
                     {% else %}
-                        <button onclick="showPaymentModal('premium_retail')" class="w-full bg-brand text-deep font-black py-4 rounded-2xl shadow-brand hover:scale-[1.02] transition-all uppercase tracking-tighter">Deploy Pro</button>
+                        <button onclick="showPaymentModal('premium_retail')" class="w-full bg-stone-800 text-white font-black py-5 rounded-2xl hover:bg-brand hover:text-deep transition-all uppercase tracking-widest text-xs">Deploy Pro Instance</button>
                     {% endif %}
                 </div>
 
                 <!-- Enterprise NGO/Resort -->
-                <div class="glass-box premium-border rounded-[2.5rem] p-8 flex flex-col justify-between transition-all hover:-translate-y-1">
+                <div id="plan-enterprise" class="glass-box premium-border border-magic-blue/50 rounded-[3rem] p-10 md:p-12 flex flex-col justify-between relative shadow-[0_0_40px_rgba(59,130,246,0.1)] bg-gradient-to-br from-stone-900/40 to-magic-blue/5 h-auto min-h-[540px] md:h-[580px] md:scale-105 transition-all hover:border-magic-blue hidden md:flex">
+                    <div class="absolute -top-5 left-1/2 -translate-x-1/2 bg-magic-blue text-white text-[10px] font-black px-6 py-2 rounded-full uppercase tracking-[0.2em] shadow-lg shadow-magic-blue/20">Elite Corporate</div>
                     <div>
-                        <div class="flex justify-between items-start mb-6">
-                            <h3 class="text-2xl font-outfit font-black text-white">Enterprise</h3>
-                            <span class="text-stone-600 font-black text-[10px] uppercase tracking-widest mt-2">NGO & Resort</span>
+                        <div class="flex justify-between items-start mb-8">
+                            <h4 class="text-lg font-black text-magic-blue uppercase tracking-widest">Portal Access</h4>
+                            <span class="text-stone-600 font-black text-[10px] uppercase tracking-widest mt-1">NGO & Resort</span>
                         </div>
-                        <div class="mb-8">
-                            <span class="text-5xl font-outfit font-black text-white">KES 3,500</span>
-                            <span class="text-stone-500 text-sm">/mo</span>
-                            <p class="text-stone-400 text-sm mt-1">Complete portal management</p>
+                        <div class="mb-10">
+                            <span class="text-6xl font-outfit font-black text-white tracking-tighter text-glow-blue">KES 3.5k</span>
+                            <span class="text-magic-blue/40 font-bold ml-2">/mo</span>
+                            <p class="text-stone-400 text-sm mt-2 font-medium">Complete portal management</p>
                         </div>
-                        <ul class="space-y-4 mb-10">
+                        <ul class="space-y-4 mb-10 border-t border-magic-blue/20 pt-10">
                             <li class="flex items-center gap-3 text-white text-sm font-bold">
-                                <div class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-white text-xs">✓</div>
+                                <div class="w-5 h-5 rounded-full bg-teal-400/20 flex items-center justify-center text-teal-400 text-xs">✓</div>
                                 Multi-Vendor Hub
                             </li>
                             <li class="flex items-center gap-3 text-stone-300 text-sm">
-                                <div class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-white text-xs">✓</div>
+                                <div class="w-5 h-5 rounded-full bg-fuchsia-500/20 flex items-center justify-center text-fuchsia-400 text-xs">✓</div>
                                 Specialty Dashboards
                             </li>
                             <li class="flex items-center gap-3 text-stone-300 text-sm">
-                                <div class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-white text-xs">✓</div>
+                                <div class="w-5 h-5 rounded-full bg-magic-blue/20 flex items-center justify-center text-magic-blue text-xs">✓</div>
                                 Priority 24/7 Support
                             </li>
                         </ul>
                     </div>
                     {% if current_plan == 'enterprise_ngo' or current_plan == 'enterprise_resort' %}
-                        <button disabled class="w-full bg-stone-800 text-stone-500 font-black py-4 rounded-2xl cursor-not-allowed">Active Tier</button>
+                        <button disabled class="w-full bg-stone-800 text-stone-500 font-black py-4 rounded-2xl cursor-not-allowed uppercase tracking-widest text-[10px]">Active Tier</button>
                     {% else %}
-                        <button onclick="showPaymentModal('enterprise')" class="w-full bg-stone-900 border border-white/20 text-white font-black py-4 rounded-2xl hover:bg-stone-800 transition-all uppercase tracking-tighter">Deploy Enterprise</button>
+                        <button onclick="showPaymentModal('enterprise')" class="w-full bg-magic-blue text-white font-black py-5 rounded-2xl shadow-lg shadow-magic-blue/20 hover:scale-[1.05] transition-all uppercase tracking-widest text-xs">Secure My Portal</button>
                     {% endif %}
                 </div>
             </div>
 
             <!-- Detailed Comparison -->
-            <div class="glass-box premium-border rounded-3xl overflow-hidden mt-20">
-                <div class="p-8 border-b border-white/5">
-                    <h3 class="text-xl font-outfit font-black text-white flex items-center gap-3">
+            <div class="glass-box premium-border rounded-[2rem] md:rounded-[2.5rem] overflow-hidden mt-12 md:mt-24 mb-8 md:mb-12 shadow-2xl">
+                <div class="p-6 md:p-10 border-b border-white/5 bg-white/[0.02]">
+                    <h3 class="text-2xl font-outfit font-black text-white flex items-center gap-4">
                         Structural Comparison
-                        <span class="px-2 py-0.5 bg-white/5 rounded text-[10px] text-stone-500 font-bold uppercase tracking-widest">Analytics Matrix</span>
+                        <span class="px-3 py-1 bg-white/5 rounded-full text-[10px] text-stone-500 font-black uppercase tracking-[0.2em] border border-white/5">Analytics Matrix</span>
                     </h3>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left">
+                    <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-stone-900/50">
-                                <th class="px-8 py-4 text-stone-500 text-[10px] uppercase font-black">Functional Area</th>
-                                <th class="px-8 py-4 text-white text-xs font-black uppercase">Free</th>
-                                <th class="px-8 py-4 text-brand text-xs font-black uppercase">Retail Pro</th>
-                                <th class="px-8 py-4 text-white text-xs font-black uppercase font-black">Enterprise</th>
+                            <tr class="bg-white/[0.01]">
+                                <th class="sticky left-0 z-20 bg-[#141210] px-4 md:px-10 py-4 md:py-6 text-stone-500 text-[10px] uppercase font-black tracking-widest border-b border-white/5">Functional Area</th>
+                                <th class="px-4 md:px-10 py-4 md:py-6 text-white text-xs font-black uppercase tracking-widest border-b border-white/5">Standard</th>
+                                <th class="px-4 md:px-10 py-4 md:py-6 text-brand text-xs font-black uppercase tracking-widest border-b border-white/5">Retail Pro</th>
+                                <th class="px-4 md:px-10 py-4 md:py-6 text-magic-blue text-xs font-black uppercase tracking-widest border-b border-white/5">Enterprise</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-white/5">
-                            <tr>
-                                <td class="px-8 py-6 text-stone-400 text-sm">Customer Database</td>
-                                <td class="px-8 py-6 text-stone-300 text-sm">20 Seats</td>
-                                <td class="px-8 py-6 text-white text-sm font-bold">Unlimited</td>
-                                <td class="px-8 py-6 text-white text-sm font-bold">Unlimited</td>
+                            <tr class="hover:bg-white/[0.02] transition-colors">
+                                <td class="sticky left-0 z-20 bg-[#141210] px-4 md:px-10 py-6 md:py-8 text-stone-400 text-sm font-medium">Customer Database</td>
+                                <td class="px-4 md:px-10 py-6 md:py-8 text-stone-300 text-sm">20 Seats</td>
+                                <td class="px-4 md:px-10 py-6 md:py-8 text-white text-sm font-black">Unlimited</td>
+                                <td class="px-4 md:px-10 py-6 md:py-8 text-white text-sm font-black">Unlimited</td>
                             </tr>
-                            <tr>
-                                <td class="px-8 py-6 text-stone-400 text-sm">Automated Broadcasts</td>
-                                <td class="px-8 py-6 text-red-400/50">✗</td>
-                                <td class="px-8 py-6 text-emerald-400 font-black">✓</td>
-                                <td class="px-8 py-6 text-emerald-400 font-black">✓</td>
+                            <tr class="hover:bg-white/[0.02] transition-colors">
+                                <td class="sticky left-0 z-20 bg-[#141210] px-4 md:px-10 py-6 md:py-8 text-stone-400 text-sm font-medium">Automated Broadcasts</td>
+                                <td class="px-4 md:px-10 py-6 md:py-8 text-stone-700">
+                                    <div class="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-[10px]">✗</div>
+                                </td>
+                                <td class="px-4 md:px-10 py-6 md:py-8 text-emerald-400 font-black">
+                                    <div class="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-[10px]">✓</div>
+                                </td>
+                                <td class="px-4 md:px-10 py-6 md:py-8 text-emerald-400 font-black">
+                                    <div class="w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center text-[10px]">✓</div>
+                                </td>
                             </tr>
-                            <tr>
-                                <td class="px-8 py-6 text-stone-400 text-sm">Portal Capabilities</td>
-                                <td class="px-8 py-6 text-stone-400">Single Location</td>
-                                <td class="px-8 py-6 text-stone-300">Advanced Hub</td>
-                                <td class="px-8 py-6 text-white font-bold">Multi-Tenant Portals</td>
+                            <tr class="hover:bg-white/[0.02] transition-colors">
+                                <td class="sticky left-0 z-20 bg-[#141210] px-4 md:px-10 py-6 md:py-8 text-stone-400 text-sm font-medium">Portal Capabilities</td>
+                                <td class="px-4 md:px-10 py-6 md:py-8 text-stone-500 italic text-sm">Single Location</td>
+                                <td class="px-4 md:px-10 py-6 md:py-8 text-stone-300 text-sm font-bold">Advanced Hub</td>
+                                <td class="px-4 md:px-10 py-6 md:py-8 text-white font-black text-sm">Multi-Tenant Portals</td>
                             </tr>
                         </tbody>
                     </table>
@@ -241,15 +262,57 @@
     };
 
     function showPaymentModal(planId) {
+        const planData = plans[planId];
         document.getElementById('selected_plan').value = planId;
-        document.getElementById('plan-name-display').textContent = plans[planId].name;
-        document.getElementById('plan-amount-display').textContent = `KES ${plans[planId].amount.toLocaleString()}`;
+        document.getElementById('plan-name-display').textContent = planData.name;
+        document.getElementById('plan-amount-display').textContent = `KES ${planData.amount.toLocaleString()}`;
         document.getElementById('payment-modal').classList.remove('hidden');
+        document.getElementById('payment-modal').classList.add('flex');
     }
 
     function closePaymentModal() {
+        document.getElementById('payment-modal').classList.remove('flex');
         document.getElementById('payment-modal').classList.add('hidden');
     }
+
+    // Plan Switching Logic for Mobile
+    function switchPlan(planId) {
+        if (window.innerWidth >= 768) return;
+
+        const plans = ['standard', 'retail', 'enterprise'];
+        plans.forEach(p => {
+            const card = document.getElementById('plan-' + p);
+            const btn = document.getElementById('btn-' + p);
+            
+            if (p === planId) {
+                card.classList.remove('hidden');
+                card.classList.add('flex', 'animate-fade-in');
+                btn.classList.add('bg-stone-800', 'text-stone-300 shadow-xl');
+                btn.classList.remove('text-stone-500');
+            } else {
+                card.classList.add('hidden');
+                card.classList.remove('flex', 'animate-fade-in');
+                btn.classList.remove('bg-stone-800', 'text-stone-300 shadow-xl');
+                btn.classList.add('text-stone-500');
+            }
+        });
+    }
+
+    // Handle resize to ensure desktop layout is preserved and mobile state is correct
+    window.addEventListener('resize', () => {
+        const plans = ['standard', 'retail', 'enterprise'];
+        if (window.innerWidth >= 768) {
+            plans.forEach(p => {
+                const card = document.getElementById('plan-' + p);
+                card.classList.remove('hidden');
+                card.classList.add('flex');
+            });
+        } else {
+            // Find currently active button
+            const activeBtn = plans.find(p => document.getElementById('btn-' + p).classList.contains('bg-stone-800'));
+            switchPlan(activeBtn || 'standard');
+        }
+    });
 
     document.getElementById('payment-form').addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -286,4 +349,10 @@
         if (e.target === this) closePaymentModal();
     });
 </script>
+
+<style>
+    .text-glow-blue {
+        text-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
+    }
+</style>
 {% endblock %}

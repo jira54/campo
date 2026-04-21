@@ -5,7 +5,7 @@
 
 {% block content %}
 
-<div class="min-h-screen bg-deep relative overflow-hidden selection:bg-brand selection:text-deep">
+<div class="min-h-screen bg-deep relative overflow-x-hidden selection:bg-brand selection:text-deep">
     <!-- Sophisticated Background Engine -->
     <div class="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
         <div class="absolute -top-40 -left-40 w-[800px] h-[800px] bg-brand/5 blur-[120px] rounded-full"></div>
@@ -14,7 +14,7 @@
     </div>
 
     <!-- Enhanced Navigation -->
-    <nav class="enhanced-navigation relative z-50 border-b border-white/5 py-4 px-6 md:px-12 backdrop-blur-xl bg-deep/60 sticky top-0">
+    <nav class="enhanced-navigation relative z-[100] border-b border-white/5 py-4 px-6 md:px-12 backdrop-blur-xl bg-deep/60 sticky top-0">
         <div class="flex items-center justify-between max-w-7xl mx-auto">
             <!-- Logo -->
             <div class="flex items-center gap-3">
@@ -22,7 +22,7 @@
                 <h1 class="text-2xl font-black text-white tracking-tighter font-outfit cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Campo<span class="text-brand">Pawa</span></h1>
             </div>
             
-            <!-- Navigation Menu -->
+            <!-- Navigation Menu (Desktop) -->
             <div class="hidden md:flex items-center gap-8">
                 <div class="nav-item group relative">
                     <a href="#solutions" class="text-stone-300 font-bold hover:text-white transition-colors uppercase tracking-widest text-[10px] flex items-center gap-2">
@@ -53,32 +53,39 @@
                 <a href="#contact" class="text-stone-300 font-bold hover:text-white transition-colors uppercase tracking-widest text-[10px]">Contact</a>
             </div>
             
-            <!-- Actions -->
-            <div class="flex items-center gap-2 md:gap-4">
+            <!-- Actions (Desktop) -->
+            <div class="hidden md:flex items-center gap-4">
                 <a href="{% url 'login' %}" class="px-5 py-2.5 text-stone-300 font-bold hover:text-white hover:bg-stone-900/80 rounded-xl transition-all uppercase tracking-widest text-[10px]">Login</a>
                 <a href="{% url 'register' %}" class="bg-white text-deep font-black px-6 py-3 rounded-xl hover:scale-105 active:scale-95 transition-all shadow-xl text-sm">Start Free</a>
             </div>
             
             <!-- Mobile Menu Toggle -->
-            <button class="md:hidden text-white" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+            <button class="md:hidden text-white p-2 hover:bg-white/5 rounded-xl transition-colors" onclick="const menu = document.getElementById('mobile-menu'); menu.classList.toggle('hidden'); menu.classList.toggle('flex');">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
             </button>
         </div>
         
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden mt-4 pt-4 border-t border-white/10 flex flex-col gap-4 pb-4">
-            <a href="#solutions" class="text-stone-300 font-bold hover:text-white transition-colors uppercase tracking-widest text-[10px]">Solutions</a>
-            <a href="#how-it-works" class="text-stone-300 font-bold hover:text-white transition-colors uppercase tracking-widest text-[10px]">How it Works</a>
-            <a href="#pricing" class="text-stone-300 font-bold hover:text-white transition-colors uppercase tracking-widest text-[10px]">Pricing</a>
-            <a href="#about" class="text-stone-300 font-bold hover:text-white transition-colors uppercase tracking-widest text-[10px]">About</a>
-            <a href="#contact" class="text-stone-300 font-bold hover:text-white transition-colors uppercase tracking-widest text-[10px]">Contact</a>
-            <a href="{% url 'login' %}" class="px-4 py-3 text-stone-300 font-bold hover:text-white hover:bg-stone-900/80 rounded-xl transition-all uppercase tracking-widest text-[10px] mt-2">Login</a>
-            <a href="{% url 'register' %}" class="bg-brand text-deep font-black px-6 py-3 rounded-xl text-center text-sm">Join Now</a>
+        <!-- Mobile Menu (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden absolute left-0 right-0 top-full bg-deep/95 backdrop-blur-2xl border-b border-white/10 flex-col p-6 animate-fade-in-down">
+            <div class="flex flex-col gap-5">
+                <a href="#solutions" class="text-stone-300 font-black hover:text-brand transition-colors uppercase tracking-[0.2em] text-[10px]">Solutions</a>
+                <a href="#how-it-works" class="text-stone-300 font-black hover:text-brand transition-colors uppercase tracking-[0.2em] text-[10px]">How it Works</a>
+                <a href="#pricing" class="text-stone-300 font-black hover:text-brand transition-colors uppercase tracking-[0.2em] text-[10px]">Pricing</a>
+                <a href="#about" class="text-stone-300 font-black hover:text-brand transition-colors uppercase tracking-[0.2em] text-[10px]">About</a>
+                <a href="#contact" class="text-stone-300 font-black hover:text-brand transition-colors uppercase tracking-[0.2em] text-[10px]">Contact</a>
+                
+                <div class="h-px bg-white/5 my-2"></div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <a href="{% url 'login' %}" class="px-5 py-4 border border-white/10 text-center text-white font-black rounded-2xl uppercase tracking-widest text-[10px]">Login</a>
+                    <a href="{% url 'register' %}" class="bg-brand text-deep font-black px-6 py-4 rounded-2xl text-center text-sm shadow-brand">Join Now</a>
+                </div>
+            </div>
         </div>
     </nav>
 
     <!-- Master Hero (Spaced and Comfortable) -->
-    <section class="relative z-10 pt-20 pb-16 px-4 md:pt-32 md:pb-24 text-center">
+    <section class="relative z-10 pt-20 pb-16 px-6 md:pt-32 md:pb-24 text-center">
         <div class="max-w-5xl mx-auto">
             <!-- Badge -->
             <div class="inline-flex items-center gap-2 px-6 py-2 bg-brand/10 border border-brand/20 rounded-full mb-8 animate-fade-in shadow-[0_0_20px_rgba(197,160,89,0.1)]">
@@ -86,32 +93,41 @@
                 <span class="text-[10px] font-black uppercase tracking-[0.3em] text-brand">The Unified Business Architecture</span>
             </div>
             <!-- Heading -->
-            <h2 class="text-5xl md:text-7xl font-black text-white mb-8 leading-[1] tracking-tighter font-outfit">
+            <h2 class="text-4xl sm:text-5xl md:text-7xl font-black text-white mb-8 leading-[1.1] tracking-tighter font-outfit">
                 Scale Your Enterprise. <br class="hidden md:block">
                 <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand via-magic-blue to-white">Bila Worry.</span>
             </h2>
             <!-- Subtext -->
-            <p class="text-xl md:text-2xl text-stone-300 mb-12 max-w-3xl mx-auto font-medium leading-relaxed">
+            <p class="text-lg md:text-2xl text-stone-300 mb-12 max-w-3xl mx-auto font-medium leading-relaxed">
                 Empowering Kenyan businesses with world-class automation, secure data tracking, and seamless financial operations.
             </p>
             <!-- CTA Buttons -->
-            <div class="flex flex-col sm:flex-row justify-center gap-6">
+            <div class="flex flex-col sm:flex-row justify-center gap-4 md:gap-6">
                 <a href="{% url 'register' %}" class="bg-brand text-deep font-black text-lg px-12 py-5 rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-brand uppercase tracking-tighter">Start Your Journey</a>
-                <a href="#solutions" class="bg-white/5 border border-white/10 text-white font-bold text-lg px-12 py-5 rounded-2xl hover:bg-white/10 transition-all backdrop-blur-md">Explore the Ecosystem</a>
+                <a href="#solutions" class="bg-white/5 border border-white/10 text-white font-bold text-lg px-12 py-5 rounded-2xl hover:bg-white/10 transition-all backdrop-blur-md">Explore Ecosystem</a>
             </div>
         </div>
     </section>
 
     <!-- Detailed Solution Verticals -->
-    <section id="solutions" class="relative z-10 py-24 space-y-32">
+    <section id="solutions" class="relative z-10 py-12 md:py-16 lg:py-24 space-y-32">
+        <!-- Mobile Tab Switcher -->
+        <div class="lg:hidden max-w-7xl mx-auto px-6 mb-12">
+            <div class="flex p-1 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl">
+                <button onclick="switchSolution('retail')" id="tab-retail" class="flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all bg-brand text-deep shadow-brand">Retail</button>
+                <button onclick="switchSolution('ngo')" id="tab-ngo" class="flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all text-stone-500 hover:text-white">NGO</button>
+                <button onclick="switchSolution('resort')" id="tab-resort" class="flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all text-stone-500 hover:text-white">Resort</button>
+            </div>
+        </div>
         
+        <div class="solution-container transition-all duration-500">
         <!-- Retail Pro Vertical -->
-        <div id="retail" class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
-            <div class="order-2 md:order-1 relative group">
+        <div id="retail" class="max-w-7xl mx-auto px-6 hidden lg:grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div class="order-2 lg:order-1 relative group">
                 <div class="absolute -inset-4 bg-brand/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                <div class="glass-box premium-border rounded-[3rem] p-12 relative overflow-hidden h-[400px] flex items-center justify-center">
+                <div class="glass-box premium-border rounded-[2.5rem] md:rounded-[3rem] p-8 md:p-12 relative overflow-hidden h-[300px] md:h-[400px] flex items-center justify-center">
                     <div class="text-center">
-                        <div class="w-24 h-24 rounded-3xl bg-brand/10 border border-brand/20 flex items-center justify-center text-brand text-5xl mb-8 mx-auto shadow-2xl">🛍️</div>
+                        <div class="w-20 h-20 md:w-24 md:h-24 rounded-3xl bg-brand/10 border border-brand/20 flex items-center justify-center text-brand text-4xl md:text-5xl mb-6 md:mb-8 mx-auto shadow-2xl">🛍️</div>
                         <div class="space-y-4">
                             <div class="h-4 w-48 bg-white/5 rounded-full mx-auto overflow-hidden"><div class="h-full w-2/3 bg-brand animate-pulse-slow"></div></div>
                             <div class="h-4 w-32 bg-white/5 rounded-full mx-auto overflow-hidden"><div class="h-full w-4/5 bg-brand/60 animate-pulse-slow delay-75"></div></div>
@@ -119,57 +135,57 @@
                     </div>
                 </div>
             </div>
-            <div class="order-1 md:order-2">
+            <div class="order-1 lg:order-2">
                 <p class="text-[10px] font-black text-brand uppercase tracking-[0.4em] mb-4">Retail Transformation</p>
-                <h3 class="text-4xl md:text-5xl font-black text-white mb-6 font-outfit tracking-tight">Retail <span class="text-brand">Pro</span></h3>
-                <p class="text-xl text-stone-300 mb-8 leading-relaxed">
+                <h3 class="text-3xl md:text-5xl font-black text-white mb-6 font-outfit tracking-tight">Retail <span class="text-brand">Pro</span></h3>
+                <p class="text-lg md:text-xl text-stone-300 mb-8 leading-relaxed">
                     Designed for shops and modern retail environments. Manage inventory, track repeat customers, and log M-Pesa transactions instantly.
                 </p>
                 <ul class="space-y-6">
                     <li class="flex items-start gap-4">
                         <div class="w-6 h-6 rounded-full bg-brand/20 flex items-center justify-center text-brand mt-1 flex-shrink-0">✓</div>
-                        <div><strong class="text-white block mb-1">Automated CRM</strong><p class="text-stone-400 text-sm">Every sale creates a customer profile. No manual logging required.</p></div>
+                        <div><strong class="text-white block mb-1">Automated CRM</strong><p class="text-stone-400 text-sm italic">Every sale creates a customer profile. No manual logging required.</p></div>
                     </li>
                     <li class="flex items-start gap-4">
                         <div class="w-6 h-6 rounded-full bg-brand/20 flex items-center justify-center text-brand mt-1 flex-shrink-0">✓</div>
-                        <div><strong class="text-white block mb-1">M-Pesa Integration</strong><p class="text-stone-400 text-sm">Seamless mapping of payments to sales records for accurate accounting.</p></div>
+                        <div><strong class="text-white block mb-1">M-Pesa Integration</strong><p class="text-stone-400 text-sm italic">Seamless mapping of payments to sales records for accurate accounting.</p></div>
                     </li>
                     <li class="flex items-start gap-4">
                         <div class="w-6 h-6 rounded-full bg-brand/20 flex items-center justify-center text-brand mt-1 flex-shrink-0">✓</div>
-                        <div><strong class="text-white block mb-1">Loyalty & Credit</strong><p class="text-stone-400 text-sm">Track customer debts and reward your most loyal fans.</p></div>
+                        <div><strong class="text-white block mb-1">Loyalty & Credit</strong><p class="text-stone-400 text-sm italic">Track customer debts and reward your most loyal fans.</p></div>
                     </li>
                 </ul>
             </div>
         </div>
 
         <!-- Impact Ops Vertical -->
-        <div id="ngo" class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+        <div id="ngo" class="max-w-7xl mx-auto px-6 hidden lg:grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <div>
                 <p class="text-[10px] font-black text-teal-400 uppercase tracking-[0.4em] mb-4">NGO & Field Operations</p>
-                <h3 class="text-4xl md:text-5xl font-black text-white mb-6 font-outfit tracking-tight">Impact <span class="text-teal-400">Ops</span></h3>
-                <p class="text-xl text-stone-300 mb-8 leading-relaxed">
+                <h3 class="text-3xl md:text-5xl font-black text-white mb-6 font-outfit tracking-tight">Impact <span class="text-teal-400">Ops</span></h3>
+                <p class="text-lg md:text-xl text-stone-300 mb-8 leading-relaxed">
                     The ultimate data engine for NGOs. Track beneficiaries, monitor impact metrics, and maintain a bulletproof audit trail for donors.
                 </p>
                 <ul class="space-y-6">
                     <li class="flex items-start gap-4">
                         <div class="w-6 h-6 rounded-full bg-teal-400/20 flex items-center justify-center text-teal-400 mt-1 flex-shrink-0">✓</div>
-                        <div><strong class="text-white block mb-1">Beneficiary CRM</strong><p class="text-stone-400 text-sm">detailed history of interactions, subsidies, and impact for every person you serve.</p></div>
+                        <div><strong class="text-white block mb-1">Beneficiary CRM</strong><p class="text-stone-400 text-sm italic">detailed history of interactions, subsidies, and impact for every person you serve.</p></div>
                     </li>
                     <li class="flex items-start gap-4">
                         <div class="w-6 h-6 rounded-full bg-teal-400/20 flex items-center justify-center text-teal-400 mt-1 flex-shrink-0">✓</div>
-                        <div><strong class="text-white block mb-1">Field-Ready Offline Access</strong><p class="text-stone-400 text-sm">Log data even in low-connectivity areas; sync when you're back online.</p></div>
+                        <div><strong class="text-white block mb-1">Field-Ready Offline Access</strong><p class="text-stone-400 text-sm italic">Log data even in low-connectivity areas; sync when you're back online.</p></div>
                     </li>
                     <li class="flex items-start gap-4">
                         <div class="w-6 h-6 rounded-full bg-teal-400/20 flex items-center justify-center text-teal-400 mt-1 flex-shrink-0">✓</div>
-                        <div><strong class="text-white block mb-1">Enterprise Auditing</strong><p class="text-stone-400 text-sm">Transparency for stakeholders with immutable logs of all resource distributions.</p></div>
+                        <div><strong class="text-white block mb-1">Enterprise Auditing</strong><p class="text-stone-400 text-sm italic">Transparency for stakeholders with immutable logs of all resource distributions.</p></div>
                     </li>
                 </ul>
             </div>
             <div class="relative group">
                 <div class="absolute -inset-4 bg-teal-400/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                <div class="glass-box premium-border rounded-[3rem] p-12 relative overflow-hidden h-[400px] flex items-center justify-center">
+                <div class="glass-box premium-border rounded-[2.5rem] md:rounded-[3rem] p-8 md:p-12 relative overflow-hidden h-[300px] md:h-[400px] flex items-center justify-center">
                     <div class="text-center">
-                        <div class="w-24 h-24 rounded-3xl bg-teal-400/10 border border-teal-400/20 flex items-center justify-center text-teal-400 text-5xl mb-8 mx-auto shadow-2xl">🌍</div>
+                        <div class="w-20 h-20 md:w-24 md:h-24 rounded-3xl bg-teal-400/10 border border-teal-400/20 flex items-center justify-center text-teal-400 text-4xl md:text-5xl mb-6 md:mb-8 mx-auto shadow-2xl">🌍</div>
                         <div class="space-y-4">
                             <div class="h-4 w-48 bg-white/5 rounded-full mx-auto overflow-hidden"><div class="h-full w-full bg-teal-400 animate-pulse-slow"></div></div>
                             <div class="h-4 w-32 bg-white/5 rounded-full mx-auto overflow-hidden"><div class="h-full w-3/4 bg-teal-400/60 animate-pulse-slow delay-75"></div></div>
@@ -180,12 +196,12 @@
         </div>
 
         <!-- Resort OS Vertical -->
-        <div id="resort" class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
-            <div class="order-2 md:order-1 relative group">
+        <div id="resort" class="max-w-7xl mx-auto px-6 hidden lg:grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div class="order-2 lg:order-1 relative group">
                 <div class="absolute -inset-4 bg-fuchsia-500/20 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                <div class="glass-box premium-border rounded-[3rem] p-12 relative overflow-hidden h-[400px] flex items-center justify-center">
+                <div class="glass-box premium-border rounded-[2.5rem] md:rounded-[3rem] p-8 md:p-12 relative overflow-hidden h-[300px] md:h-[400px] flex items-center justify-center">
                     <div class="text-center">
-                        <div class="w-24 h-24 rounded-3xl bg-fuchsia-500/10 border border-fuchsia-500/20 flex items-center justify-center text-fuchsia-400 text-5xl mb-8 mx-auto shadow-2xl">🏨</div>
+                        <div class="w-20 h-20 md:w-24 md:h-24 rounded-3xl bg-fuchsia-500/10 border border-fuchsia-500/20 flex items-center justify-center text-fuchsia-400 text-4xl md:text-5xl mb-6 md:mb-8 mx-auto shadow-2xl">🏨</div>
                         <div class="space-y-4">
                             <div class="h-4 w-48 bg-white/5 rounded-full mx-auto overflow-hidden"><div class="h-full w-1/2 bg-fuchsia-500 animate-pulse-slow"></div></div>
                             <div class="h-4 w-32 bg-white/5 rounded-full mx-auto overflow-hidden"><div class="h-full w-full bg-fuchsia-500/60 animate-pulse-slow delay-75"></div></div>
@@ -193,40 +209,40 @@
                     </div>
                 </div>
             </div>
-            <div class="order-1 md:order-2">
+            <div class="order-1 lg:order-2">
                 <p class="text-[10px] font-black text-fuchsia-400 uppercase tracking-[0.4em] mb-4">Hospitality Excellence</p>
-                <h3 class="text-4xl md:text-5xl font-black text-white mb-6 font-outfit tracking-tight">Resort <span class="text-fuchsia-400">OS</span></h3>
-                <p class="text-xl text-stone-300 mb-8 leading-relaxed">
+                <h3 class="text-3xl md:text-5xl font-black text-white mb-6 font-outfit tracking-tight">Resort <span class="text-fuchsia-400">OS</span></h3>
+                <p class="text-lg md:text-xl text-stone-300 mb-8 leading-relaxed">
                     A premium operating system for lodges and boutique hotels. Absolute control over guest folios, housekeeping lifecycles, and multi-property management.
                 </p>
                 <ul class="space-y-6">
                     <li class="flex items-start gap-4">
                         <div class="w-6 h-6 rounded-full bg-fuchsia-500/20 flex items-center justify-center text-fuchsia-400 mt-1 flex-shrink-0">✓</div>
-                        <div><strong class="text-white block mb-1">Automated Folios</strong><p class="text-stone-400 text-sm">Guest billing simplified. Log charges for bar, kitchen, or stay in one click.</p></div>
+                        <div><strong class="text-white block mb-1">Automated Folios</strong><p class="text-stone-400 text-sm italic">Guest billing simplified. Log charges for bar, kitchen, or stay in one click.</p></div>
                     </li>
                     <li class="flex items-start gap-4">
                         <div class="w-6 h-6 rounded-full bg-fuchsia-500/20 flex items-center justify-center text-fuchsia-400 mt-1 flex-shrink-0">✓</div>
-                        <div><strong class="text-white block mb-1">Housekeeping Hub</strong><p class="text-stone-400 text-sm">Real-time room status tracking from 'Dirty' to 'Inspected' & 'Clean'.</p></div>
+                        <div><strong class="text-white block mb-1">Housekeeping Hub</strong><p class="text-stone-400 text-sm italic">Real-time room status tracking from 'Dirty' to 'Inspected' & 'Clean'.</p></div>
                     </li>
                     <li class="flex items-start gap-4">
                         <div class="w-6 h-6 rounded-full bg-fuchsia-500/20 flex items-center justify-center text-fuchsia-400 mt-1 flex-shrink-0">✓</div>
-                        <div><strong class="text-white block mb-1">Multi-Property View</strong><p class="text-stone-400 text-sm">Switch between multiple hotels or campsites from a single dashboard.</p></div>
+                        <div><strong class="text-white block mb-1">Multi-Property View</strong><p class="text-stone-400 text-sm italic">Switch between multiple hotels or campsites from a single dashboard.</p></div>
                     </li>
                 </ul>
             </div>
         </div>
+        </div>
     </section>
 
     <!-- Testimonials (Social Proof) -->
-    <section id="testimonials" class="relative z-10 py-32 bg-black/20 border-y border-white/5">
+    <section id="testimonials" class="relative z-10 py-12 md:py-24 lg:py-32 bg-black/20 border-y border-white/5">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-24">
                 <p class="text-[10px] font-black text-magic-blue uppercase tracking-[0.5em] mb-4">Success Stories</p>
                 <h2 class="text-5xl md:text-6xl font-black text-white font-outfit tracking-tighter uppercase">Trusted by <span class="text-brand">Leaders</span></h2>
             </div>
             
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Retail Testimonial -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                 <div class="glass-box premium-border rounded-[2.5rem] p-10 relative group hover:bg-white/[0.03] transition-all">
                     <div class="absolute top-8 right-10 text-brand/20 text-6xl font-serif">"</div>
                     <p class="text-stone-300 text-lg leading-relaxed mb-10 italic relative z-10">
@@ -240,8 +256,8 @@
                     </div>
                 </div>
 
-                <!-- NGO Testimonial -->
-                <div class="glass-box premium-border rounded-[2.5rem] p-10 relative group hover:bg-white/[0.03] transition-all">
+                <!-- NGO Testimonial (Hidden on mobile) -->
+                <div class="glass-box premium-border rounded-[2.5rem] p-10 relative group hover:bg-white/[0.03] transition-all hidden md:block">
                     <div class="absolute top-8 right-10 text-teal-400/20 text-6xl font-serif">"</div>
                     <p class="text-stone-300 text-lg leading-relaxed mb-10 italic relative z-10">
                         "Donor reporting went from weeks to minutes. Our compliance is now 100% automated and we can focus on our mission."
@@ -272,14 +288,14 @@
     </section>
 
     <!-- How it Works (Educational Tour) -->
-    <section id="how-it-works" class="relative z-10 py-32 bg-white/[0.02] border-y border-white/5">
+    <section id="how-it-works" class="relative z-10 py-12 md:py-24 lg:py-32 bg-white/[0.02] border-y border-white/5">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-24">
                 <p class="text-[10px] font-black text-magic-blue uppercase tracking-[0.5em] mb-4">Zero Friction</p>
                 <h2 class="text-5xl md:text-6xl font-black text-white font-outfit tracking-tighter uppercase">How it <span class="text-brand">Works</span></h2>
             </div>
             
-            <div class="grid md:grid-cols-3 gap-16 relative">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16 relative">
                 <!-- Connector Line -->
                 <div class="hidden md:block absolute top-[15%] left-[10%] right-[10%] h-0.5 bg-gradient-to-r from-brand/20 via-magic-blue/20 to-teal-400/20"></div>
                 
@@ -308,14 +324,14 @@
     </section>
 
     <!-- Features Deep Dive -->
-    <section id="features" class="relative z-10 py-32 px-6">
+    <section id="features" class="relative z-10 py-12 md:py-24 lg:py-32 px-6">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-24">
                 <p class="text-[10px] font-black text-brand uppercase tracking-[0.5em] mb-4">Core Signal Capabilities</p>
                 <h2 class="text-5xl md:text-6xl font-black text-white font-outfit tracking-tighter uppercase">The <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand to-magic-blue">Ecosystem</span> Advantage</h2>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Data Security -->
                 <div class="glass-box premium-border rounded-3xl p-10 hover:border-brand/30 transition-all group">
                     <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-brand text-3xl mb-8 group-hover:scale-110 transition-transform">🔒</div>
@@ -356,8 +372,8 @@
     </section>
 
     <!-- Metrics & Story -->
-    <section id="about" class="relative z-10 py-32 px-6">
-        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-24 items-center">
+    <section id="about" class="relative z-10 py-12 md:py-24 lg:py-32 px-6">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
             <div>
                 <p class="text-[10px] font-black text-magic-blue uppercase tracking-[0.4em] mb-4">Empowering Kenya</p>
                 <h2 class="text-5xl font-black text-white font-outfit tracking-tight leading-tight mb-8">Building the Infrastructure for <span class="text-brand">Future Titans.</span></h2>
@@ -386,58 +402,88 @@
         </div>
     </section>
 
-    <!-- Pricing (Spacious) -->
-    <section id="pricing" class="relative z-10 py-32 bg-black/40 border-y border-white/5">
-        <div class="max-w-6xl mx-auto px-6">
+    <!-- Pricing (Mobile Optimized) -->
+    <section id="pricing" class="relative z-10 py-8 md:py-16 lg:py-24 bg-black/40 border-y border-white/5">
+        <div class="max-w-6xl mx-auto px-4 md:px-6">
             <p class="text-center text-[10px] font-black text-magic-blue uppercase tracking-[0.5em] mb-4">Investment Roadmap</p>
-            <h2 class="text-5xl md:text-6xl font-black text-center text-white mb-20 font-outfit uppercase tracking-tighter">Enterprise <span class="text-brand">Access</span></h2>
-            <div class="grid md:grid-cols-3 gap-12 items-end">
-                <!-- Base -->
-                <div class="glass-box premium-border rounded-[2.5rem] p-10 flex flex-col justify-between hover:bg-white/[0.02] h-[520px]">
-                    <div>
-                        <h4 class="text-lg font-black text-stone-400 mb-4 uppercase tracking-widest">Standard Deployment</h4>
-                        <div class="mb-10"><span class="text-6xl font-black text-white font-outfit tracking-tighter">KES 0</span><span class="text-stone-600 font-bold ml-2"> / mo</span></div>
-                        <ul class="space-y-4 text-sm text-stone-300 border-t border-white/5 pt-10">
-                            <li>✓ 20 Customer Seats</li>
-                            <li>✓ Daily Analytics</li>
-                            <li>✓ Simple CRM Tools</li>
+            <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-center text-white mb-12 md:mb-16 lg:mb-20 font-outfit uppercase tracking-tighter">Enterprise <span class="text-brand">Access</span></h2>
+            <div class="space-y-6 md:space-y-8">
+                <!-- Free -->
+                <div class="glass-box premium-border rounded-2xl p-6 md:p-8 hover:bg-white/[0.02]">
+                    <div class="text-center">
+                        <h4 class="text-base md:text-lg font-black text-stone-400 mb-3 uppercase tracking-widest">Standard Deployment</h4>
+                        <div class="mb-6 text-4xl md:text-5xl font-black text-white font-outfit tracking-tighter">KES 0</div>
+                        <div class="mb-4 text-sm text-stone-500">Foundational insights</div>
+                        <ul class="space-y-3 text-sm text-stone-300">
+                            <li class="flex items-center gap-2">
+                                <span class="text-emerald-400">+</span>
+                                <span>20 active customers</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-emerald-400">+</span>
+                                <span>Basic dashboard</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-red-400">+</span>
+                                <span>SMS/WhatsApp Automations</span>
+                            </li>
                         </ul>
                     </div>
-                    <a href="{% url 'register' %}" class="mt-12 block text-center border border-white/10 text-white font-black py-4 rounded-2xl hover:bg-white/5 transition-all uppercase tracking-widest text-[10px]">Initialize Base</a>
+                    <a href="{% url 'register' %}" class="mt-6 block text-center border border-white/10 text-white font-black py-3 rounded-2xl hover:bg-white/5 transition-all uppercase tracking-widest text-[10px]">Get Started</a>
                 </div>
                 <!-- Retail Pro -->
-                <div class="glass-box premium-border border-stone-800 rounded-[3rem] p-12 flex flex-col justify-between relative shadow-2xl bg-gradient-to-br from-stone-900/40 to-stone-800/10 h-[560px] group hover:border-brand/40 transition-all">
-                    <div>
-                        <h4 class="text-lg font-black text-stone-300 group-hover:text-brand mb-4 uppercase tracking-widest transition-colors text-center">Retail Pro</h4>
-                        <div class="mb-10 text-center"><span class="text-6xl font-black text-white font-outfit tracking-tighter">KES 700</span><span class="text-stone-600 font-bold ml-2"> / mo</span></div>
-                        <ul class="space-y-4 text-sm text-stone-400 border-t border-stone-800 pt-10">
-                            <li>● Unlimited Capacity</li>
-                            <li>● Reward Programs</li>
-                            <li>● Smart Payment mapping</li>
+                <div class="glass-box premium-border border-stone-800 rounded-2xl md:rounded-3xl p-6 md:p-8 hover:border-brand/40 transition-all">
+                    <div class="text-center">
+                        <h4 class="text-base md:text-lg font-black text-stone-300 mb-3 uppercase tracking-widest">Retail Pro</h4>
+                        <div class="mb-6 text-4xl md:text-5xl font-black text-white font-outfit tracking-tighter">KES 700</div>
+                        <div class="mb-4 text-sm text-stone-500">Growth engine for retailers</div>
+                        <ul class="space-y-3 text-sm text-stone-400">
+                            <li class="flex items-center gap-2">
+                                <span class="text-emerald-400">+</span>
+                                <span>Unlimited customers</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-emerald-400">+</span>
+                                <span>SMS/WhatsApp Campaigns</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-emerald-400">+</span>
+                                <span>Advanced Analytics</span>
+                            </li>
                         </ul>
                     </div>
-                    <a href="{% url 'register' %}" class="mt-12 block w-full text-center bg-stone-800 text-white font-black py-5 rounded-2xl hover:bg-brand hover:text-deep transition-all uppercase tracking-widest text-xs">Deploy Pro Instance</a>
+                    <a href="{% url 'register' %}" class="mt-6 block w-full text-center bg-stone-800 text-white font-black py-3 md:py-4 rounded-2xl hover:bg-brand hover:text-deep transition-all uppercase tracking-widest text-xs">Choose Retail Pro</a>
                 </div>
-                <!-- Portal Access -->
-                <div class="glass-box premium-border border-magic-blue/50 rounded-[3rem] p-12 flex flex-col justify-between relative shadow-[0_0_40px_rgba(59,130,246,0.1)] bg-gradient-to-br from-stone-900/40 to-magic-blue/5 h-[580px] md:scale-105">
-                    <div class="absolute -top-5 left-1/2 -translate-x-1/2 bg-magic-blue text-white text-[10px] font-black px-6 py-2 rounded-full uppercase tracking-[0.2em] shadow-lg shadow-magic-blue/20">Elite Corporate</div>
-                    <div>
-                        <h4 class="text-lg font-black text-magic-blue mb-4 uppercase tracking-widest text-center">Portal Access</h4>
-                        <div class="mb-10 text-center"><span class="text-6xl font-black text-white font-outfit tracking-tighter">KES 3.5k</span><span class="text-magic-blue/40 font-bold ml-2"> / mo</span></div>
-                        <ul class="space-y-4 text-sm text-stone-200 border-t border-magic-blue/20 pt-10">
-                            <li class="text-teal-500">✓ NGO / Impact Portal</li>
-                            <li class="text-fuchsia-500">✓ Resort / Hospitality Portal</li>
-                            <li>✓ Multi-Tenant Sync Control</li>
+                <!-- Enterprise -->
+                <div class="glass-box premium-border border-magic-blue/50 rounded-2xl md:rounded-3xl p-6 md:p-8 hover:border-magic-blue/40 transition-all">
+                    <div class="text-center">
+                        <h4 class="text-base md:text-lg font-black text-magic-blue mb-3 uppercase tracking-widest">Enterprise</h4>
+                        <div class="mb-4 text-sm text-magic-blue/80">NGO & Resort</div>
+                        <div class="mb-6 text-4xl md:text-5xl font-black text-white font-outfit tracking-tighter">KES 3,500</div>
+                        <div class="mb-4 text-sm text-stone-500">Complete portal management</div>
+                        <ul class="space-y-3 text-sm text-stone-200">
+                            <li class="flex items-center gap-2">
+                                <span class="text-emerald-400">+</span>
+                                <span>Multi-Vendor Hub</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-emerald-400">+</span>
+                                <span>Specialty Dashboards</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <span class="text-emerald-400">+</span>
+                                <span>Priority 24/7 Support</span>
+                            </li>
                         </ul>
                     </div>
-                    <a href="{% url 'register' %}" class="mt-12 block w-full text-center bg-magic-blue text-white font-black py-5 rounded-2xl shadow-lg shadow-magic-blue/20 hover:scale-[1.05] transition-all uppercase tracking-widest text-xs">Secure My Portal</a>
+                    <a href="{% url 'register' %}" class="mt-6 block w-full text-center bg-magic-blue text-white font-black py-3 md:py-4 rounded-2xl hover:scale-[1.05] transition-all uppercase tracking-widest text-xs">Choose Enterprise</a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- FAQ Section -->
-    <section id="faq" class="relative z-10 py-32 bg-black/40 border-y border-white/5 px-6">
+    <section id="faq" class="relative z-10 py-12 md:py-24 lg:py-32 bg-black/40 border-y border-white/5 px-6">
         <div class="max-w-4xl mx-auto">
             <div class="text-center mb-24">
                 <p class="text-[10px] font-black text-brand uppercase tracking-[0.5em] mb-4">Knowledge Base</p>
@@ -472,8 +518,8 @@
     </section>
 
     <!-- Contact & Feedback -->
-    <section id="contact" class="relative z-10 py-32 px-6">
-        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-20">
+    <section id="contact" class="relative z-10 py-12 md:py-24 lg:py-32 px-6">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20">
             <div>
                 <p class="text-[10px] font-black text-brand uppercase tracking-[0.4em] mb-4">Support Hub</p>
                 <h2 class="text-5xl font-black text-white font-outfit tracking-tight leading-tight mb-8">Let's Build the <span class="text-brand">Future</span> Together.</h2>
@@ -632,6 +678,53 @@
             content.style.opacity = '1';
             icon.style.transform = 'rotate(45deg)';
         }
+    }
+
+    // Solutions Mobile Tab Switcher Logic
+    function switchSolution(id) {
+        // Desktop check - do nothing if we are on wide screens
+        if (window.innerWidth >= 1024) return;
+
+        const sections = ['retail', 'ngo', 'resort'];
+        const tabs = {
+            'retail': document.getElementById('tab-retail'),
+            'ngo': document.getElementById('tab-ngo'),
+            'resort': document.getElementById('tab-resort')
+        };
+
+        sections.forEach(sectionId => {
+            const el = document.getElementById(sectionId);
+            const tab = tabs[sectionId];
+            
+            if (sectionId === id) {
+                el.classList.remove('hidden');
+                el.classList.add('animate-fade-in');
+                tab.classList.remove('text-stone-500', 'hover:text-white');
+                tab.classList.add('bg-brand', 'text-deep', 'shadow-brand');
+            } else {
+                el.classList.add('hidden');
+                el.classList.remove('animate-fade-in');
+                tab.classList.add('text-stone-500', 'hover:text-white');
+                tab.classList.remove('bg-brand', 'text-deep', 'shadow-brand');
+            }
+        });
+    }
+
+    // Initial mobile state setup
+    window.addEventListener('resize', () => {
+        const sections = ['retail', 'ngo', 'resort'];
+        if (window.innerWidth >= 1024) {
+            sections.forEach(id => document.getElementById(id).classList.remove('hidden'));
+        } else {
+            // Find currently active tab or default to retail
+            const activeTab = Object.keys(sections).find(id => document.getElementById('tab-' + sections[id]).classList.contains('bg-brand'));
+            switchSolution(sections[activeTab] || 'retail');
+        }
+    });
+    
+    // Set initial state for mobile on load
+    if (window.innerWidth < 1024) {
+        switchSolution('retail');
     }
 </script>
 

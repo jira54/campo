@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Manager Login - CampoPawa Resort OS{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen bg-deep overflow-hidden">
+    {% include 'resort_portal/sidebar_resort.html' %}
+
+    <div class="flex-1 md:ml-72 h-screen overflow-y-auto overflow-x-hidden relative">
+        <div class="p-6 md:p-10 pb-24">
+            
+            <!-- Header -->
+            <div class="mb-12">
+                <h1 class="text-4xl md:text-6xl font-outfit font-black text-white leading-tight mb-4">
+                    Manager <span class="text-brand">Login</span>.
+                </h1>
+                <p class="text-stone-500 text-lg max-w-2xl">Access your manager dashboard and protected features with your secure credentials.</p>
+            </div>
+
+            <!-- Login Form -->
+            <div class="max-w-2xl">
+                <div class="bg-stone-900/50 border border-brand/20 rounded-3xl p-8">
+                    <div class="flex items-start gap-4 mb-6">
+                        <div class="h-10 w-10 bg-brand/10 border border-brand/20 rounded-xl flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-lock text-brand"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-white font-bold mb-1">Secure Manager Access</h3>
+                            <p class="text-stone-500 text-sm">Enter your email and password to access protected features and financial data.</p>
+                        </div>
+                    </div>
+
+                    <form method="POST" class="space-y-6">
+                        {% csrf_token %}
+                        
+                        <div>
+                            <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest mb-2">
+                                Email Address
+                            </label>
+                            <input type="email" name="email" required
+                                   placeholder="manager@resort.com"
+                                   class="w-full bg-stone-800 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all">
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest mb-2">
+                                Password
+                            </label>
+                            <input type="password" name="password" required
+                                   placeholder="Enter your password"
+                                   class="w-full bg-stone-800 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all">
+                        </div>
+
+                        <button type="submit" 
+                                class="w-full bg-brand text-deep font-outfit font-black py-4 rounded-xl hover:scale-[1.02] transition-all">
+                            Sign In to Manager Dashboard
+                        </button>
+                    </form>
+
+                    <div class="mt-6 pt-6 border-t border-white/5 text-center">
+                        <a href="{% url 'resort_portal:manager_forgot' %}" class="text-brand text-sm font-bold hover:text-brand/80 transition-colors">
+                            Forgot your password?
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Security Features -->
+                <div class="mt-8 bg-stone-900/30 border border-stone-700/30 rounded-2xl p-6">
+                    <h4 class="text-white font-bold mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-shield-halved text-amber-400"></i>
+                        Security Features
+                    </h4>
+                    <ul class="space-y-2 text-stone-400 text-sm">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-1 text-xs"></i>
+                            <span>Encrypted password storage and transmission</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-1 text-xs"></i>
+                            <span>Account protection against brute force attacks</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-1 text-xs"></i>
+                            <span>Automatic session timeout for security</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-1 text-xs"></i>
+                            <span>Complete audit trail of all login attempts</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -20,6 +20,18 @@ urlpatterns = [
     path('day-visitors/', views.day_visitors_section, name='day_visitors'),
     path('reports/', views.reports_section, name='reports'),
     path('settings/', views.settings_section, name='settings'),
+    
+    # Security
+    path('security/', views.security_settings, name='security'),
+    
+    # Manager Authentication
+    path('auth/setup/', views.manager_auth_setup, name='manager_setup'),
+    path('auth/login/', views.manager_login, name='manager_login'),
+    path('auth/logout/', views.manager_logout, name='manager_logout'),
+    path('auth/verify/', views.manager_verify, name='manager_verify'),
+    path('auth/forgot/', views.manager_forgot_password, name='manager_forgot'),
+    path('auth/reset/', views.manager_reset_password, name='manager_reset'),
+    
     path('settle-bill/', views.settle_bill, name='settle_bill'),
 
     # Existing detail/op views

@@ -1,0 +1,306 @@
+{% extends 'base.html' %}
+
+{% block title %}Security Settings - CampoPawa Resort OS{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen bg-deep overflow-hidden">
+    {% include 'resort_portal/sidebar_resort.html' %}
+
+    <div class="flex-1 md:ml-72 h-screen overflow-y-auto overflow-x-hidden relative">
+        <div class="p-6 md:p-10 pb-24">
+            
+            <!-- Header -->
+            <div class="mb-12">
+                <h1 class="text-4xl md:text-6xl font-outfit font-black text-white leading-tight mb-4">
+                    Security & <span class="text-brand">Access Control</span>.
+                </h1>
+                <p class="text-stone-500 text-lg max-w-2xl">Configure your Manager PIN and security settings to protect sensitive financial data and system access.</p>
+            </div>
+
+            <!-- Security Status Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div class="bg-stone-900/50 border border-white/5 rounded-3xl p-6">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+                            <i class="fa-solid fa-shield-halved text-emerald-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-white font-bold">Manager PIN</h3>
+                            <p class="text-stone-500 text-sm">
+                                {% if request.user.resort_manager_pin %}
+                                    <span class="text-emerald-400">Active & Secure</span>
+                                {% else %}
+                                    <span class="text-amber-400">Not Set</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-stone-900/50 border border-white/5 rounded-3xl p-6">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-brand/10 border border-brand/20 flex items-center justify-center">
+                            <i class="fa-solid fa-lock text-brand"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-white font-bold">Access Level</h3>
+                            <p class="text-stone-500 text-sm">Manager Protected</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-stone-900/50 border border-white/5 rounded-3xl p-6">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-stone-700/50 border border-stone-600/20 flex items-center justify-center">
+                            <i class="fa-solid fa-clock text-stone-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-white font-bold">Last Updated</h3>
+                            <p class="text-stone-500 text-sm">
+                                {% if request.user.resort_manager_pin %}
+                                    Recently
+                                {% else %}
+                                    Never
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PIN Configuration -->
+            <div class="max-w-2xl">
+                <div class="flex justify-between items-end border-b border-white/5 pb-4 mb-8">
+                    <h2 class="text-2xl font-outfit font-black text-white">Manager PIN Configuration</h2>
+                    <span class="text-[10px] text-stone-500 font-bold uppercase tracking-widest">
+                        {% if request.user.resort_manager_pin %}Update PIN{% else %}Set PIN{% endif %}
+                    </span>
+                </div>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="mb-6 p-4 rounded-xl {% if message.tags == 'success' %}bg-emerald-500/10 border border-emerald-500/20 text-emerald-400{% elif message.tags == 'error' %}bg-red-500/10 border border-red-500/20 text-red-400{% else %}bg-brand/10 border border-brand/20 text-brand{% endif %}">
+                            <p class="text-sm font-bold">{{ message }}</p>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <div class="bg-stone-900/50 border border-brand/20 rounded-3xl p-8">
+                    <div class="flex items-start gap-4 mb-6">
+                        <div class="h-10 w-10 bg-brand/10 border border-brand/20 rounded-xl flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-key text-brand"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-white font-bold mb-1">
+                                {% if request.user.resort_manager_pin %}Update Manager PIN{% else %}Create Manager PIN{% endif %}
+                            </h3>
+                            <p class="text-stone-500 text-sm">
+                                {% if request.user.resort_manager_pin %}
+                                    Change your 4-digit Manager PIN to maintain security. Financial analytics will require this PIN for access.
+                                {% else %}
+                                    Create a 4-digit Manager PIN to protect sensitive financial analytics from unauthorized access.
+                                {% endif %}
+                            </p>
+                            {% if request.user.resort_manager_pin %}
+                                <p class="text-emerald-400 text-xs mt-2">PIN is currently set and active</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <form method="POST" id="pin-form" class="space-y-6">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="set_pin">
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest mb-2">
+                                    {% if request.user.resort_manager_pin %}New PIN{% else %}Create PIN{% endif %}
+                                </label>
+                                <input type="password" name="pin" id="pin-input" maxlength="4" 
+                                       placeholder="****" 
+                                       class="w-full bg-stone-800 border border-white/5 rounded-xl px-4 py-4 text-white font-bold text-center tracking-widest text-2xl focus:outline-none focus:border-brand transition-all" 
+                                       pattern="[0-9]{4}" 
+                                       title="Enter exactly 4 digits"
+                                       required>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest mb-2">
+                                    Confirm PIN
+                                </label>
+                                <input type="password" name="pin_confirm" id="pin-confirm" maxlength="4" 
+                                       placeholder="****" 
+                                       class="w-full bg-stone-800 border border-white/5 rounded-xl px-4 py-4 text-white font-bold text-center tracking-widest text-2xl focus:outline-none focus:border-brand transition-all" 
+                                       pattern="[0-9]{4}" 
+                                       title="Confirm your 4-digit PIN"
+                                       required>
+                            </div>
+                        </div>
+
+                        <!-- Security Indicators -->
+                        <div id="pin-feedback" class="space-y-2">
+                            <div class="flex items-center gap-2 text-xs">
+                                <div id="length-check" class="w-3 h-3 rounded-full bg-stone-600"></div>
+                                <span id="length-text" class="text-stone-500">4 digits required</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs">
+                                <div id="match-check" class="w-3 h-3 rounded-full bg-stone-600"></div>
+                                <span id="match-text" class="text-stone-500">PINs must match</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs">
+                                <div id="strength-check" class="w-3 h-3 rounded-full bg-stone-600"></div>
+                                <span id="strength-text" class="text-stone-500">Avoid sequential numbers (1234)</span>
+                            </div>
+                        </div>
+
+                        <!-- PIN Strength Meter -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs text-stone-500">
+                                <span>PIN Strength</span>
+                                <span id="strength-label">-</span>
+                            </div>
+                            <div class="w-full bg-stone-700 rounded-full h-2">
+                                <div id="strength-bar" class="h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="submit-btn" 
+                                class="w-full bg-brand text-deep font-outfit font-black py-4 rounded-xl hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                                disabled>
+                            {% if request.user.resort_manager_pin %}Update Manager PIN{% else %}Set Manager PIN{% endif %}
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Security Tips -->
+                <div class="mt-8 bg-stone-900/30 border border-stone-700/30 rounded-2xl p-6">
+                    <h4 class="text-white font-bold mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-lightbulb text-amber-400"></i>
+                        Security Tips
+                    </h4>
+                    <ul class="space-y-2 text-stone-400 text-sm">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-1 text-xs"></i>
+                            <span>Use a unique PIN that's not your birth year, address, or phone number</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-1 text-xs"></i>
+                            <span>Avoid sequential numbers (1234, 4321) or repeating digits (1111, 0000)</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-1 text-xs"></i>
+                            <span>Change your PIN regularly for maximum security</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-1 text-xs"></i>
+                            <span>Never share your PIN with other staff members</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const pinInput = document.getElementById('pin-input');
+    const pinConfirm = document.getElementById('pin-confirm');
+    const submitBtn = document.getElementById('submit-btn');
+    const lengthCheck = document.getElementById('length-check');
+    const lengthText = document.getElementById('length-text');
+    const matchCheck = document.getElementById('match-check');
+    const matchText = document.getElementById('match-text');
+    const strengthCheck = document.getElementById('strength-check');
+    const strengthText = document.getElementById('strength-text');
+    const strengthBar = document.getElementById('strength-bar');
+    const strengthLabel = document.getElementById('strength-label');
+
+    function checkPinStrength() {
+        const pin = pinInput.value;
+        const confirm = pinConfirm.value;
+        
+        // Length check
+        const hasLength = pin.length === 4;
+        updateIndicator(lengthCheck, lengthText, hasLength, hasLength ? '4 digits entered' : '4 digits required', hasLength ? 'emerald-500' : 'stone-600');
+        
+        // Match check
+        const hasMatch = pin === confirm && pin.length > 0;
+        updateIndicator(matchCheck, matchText, hasMatch, hasMatch ? 'PINs match' : 'PINs must match', hasMatch ? 'emerald-500' : 'stone-600');
+        
+        // Strength check
+        let strength = 0;
+        let strengthMessage = '';
+        let strengthColor = 'bg-red-500';
+        
+        if (pin.length === 4) {
+            strength = 25;
+            strengthMessage = 'Weak';
+            
+            // Check for sequential numbers
+            const isSequential = /^(0123|1234|2345|3456|4567|5678|6789|9876|8765|7654|6543|5432|4321|3210|2109)$/.test(pin);
+            const isRepeating = /^(1111|2222|3333|4444|5555|6666|7777|8888|9999|0000)$/.test(pin);
+            
+            if (!isSequential && !isRepeating) {
+                strength = 75;
+                strengthMessage = 'Strong';
+                strengthColor = 'bg-emerald-500';
+            } else {
+                strength = 50;
+                strengthMessage = 'Fair';
+                strengthColor = 'bg-yellow-500';
+            }
+        }
+        
+        updateIndicator(strengthCheck, strengthText, pin.length === 4 && !/^(0123|1234|2345|3456|4567|5678|6789|9876|8765|7654|6543|5432|4321|3210|2109|1111|2222|3333|4444|5555|6666|7777|8888|9999|0000)$/.test(pin), pin.length === 4 && !/^(0123|1234|2345|3456|4567|5678|6789|9876|8765|7654|6543|5432|4321|3210|2109|1111|2222|3333|4444|5555|6666|7777|8888|9999|0000)$/.test(pin) ? 'Strong PIN' : 'Avoid sequential/repeating numbers', pin.length === 4 && !/^(0123|1234|2345|3456|4567|5678|6789|9876|8765|7654|6543|5432|4321|3210|2109|1111|2222|3333|4444|5555|6666|7777|8888|9999|0000)$/.test(pin) ? 'emerald-500' : 'stone-600');
+        
+        // Update strength bar
+        strengthBar.style.width = strength + '%';
+        strengthBar.className = `h-2 rounded-full transition-all duration-300 ${strengthColor}`;
+        strengthLabel.textContent = strength > 0 ? strengthMessage : '-';
+        
+        // Enable/disable submit button
+        const canSubmit = hasLength && hasMatch && strength >= 50;
+        submitBtn.disabled = !canSubmit;
+    }
+    
+    function updateIndicator(dot, text, isValid, message, colorClass) {
+        dot.className = `w-3 h-3 rounded-full ${colorClass}`;
+        text.textContent = message;
+        text.className = `text-xs ${isValid ? 'text-emerald-400' : 'text-stone-500'}`;
+    }
+    
+    // Input event listeners
+    pinInput.addEventListener('input', checkPinStrength);
+    pinConfirm.addEventListener('input', checkPinStrength);
+    
+    // Only allow numbers
+    [pinInput, pinConfirm].forEach(input => {
+        input.addEventListener('keypress', function(e) {
+            if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
+                e.preventDefault();
+            }
+        });
+    });
+    
+    // Form submission
+    document.getElementById('pin-form').addEventListener('submit', function(e) {
+        const pin = pinInput.value;
+        const confirm = pinConfirm.value;
+        
+        if (pin !== confirm) {
+            e.preventDefault();
+            alert('PINs do not match. Please try again.');
+            return;
+        }
+        
+        if (/^(0123|1234|2345|3456|4567|5678|6789|9876|8765|7654|6543|5432|4321|3210|2109|1111|2222|3333|4444|5555|6666|7777|8888|9999|0000)$/.test(pin)) {
+            e.preventDefault();
+            alert('This PIN is too common and insecure. Please choose a more secure PIN that isn\'t sequential (like 1234) or repeating (like 1111).');
+            return;
+        }
+    });
+});
+</script>
+
+{% endblock %}

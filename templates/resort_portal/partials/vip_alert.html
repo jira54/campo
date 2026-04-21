@@ -1,0 +1,13 @@
+<!-- VIP Alert Component -->
+{% if vip_arrivals > 0 %}
+<div class="mb-10 bg-brand/10 border border-brand/20 p-6 rounded-2xl flex items-center justify-between gap-6 group hover:bg-brand/15 transition-all">
+    <div class="flex items-center gap-6">
+        <div class="w-16 h-16 rounded-2xl bg-brand flex items-center justify-center text-deep text-3xl shadow-brand">VIP</div>
+        <div>
+            <h3 class="text-brand font-outfit font-black text-lg mb-1">VIP Alerts</h3>
+            <p class="text-stone-300 text-sm">You have {{ vip_arrivals }} VIP guests arriving today.</p>
+        </div>
+    </div>
+    <button class="bg-white/5 hover:bg-white/10 text-white font-bold px-6 py-3 rounded-xl transition-all border border-white/5">View List</button>
+</div>
+{% endif %}

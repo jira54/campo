@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+
+{% block title %}Reset Password - CampoPawa Resort OS{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen bg-deep overflow-hidden">
+    {% include 'resort_portal/sidebar_resort.html' %}
+
+    <div class="flex-1 md:ml-72 h-screen overflow-y-auto overflow-x-hidden relative">
+        <div class="p-6 md:p-10 pb-24">
+            
+            <!-- Header -->
+            <div class="mb-12">
+                <h1 class="text-4xl md:text-6xl font-outfit font-black text-white leading-tight mb-4">
+                    Reset <span class="text-brand">Password</span>.
+                </h1>
+                <p class="text-stone-500 text-lg max-w-2xl">Create a new secure password for your manager account. Enter the verification code sent to {{ email }}.</p>
+            </div>
+
+            <!-- Reset Form -->
+            <div class="max-w-2xl">
+                <div class="bg-stone-900/50 border border-brand/20 rounded-3xl p-8">
+                    <div class="flex items-start gap-4 mb-6">
+                        <div class="h-10 w-10 bg-brand/10 border border-brand/20 rounded-xl flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-key text-brand"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-white font-bold mb-1">Create New Password</h3>
+                            <p class="text-stone-500 text-sm">Verify your identity with the code and set a new secure password.</p>
+                        </div>
+                    </div>
+
+                    <form method="POST" class="space-y-6">
+                        {% csrf_token %}
+                        
+                        <div>
+                            <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest mb-2">
+                                Verification Code
+                            </label>
+                            <div class="flex justify-center gap-3">
+                                <input type="text" name="verification_code" maxlength="6" required
+                                       placeholder="000000"
+                                       class="w-20 h-20 bg-stone-800 border border-white/5 rounded-xl text-center text-3xl font-black text-brand focus:outline-none focus:border-brand transition-all"
+                                       pattern="[0-9]{6}">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest mb-2">
+                                New Password
+                            </label>
+                            <input type="password" name="password" id="password" required
+                                   placeholder="Create a strong password"
+                                   class="w-full bg-stone-800 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all">
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-black text-stone-500 uppercase tracking-widest mb-2">
+                                Confirm New Password
+                            </label>
+                            <input type="password" name="confirm_password" id="confirm_password" required
+                                   placeholder="Confirm your new password"
+                                   class="w-full bg-stone-800 border border-white/5 rounded-xl px-4 py-4 text-white font-bold focus:outline-none focus:border-brand transition-all">
+                        </div>
+
+                        <!-- Password Strength Indicator -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs text-stone-500">
+                                <span>Password Strength</span>
+                                <span id="strength-label">-</span>
+                            </div>
+                            <div class="w-full bg-stone-700 rounded-full h-2">
+                                <div id="strength-bar" class="h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                            <div id="password-requirements" class="space-y-1 text-xs text-stone-500">
+                                <div class="flex items-center gap-2">
+                                    <div id="length-req" class="w-2 h-2 rounded-full bg-stone-600"></div>
+                                    <span>At least 8 characters</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div id="upper-req" class="w-2 h-2 rounded-full bg-stone-600"></div>
+                                    <span>One uppercase letter</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div id="lower-req" class="w-2 h-2 rounded-full bg-stone-600"></div>
+                                    <span>One lowercase letter</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div id="number-req" class="w-2 h-2 rounded-full bg-stone-600"></div>
+                                    <span>One number</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="submit-btn" 
+                                class="w-full bg-brand text-deep font-outfit font-black py-4 rounded-xl hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                                disabled>
+                            Reset Password
+                        </button>
+                    </form>
+
+                    <div class="mt-6 pt-6 border-t border-white/5 text-center">
+                        <a href="{% url 'resort_portal:manager_login' %}" class="text-brand text-sm font-bold hover:text-brand/80 transition-colors">
+                            Back to Login
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Security Notice -->
+                <div class="mt-8 bg-stone-900/30 border border-stone-700/30 rounded-2xl p-6">
+                    <h4 class="text-white font-bold mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-shield-halved text-amber-400"></i>
+                        Password Security Tips
+                    </h4>
+                    <ul class="space-y-2 text-stone-400 text-sm">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-1 text-xs"></i>
+                            <span>Use a unique password you haven't used elsewhere</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-1 text-xs"></i>
+                            <span>Avoid personal information like birthdays or names</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-1 text-xs"></i>
+                            <span>Consider using a password manager for security</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-1 text-xs"></i>
+                            <span>Change your password regularly for maximum security</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirm_password');
+    const submitBtn = document.getElementById('submit-btn');
+    const strengthBar = document.getElementById('strength-bar');
+    const strengthLabel = document.getElementById('strength-label');
+    
+    // Requirement indicators
+    const lengthReq = document.getElementById('length-req');
+    const upperReq = document.getElementById('upper-req');
+    const lowerReq = document.getElementById('lower-req');
+    const numberReq = document.getElementById('number-req');
+
+    function checkPasswordStrength() {
+        const pwd = password.value;
+        const conf = confirmPassword.value;
+        
+        // Check requirements
+        const hasLength = pwd.length >= 8;
+        const hasUpper = /[A-Z]/.test(pwd);
+        const hasLower = /[a-z]/.test(pwd);
+        const hasNumber = /\d/.test(pwd);
+        
+        // Update requirement indicators
+        updateRequirement(lengthReq, hasLength);
+        updateRequirement(upperReq, hasUpper);
+        updateRequirement(lowerReq, hasLower);
+        updateRequirement(numberReq, hasNumber);
+        
+        // Calculate strength
+        let strength = 0;
+        let strengthMessage = '';
+        let strengthColor = 'bg-red-500';
+        
+        if (hasLength) strength += 25;
+        if (hasUpper) strength += 25;
+        if (hasLower) strength += 25;
+        if (hasNumber) strength += 25;
+        
+        if (strength === 100) {
+            strengthMessage = 'Strong';
+            strengthColor = 'bg-emerald-500';
+        } else if (strength >= 75) {
+            strengthMessage = 'Good';
+            strengthColor = 'bg-blue-500';
+        } else if (strength >= 50) {
+            strengthMessage = 'Fair';
+            strengthColor = 'bg-yellow-500';
+        } else if (strength > 0) {
+            strengthMessage = 'Weak';
+            strengthColor = 'bg-red-500';
+        } else {
+            strengthMessage = '-';
+            strengthColor = 'bg-stone-600';
+        }
+        
+        // Update strength bar
+        strengthBar.style.width = strength + '%';
+        strengthBar.className = `h-2 rounded-full transition-all duration-300 ${strengthColor}`;
+        strengthLabel.textContent = strengthMessage;
+        
+        // Enable/disable submit button
+        const canSubmit = hasLength && hasUpper && hasLower && hasNumber && pwd === conf && conf.length > 0;
+        submitBtn.disabled = !canSubmit;
+    }
+    
+    function updateRequirement(element, isValid) {
+        element.className = `w-2 h-2 rounded-full ${isValid ? 'bg-emerald-500' : 'bg-stone-600'}`;
+    }
+    
+    // Event listeners
+    password.addEventListener('input', checkPasswordStrength);
+    confirmPassword.addEventListener('input', checkPasswordStrength);
+});
+</script>
+
+{% endblock %}

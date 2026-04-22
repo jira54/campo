@@ -336,53 +336,177 @@ class ResortSettings(models.Model):
         return settings
 
 class ManagerAuth(models.Model):
-    """Manager authentication and verification system."""
-    vendor = models.OneToOneField(Vendor, on_delete=models.CASCADE, related_name='manager_auth')
-    email = models.EmailField(help_text="Manager email for verification")
-    phone = models.CharField(max_length=20, blank=True, help_text="Manager phone for verification")
-    password_hash = models.CharField(max_length=255, help_text="Hashed manager password")
-    is_verified = models.BooleanField(default=False, help_text="Email/phone verification status")
-    verification_code = models.CharField(max_length=6, blank=True, help_text="Email/phone verification code")
-    verification_expires = models.DateTimeField(null=True, blank=True, help_text="Verification code expiry")
-    failed_attempts = models.PositiveIntegerField(default=0, help_text="Failed login attempts")
-    locked_until = models.DateTimeField(null=True, blank=True, help_text="Account lockout expiry")
-    last_login = models.DateTimeField(null=True, blank=True, help_text="Last successful login")
+    """
+    Unified manager authentication model.
+    Replaces both Vendor.resort_manager_pin and old ManagerAuth.
+    """
+    
+    # Core relationship
+    vendor = models.OneToOneField(
+        'vendors.Vendor',
+        on_delete=models.CASCADE,
+        related_name='manager_auth',
+        primary_key=True
+    )
+    
+    # Email/Phone credentials
+    email = models.EmailField(unique=True)
+    phone = models.CharField(max_length=20)
+    
+    # Password (primary login)
+    password_hash = models.CharField(max_length=255)
+    password_changed_at = models.DateTimeField(default=timezone.now)
+    
+    # PIN (secondary unlock)
+    manager_pin = models.CharField(max_length=128, blank=True, null=True)
+    pin_set_at = models.DateTimeField(null=True, blank=True)
+    
+    # Email verification
+    is_verified = models.BooleanField(default=False)
+    verification_code = models.CharField(max_length=6, blank=True)
+    verification_sent_at = models.DateTimeField(null=True, blank=True)
+    verified_at = models.DateTimeField(null=True, blank=True)
+    
+    # Password security
+    failed_password_attempts = models.PositiveIntegerField(default=0)
+    password_locked_until = models.DateTimeField(null=True, blank=True)
+    
+    # PIN security
+    failed_pin_attempts = models.PositiveIntegerField(default=0)
+    pin_locked_until = models.DateTimeField(null=True, blank=True)
+    
+    # Audit
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    last_login_at = models.DateTimeField(null=True, blank=True)
+    last_pin_unlock_at = models.DateTimeField(null=True, blank=True)
     
     class Meta:
+        db_table = 'resort_portal_manager_auth'
+        indexes = [
+            models.Index(fields=['email']),
+            models.Index(fields=['vendor']),
+        ]
         verbose_name = "Manager Authentication"
         verbose_name_plural = "Manager Authentication"
     
     def __str__(self):
-        return f"Manager Auth for {self.vendor.business_name}"
+        return f"Manager: {self.email}"
     
+    # ============ PASSWORD METHODS ============
+    
+    def set_password(self, raw_password):
+        """Hash and store password."""
+        self.password_hash = make_password(raw_password)
+        self.password_changed_at = timezone.now()
+        self.failed_password_attempts = 0
+        self.password_locked_until = None
+        self.save()
+    
+    def check_password(self, raw_password):
+        """Verify password (returns True/False)."""
+        return check_password(raw_password, self.password_hash)
+    
+    def is_password_locked(self):
+        """Check if account is locked due to failed attempts."""
+        if not self.password_locked_until:
+            return False
+        if timezone.now() > self.password_locked_until:
+            self.password_locked_until = None
+            self.failed_password_attempts = 0
+            self.save()
+            return False
+        return True
+    
+    def record_failed_password_attempt(self):
+        """Record failed login attempt. Lock after 5 failures."""
+        self.failed_password_attempts += 1
+        
+        if self.failed_password_attempts >= 5:
+            self.password_locked_until = timezone.now() + timedelta(minutes=30)
+        
+        self.save()
+    
+    def reset_password_attempts(self):
+        """Clear failed attempts on successful login."""
+        self.failed_password_attempts = 0
+        self.password_locked_until = None
+        self.last_login_at = timezone.now()
+        self.save()
+    
+    # ============ PIN METHODS ============
+    
+    def set_pin(self, raw_pin):
+        """Hash and store PIN."""
+        self.manager_pin = make_password(raw_pin)
+        self.pin_set_at = timezone.now()
+        self.failed_pin_attempts = 0
+        self.pin_locked_until = None
+        self.save()
+    
+    def check_pin(self, raw_pin):
+        """Verify PIN (returns True/False)."""
+        if not self.manager_pin:
+            return False
+        return check_password(raw_pin, self.manager_pin)
+    
+    def is_pin_locked(self):
+        """Check if PIN entry is locked due to failed attempts."""
+        if not self.pin_locked_until:
+            return False
+        if timezone.now() > self.pin_locked_until:
+            self.pin_locked_until = None
+            self.failed_pin_attempts = 0
+            self.save()
+            return False
+        return True
+    
+    def record_failed_pin_attempt(self):
+        """Record failed PIN attempt. Lock after 3 failures."""
+        self.failed_pin_attempts += 1
+        
+        if self.failed_pin_attempts >= 3:
+            self.pin_locked_until = timezone.now() + timedelta(minutes=15)
+        
+        self.save()
+    
+    def reset_pin_attempts(self):
+        """Clear failed PIN attempts on successful unlock."""
+        self.failed_pin_attempts = 0
+        self.pin_locked_until = None
+        self.last_pin_unlock_at = timezone.now()
+        self.save()
+    
+    # ============ STATUS METHODS ============
+    
+    def has_pin(self):
+        """Check if PIN is configured."""
+        return bool(self.manager_pin)
+    
+    def get_password_attempts_remaining(self):
+        """Get remaining attempts before lockout."""
+        return max(0, 5 - self.failed_password_attempts)
+    
+    def get_pin_attempts_remaining(self):
+        """Get remaining PIN attempts before lockout."""
+        return max(0, 3 - self.failed_pin_attempts)
+    
+    # Legacy compatibility methods
     def is_locked(self):
         """Check if account is locked due to failed attempts."""
-        if self.locked_until:
-            from django.utils import timezone
-            return timezone.now() < self.locked_until
-        return False
+        return self.is_password_locked()
     
     def can_attempt_login(self):
         """Check if user can attempt login."""
-        return not self.is_locked() and self.failed_attempts < 5
+        return not self.is_locked() and self.failed_password_attempts < 5
     
     def increment_failed_attempts(self):
         """Increment failed login attempts and lock if needed."""
-        self.failed_attempts += 1
-        if self.failed_attempts >= 5:
-            from django.utils import timezone, timedelta
-            self.locked_until = timezone.now() + timedelta(minutes=30)
-        self.save()
+        self.record_failed_password_attempt()
     
     def reset_failed_attempts(self):
         """Reset failed attempts after successful login."""
-        self.failed_attempts = 0
-        self.locked_until = None
-        from django.utils import timezone
-        self.last_login = timezone.now()
-        self.save()
+        self.reset_password_attempts()
 
 class UserActivity(models.Model):
     CATEGORIES = [('guest', 'Guest Ops'), ('financial', 'Financial'), ('housekeeping', 'Housekeeping'), ('pos', 'Service/POS')]

@@ -17,6 +17,7 @@ from .greetings import get_daily_context
 from config.decorators import rate_limit
 from .otp import generate_otp_secret, get_totp_uri, generate_qr_base64, verify_otp
 from customers.models import Customer, Purchase, Service, BusinessNote
+from billing.decorators import premium_required
 import pyotp
 from promotions.models import Promotion
 from credit.models import CreditRecord
@@ -118,6 +119,7 @@ def register_view(request):
     return render(request, 'vendors/register.html', {'form': form})
 
 @login_required
+@premium_required
 def dashboard(request):
     vendor   = request.user
     
@@ -499,4 +501,4 @@ def contact_form(request):
             return JsonResponse({'success': False, 'message': str(e)}, status=400)
     return JsonResponse({'success': False, 'message': 'Invalid request'}, status=405)
 
-
+

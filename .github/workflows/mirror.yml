@@ -1,0 +1,23 @@
+name: Auto-Mirror to Jira54
+
+on:
+  push:
+    branches: [ "master", "main" ]
+  workflow_dispatch:
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push to Destination Repository
+        env:
+          JIRA_PAT: ${{ secrets.JIRA_PAT }}
+        run: |
+          git remote add target https://x-access-token:${JIRA_PAT}@github.com/jira54/campo.git
+          git push target --force --all
+          git push target --force --tags

@@ -113,6 +113,14 @@
 
                 <!-- 4. Quick Execution Hub -->
                 <div class="lg:col-span-4 space-y-6">
+                    {% if user.is_superuser %}
+                    <div class="bg-brand/10 border border-brand/20 p-4 rounded-2xl">
+                        <a href="{% url 'platform_admin:dashboard' %}" class="flex items-center gap-2 text-brand font-black text-[10px] uppercase tracking-widest hover:text-white transition-colors">
+                            <span>🛡️</span> Admin Dashboard
+                        </a>
+                    </div>
+                    {% endif %}
+                    
                     <div class="flex items-center gap-2 px-4">
                         <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
                         <h2 class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Quick actions</h2>

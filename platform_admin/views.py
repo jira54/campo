@@ -14,7 +14,7 @@ def dashboard(request):
     """Main admin dashboard with overview statistics"""
     if not request.user.is_superuser:
         messages.error(request, 'Access denied. Superuser only.')
-        return redirect('/')
+        return redirect('/dashboard/')
     
     # Get statistics
     total_users = Vendor.objects.count()
@@ -67,7 +67,7 @@ def user_list(request):
     """List all users with filtering"""
     if not request.user.is_superuser:
         messages.error(request, 'Access denied. Superuser only.')
-        return redirect('/')
+        return redirect('/dashboard/')
     
     users = Vendor.objects.all().order_by('-created_at')
     
@@ -104,7 +104,7 @@ def user_detail(request, user_id):
     """Detailed view of a single user"""
     if not request.user.is_superuser:
         messages.error(request, 'Access denied. Superuser only.')
-        return redirect('/')
+        return redirect('/dashboard/')
     
     user = get_object_or_404(Vendor, id=user_id)
     subscription = getattr(user, 'subscription', None)
@@ -124,7 +124,7 @@ def change_plan(request, user_id):
     """Manually change user's subscription plan"""
     if not request.user.is_superuser:
         messages.error(request, 'Access denied. Superuser only.')
-        return redirect('/')
+        return redirect('/dashboard/')
     
     user = get_object_or_404(Vendor, id=user_id)
     
@@ -172,7 +172,7 @@ def extend_trial(request, user_id):
     """Extend user's trial period"""
     if not request.user.is_superuser:
         messages.error(request, 'Access denied. Superuser only.')
-        return redirect('/')
+        return redirect('/dashboard/')
     
     user = get_object_or_404(Vendor, id=user_id)
     
@@ -202,7 +202,7 @@ def payment_list(request):
     """List all payments with filtering"""
     if not request.user.is_superuser:
         messages.error(request, 'Access denied. Superuser only.')
-        return redirect('/')
+        return redirect('/dashboard/')
     
     payments = Payment.objects.all().order_by('-created_at')
     
@@ -230,7 +230,7 @@ def manual_payment(request):
     """Add manual payment (bank transfer, cash, etc.)"""
     if not request.user.is_superuser:
         messages.error(request, 'Access denied. Superuser only.')
-        return redirect('/')
+        return redirect('/dashboard/')
     
     if request.method == 'POST':
         vendor_id = request.POST.get('vendor')
@@ -277,7 +277,7 @@ def confirm_payment(request, payment_id):
     """Confirm a pending payment"""
     if not request.user.is_superuser:
         messages.error(request, 'Access denied. Superuser only.')
-        return redirect('/')
+        return redirect('/dashboard/')
     
     payment = get_object_or_404(Payment, id=payment_id)
     
@@ -304,7 +304,7 @@ def reject_payment(request, payment_id):
     """Reject a pending payment"""
     if not request.user.is_superuser:
         messages.error(request, 'Access denied. Superuser only.')
-        return redirect('/')
+        return redirect('/dashboard/')
     
     payment = get_object_or_404(Payment, id=payment_id)
     

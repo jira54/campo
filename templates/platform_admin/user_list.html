@@ -1,0 +1,111 @@
+{% extends 'platform_admin/base.html' %}
+
+{% block title %}Users - CampoPawa Admin{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Users</h1>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" class="row g-3">
+            <div class="col-md-4">
+                <input type="text" name="search" class="form-control" placeholder="Search by name, email, phone..." value="{{ search_query }}">
+            </div>
+            <div class="col-md-3">
+                <select name="plan" class="form-select">
+                    <option value="">All Plans</option>
+                    <option value="free" {% if plan_filter == 'free' %}selected{% endif %}>Free</option>
+                    <option value="premium_retail" {% if plan_filter == 'premium_retail' %}selected{% endif %}>Premium Retail</option>
+                    <option value="enterprise_ngo" {% if plan_filter == 'enterprise_ngo' %}selected{% endif %}>Enterprise NGO</option>
+                    <option value="enterprise_resort" {% if plan_filter == 'enterprise_resort' %}selected{% endif %}>Enterprise Resort</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="business_type" class="form-select">
+                    <option value="">All Business Types</option>
+                    <option value="food" {% if business_type_filter == 'food' %}selected{% endif %}>Food Vendor</option>
+                    <option value="printing" {% if business_type_filter == 'printing' %}selected{% endif %}>Printing / Cyber</option>
+                    <option value="thrift" {% if business_type_filter == 'thrift' %}selected{% endif %}>Thrift / Clothing</option>
+                    <option value="rental" {% if business_type_filter == 'rental' %}selected{% endif %}>Rental Services</option>
+                    <option value="cakes" {% if business_type_filter == 'cakes' %}selected{% endif %}>Cakes & Confectionery</option>
+                    <option value="ngo" {% if business_type_filter == 'ngo' %}selected{% endif %}>NGO / Non-Profit</option>
+                    <option value="resort" {% if business_type_filter == 'resort' %}selected{% endif %}>Resort / Hospitality</option>
+                    <option value="other" {% if business_type_filter == 'other' %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Users Table -->
+<div class="card">
+    <div class="card-body">
+        {% if users %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Business Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Business Type</th>
+                            <th>Plan</th>
+                            <th>Trial Status</th>
+                            <th>Registered</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            <tr>
+                                <td><strong>{{ user.business_name }}</strong></td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.phone_number }}</td>
+                                <td>{{ user.get_business_type_display }}</td>
+                                <td>
+                                    {% if user.subscription %}
+                                        {% if user.subscription.plan == 'free' %}
+                                            <span class="badge badge-primary">Free</span>
+                                        {% elif user.subscription.plan == 'premium_retail' %}
+                                            <span class="badge badge-success">Premium Retail</span>
+                                        {% elif user.subscription.plan == 'enterprise_ngo' %}
+                                            <span class="badge badge-success">Enterprise NGO</span>
+                                        {% elif user.subscription.plan == 'enterprise_resort' %}
+                                            <span class="badge badge-success">Enterprise Resort</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="badge badge-primary">Free</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if user.trial_end_date %}
+                                        {% if user.trial_end_date > timezone.now %}
+                                            <span class="badge badge-success">Active ({{ user.trial_end_date|date:"M d" }})</span>
+                                        {% else %}
+                                            <span class="badge badge-danger">Expired</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="text-muted">No trial</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ user.created_at|date:"M d, Y" }}</td>
+                                <td>
+                                    <a href="{% url 'platform_admin:user_detail' user.id %}" class="btn btn-sm btn-primary">View</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted">No users found matching your criteria.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -176,7 +176,10 @@ def dashboard(request):
         status='sent'
     ).aggregate(total=Sum('response_count'))['total'] or 0
 
+    from notes.models import Note
+    
     recent_customers = customers.order_by('-added_at')[:5]
+    recent_notes = Note.objects.filter(vendor=vendor).order_by('-created_at')[:3]
 
     at_risk_count = customers.annotate(
         last_purchase_date=Max('purchases__purchased_at')
@@ -205,11 +208,15 @@ def dashboard(request):
         )
         total_credit_owed = (_credit_agg['given'] or 0) - (_credit_agg['paid'] or 0)
 
+    # Calculation for Multi-Metric Cards (Retail Parity)
+    promos_sent = Promotion.objects.filter(vendor=vendor, sent_at__date=today).count()
+    
     context = {
         'total_customers':  total_customers,
-        'repeat_rate':      repeat_rate,
+        'repeat_rate':      round(repeat_rate),
         'week_revenue':     week_revenue,
         'promo_responses':  promo_responses,
+        'promos_sent':      promos_sent,
         'recent_customers': recent_customers,
         'at_risk_count':    at_risk_count,
         'customer_limit':   vendor.customer_limit,
@@ -225,6 +232,7 @@ def dashboard(request):
         # Credit alerts
         'overdue_credits':  overdue_credits,
         'total_credit_owed': total_credit_owed,
+        'recent_notes': recent_notes,
         # Check if services exist for Quick Sale visibility
         'has_services': Service.objects.filter(vendor=vendor, is_active=True).exists(),
         # Add latest quick notes
@@ -291,6 +299,21 @@ def quick_sale(request):
             messages.error(request, "Invalid amount entered.")
             return redirect('vendors:dashboard')
     
+    return redirect('vendors:dashboard')
+
+@login_required
+def save_quick_note(request):
+    if request.method == 'POST':
+        title = request.POST.get('title', 'Quick Record')
+        content = request.POST.get('content', '').strip()
+        if content:
+            from notes.models import Note
+            Note.objects.create(
+                vendor=request.user,
+                title=title,
+                content=content
+            )
+            messages.success(request, "Note recorded in your strategic log.")
     return redirect('vendors:dashboard')
 
 class CustomPasswordResetView(PasswordResetView):

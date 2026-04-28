@@ -1,6 +1,5 @@
 from django.urls import path
 from . import views
-from . import auth_views
 
 app_name = 'resort_portal'
 
@@ -25,16 +24,7 @@ urlpatterns = [
     # Security
     path('security/', views.security_settings, name='security'),
     
-    # NEW: Manager Authentication System
-    path('manager-setup/', auth_views.manager_setup, name='resort_manager_setup'),
-    path('manager-verify-email/', auth_views.manager_verify_email, name='resort_manager_verify'),
-    path('manager-login/', auth_views.manager_login, name='resort_manager_login'),
-    path('manager-logout/', auth_views.manager_logout, name='resort_manager_logout'),
-    path('manager-set-pin/', auth_views.manager_set_pin, name='resort_manager_set_pin'),
-    path('manager-verify-pin/', auth_views.manager_verify_pin, name='resort_verify_pin'),
-    path('resort-dashboard/', auth_views.resort_dashboard, name='resort_dashboard'),
-    
-    # Legacy Manager Authentication (keep for compatibility)
+    # Manager Authentication
     path('auth/setup/', views.manager_auth_setup, name='manager_setup'),
     path('auth/login/', views.manager_login, name='manager_login'),
     path('auth/logout/', views.manager_logout, name='manager_logout'),

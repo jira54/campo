@@ -1,0 +1,6 @@
+{
+  "backup_timestamp": "2026-04-28T04:40:00Z",
+  "database_url": "postgresql://postgres.qkrryrokcuhavjhpamlo:Mkatemingi%40me@aws-1-eu-west-3.pooler.supabase.com:5432/postgres",
+  "backup_type": "configuration_backup",
+  "note": "Database is hosted on Supabase - data will persist even if Fly.io app is deleted. This backup contains connection details to reconnect new app."
+}

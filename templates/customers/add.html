@@ -102,7 +102,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-40 overflow-y-auto pr-2">
                             {% for service in popular_services %}
                             <label class="flex items-center p-3 bg-yellow-900 bg-opacity-20 border border-yellow-500 border-opacity-30 rounded cursor-pointer hover:bg-yellow-900 hover:bg-opacity-30 transition">
-                                <input type="checkbox" name="services" value="{{ service.id }}" class="mr-3 h-4 w-4 text-yellow-400 focus:ring-yellow-500 border-gray-300 rounded">
+                                <input type="checkbox" name="services" value="{{ service.id }}" class="mr-3 h-4 w-4 text-yellow-400 focus:ring-yellow-500 border-gray-300 rounded" data-price="{{ service.price }}">
                                 <div class="flex-1">
                                     <div class="font-medium text-white">{{ service.name }}</div>
                                     {% if service.description %}

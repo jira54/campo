@@ -1,0 +1,91 @@
+{% extends 'platform_admin/base.html' %}
+
+{% block title %}Payments - CampoPawa Admin{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Payments</h1>
+    <a href="{% url 'platform_admin:manual_payment' %}" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Add Manual Payment
+    </a>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" class="row g-3">
+            <div class="col-md-4">
+                <select name="status" class="form-select">
+                    <option value="">All Status</option>
+                    <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="confirmed" {% if status_filter == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                    <option value="failed" {% if status_filter == 'failed' %}selected{% endif %}>Failed</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <select name="plan" class="form-select">
+                    <option value="">All Plans</option>
+                    <option value="free" {% if plan_filter == 'free' %}selected{% endif %}>Free</option>
+                    <option value="premium_retail" {% if plan_filter == 'premium_retail' %}selected{% endif %}>Premium Retail</option>
+                    <option value="enterprise_ngo" {% if plan_filter == 'enterprise_ngo' %}selected{% endif %}>Enterprise NGO</option>
+                    <option value="enterprise_resort" {% if plan_filter == 'enterprise_resort' %}selected{% endif %}>Enterprise Resort</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Payments Table -->
+<div class="card">
+    <div class="card-body">
+        {% if payments %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Invoice #</th>
+                            <th>Business</th>
+                            <th>Amount</th>
+                            <th>Plan</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for payment in payments %}
+                            <tr>
+                                <td>{{ payment.invoice_number|default:"—" }}</td>
+                                <td><strong>{{ payment.vendor.business_name }}</strong></td>
+                                <td>KES {{ payment.amount }}</td>
+                                <td>{{ payment.get_plan_paid_for_display }}</td>
+                                <td>
+                                    {% if payment.status == 'confirmed' %}
+                                        <span class="badge badge-success">Confirmed</span>
+                                    {% elif payment.status == 'pending' %}
+                                        <span class="badge badge-warning">Pending</span>
+                                    {% else %}
+                                        <span class="badge badge-danger">Failed</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ payment.created_at|date:"M d, Y H:i" }}</td>
+                                <td>
+                                    {% if payment.status == 'pending' %}
+                                        <a href="{% url 'platform_admin:confirm_payment' payment.id %}" class="btn btn-sm btn-success">Confirm</a>
+                                        <a href="{% url 'platform_admin:reject_payment' payment.id %}" class="btn btn-sm btn-danger">Reject</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted">No payments found matching your criteria.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

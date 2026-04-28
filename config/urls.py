@@ -36,10 +36,10 @@ urlpatterns = [
     path('credit/',     include('credit.urls')),
     path('ngo/',        include('ngo_portal.urls')),
     path('resort/',     include('resort_portal.urls')),
-    path('saas-admin/', include('admin_dashboard.urls')),
+    path('saas-admin/', include('platform_admin.urls')),
     path('sw.js', service_worker, name='service_worker'),
     path('offline/', offline, name='offline'),
 ]
 
 handler404 = 'vendors.views.custom_404'
-handler500 = 'vendors.views.custom_500'
+handler500 = 'vendors.views.custom_500'

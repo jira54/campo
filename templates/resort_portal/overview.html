@@ -1,25 +1,25 @@
 {% extends 'resort_portal/base_section.html' %}
 {% load resort_tags %}
 
-{% block section_title %}Overview Dashboard{% endblock %}
+{% block section_title %}Property HUB{% endblock %}
 {% block breadcrumb %}Overview{% endblock %}
-{% block page_title %}Property Performance Insights{% endblock %}
+{% block page_title %}Operational Intelligence{% endblock %}
 
 {% block header_actions %}
 <div class="flex items-center gap-4">
     <div id="staff-controls" class="{% if is_manager_unlocked %}hidden{% endif %}">
-        <button onclick="document.getElementById('pin-modal').classList.remove('hidden')" class="px-5 py-2.5 bg-brand text-deep font-outfit font-black text-[10px] uppercase tracking-[0.2em] rounded-xl shadow-brand hover:scale-105 transition-all">
+        <button onclick="document.getElementById('pin-modal').classList.remove('hidden')" class="px-8 py-3.5 bg-brand text-deep font-outfit font-black text-[10px] uppercase tracking-[0.2em] rounded-full shadow-[0_0_20px_rgba(197,160,89,0.3)] hover:scale-105 transition-all">
             Unlock Manager View
         </button>
     </div>
     {% if is_manager_unlocked %}
     <div class="flex items-center gap-4">
-        <div class="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center gap-2">
+        <div class="px-5 py-2.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center gap-2">
             <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-            <span class="text-emerald-400 text-[9px] font-black uppercase tracking-widest">Manager Session Active</span>
+            <span class="text-emerald-400 text-[10px] font-black uppercase tracking-widest">Manager Session Active</span>
         </div>
-        <a href="{% url 'resort_portal:lock_manager' %}" class="px-5 py-2.5 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white border border-rose-500/20 font-outfit font-black text-[10px] uppercase tracking-widest rounded-xl transition-all">
-            Lock
+        <a href="{% url 'resort_portal:lock_manager' %}" class="px-8 py-3.5 bg-rose-500/10 text-rose-500 hover:bg-rose-500 hover:text-white border border-rose-500/20 font-outfit font-black text-[10px] uppercase tracking-widest rounded-full transition-all">
+            Lock View
         </a>
     </div>
     {% endif %}
@@ -28,134 +28,143 @@
 
 {% block section_content %}
 
-<!-- PIN Setup Status Alert -->
-{% if not request.user.resort_manager_pin %}
-<div class="mb-10 bg-amber-500/10 border border-amber-500/20 p-6 rounded-2xl flex items-center justify-between gap-6 group hover:bg-amber-500/15 transition-all">
-    <div class="flex items-center gap-6">
-        <div class="w-16 h-16 rounded-2xl bg-amber-500 flex items-center justify-center text-deep text-3xl shadow-amber-500/20">!</div>
-        <div>
-            <h3 class="text-amber-400 font-outfit font-black text-lg mb-1">Security Setup Required</h3>
-            <p class="text-stone-300 text-sm">Set your Manager PIN to unlock financial analytics and protect sensitive data.</p>
-        </div>
-    </div>
-    <a href="{% url 'resort_portal:security' %}" class="bg-amber-500 hover:bg-amber-400 text-deep font-bold px-6 py-3 rounded-xl transition-all flex items-center gap-2">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-        Set PIN Now
-    </a>
-</div>
-{% endif %}
-
-<!-- At-a-Glance Strategic Insights -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-    <!-- Occupancy -->
-    <div class="glass-box premium-border p-8 rounded-[2.5rem] relative overflow-hidden group">
-        <div class="absolute -right-4 -top-4 w-32 h-32 bg-brand/5 blur-3xl rounded-full group-hover:bg-brand/10 transition-all"></div>
-        <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-6 flex items-center gap-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-brand"></span>
-            Occupancy Pulse
-        </p>
-        <div class="space-y-1">
-            <p class="text-4xl font-outfit font-black text-white tracking-tighter">
-                {% if active_property.rooms.count > 0 %}{{ occupied_rooms|divide:active_property.rooms.count|multiply:100|floatformat:0 }}%{% else %}0%{% endif %}
-            </p>
-            <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest">{{ occupied_rooms }} / {{ active_property.rooms.count }} Rooms Booked</p>
-        </div>
+<!-- Welcome & Wisdom Section -->
+<div class="mb-12">
+    <div class="flex items-center gap-3 mb-6">
+        <span class="text-3xl animate-bounce">{{ greeting_emoji }}</span>
+        <h2 class="text-4xl font-outfit font-black text-brand tracking-tighter">{{ greeting }}, {{ first_name }}!</h2>
     </div>
 
-    <!-- Revenue (Green Highlighted as requested) -->
-    <div class="glass-box premium-border p-8 rounded-[2.5rem] relative overflow-hidden group border-emerald-500/10">
-        <div class="absolute -right-4 -top-4 w-32 h-32 bg-emerald-500/10 blur-3xl rounded-full group-hover:bg-emerald-500/20 transition-all"></div>
-        <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-6 flex items-center gap-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-            Strategic Yield
-        </p>
-        <div class="space-y-1">
-            <p class="text-4xl font-outfit font-black text-emerald-400 tracking-tighter">
-                {% if is_manager_unlocked %}KSh {{ total_revenue_today|floatformat:0 }}{% else %}<span class="text-stone-600">Locked</span>{% endif %}
-            </p>
-            <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Today's Revenue Flow</p>
-        </div>
-    </div>
-
-    <!-- Arrivals (Orange/White wording) -->
-    <div class="glass-box premium-border p-8 rounded-[2.5rem] relative overflow-hidden group">
-        <div class="absolute -right-4 -top-4 w-32 h-32 bg-orange-500/5 blur-3xl rounded-full group-hover:bg-orange-500/10 transition-all"></div>
-        <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-6 flex items-center gap-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-orange-400"></span>
-            Arrival Matrix
-        </p>
-        <div class="space-y-1">
-            <p class="text-4xl font-outfit font-black text-white tracking-tighter">{{ arrivals_today }} <span class="text-xs text-orange-400">Arrived</span></p>
-            <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest">{{ vip_arrivals }} VIP Protocols Pending</p>
-        </div>
-    </div>
-
-    <!-- Housekeeping -->
-    <div class="glass-box premium-border p-8 rounded-[2.5rem] relative overflow-hidden group">
-        <div class="absolute -right-4 -top-4 w-32 h-32 bg-teal-500/5 blur-3xl rounded-full group-hover:bg-teal-500/10 transition-all"></div>
-        <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-6 flex items-center gap-2">
-            <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span>
-            Service Flow
-        </p>
-        <div class="space-y-1">
-            <p class="text-4xl font-outfit font-black text-white tracking-tighter">{{ dirty_rooms }} <span class="text-xs text-teal-400">Dirty</span></p>
-            <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Rooms Awaiting Turnaround</p>
-        </div>
-    </div>
-</div>
-
-<!-- Operational Navigation -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-    <a href="{% url 'resort_portal:guests' %}?tab=register" class="group relative p-10 glass-box premium-border rounded-[3rem] overflow-hidden transition-all hover:scale-[1.01] active:scale-95 shadow-xl">
-        <div class="absolute inset-0 bg-emerald-500/0 group-hover:bg-emerald-500/5 transition-all"></div>
-        <div class="relative z-10 flex items-center justify-between">
-            <div class="space-y-2">
-                <h4 class="text-3xl font-outfit font-black text-white tracking-tight">Initiate Check-in</h4>
-                <p class="text-emerald-400 text-xs font-bold uppercase tracking-widest">Register New Arrival &rarr;</p>
+    <div class="p-8 rounded-[2.5rem] bg-gradient-to-r from-stone-900/80 to-stone-800/40 border border-white/5 relative overflow-hidden group">
+        <div class="absolute -right-10 -top-10 w-40 h-40 bg-brand/10 rounded-full blur-3xl group-hover:bg-brand/20 transition-all"></div>
+        <div class="flex items-center gap-6 relative z-10">
+            <div class="w-14 h-14 bg-brand rounded-2xl flex items-center justify-center text-deep text-2xl shadow-xl shadow-brand/20">
+                ✨
             </div>
-            <div class="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">🛎️</div>
-        </div>
-    </a>
-    
-    <a href="{% url 'resort_portal:rooms' %}" class="group relative p-10 glass-box premium-border rounded-[3rem] overflow-hidden transition-all hover:scale-[1.01] active:scale-95 shadow-xl">
-        <div class="absolute inset-0 bg-brand/0 group-hover:bg-brand/5 transition-all"></div>
-        <div class="relative z-10 flex items-center justify-between">
-            <div class="space-y-2">
-                <h4 class="text-3xl font-outfit font-black text-white tracking-tight">Room Inventory</h4>
-                <p class="text-brand text-xs font-bold uppercase tracking-widest">Audit Status & Availability &rarr;</p>
+            <div>
+                <p class="text-white font-medium text-lg leading-relaxed">{{ daily_tip }}</p>
+                <p class="text-stone-500 text-[10px] font-black uppercase tracking-[0.2em] mt-2">Strategic Insight of the Day</p>
             </div>
-            <div class="w-16 h-16 rounded-full bg-brand/10 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">🏠</div>
         </div>
-    </a>
+    </div>
 </div>
 
-<!-- Recent Strategic Activity -->
-<div class="glass-box premium-border rounded-[3rem] overflow-hidden">
-    <div class="p-8 border-b border-white/5 flex items-center justify-between">
-        <h3 class="text-xl font-outfit font-black text-white tracking-tight">Operational Intelligence</h3>
-        <span class="text-[10px] font-black text-stone-500 uppercase tracking-widest">Live Audit Feed</span>
-    </div>
-    <div class="max-h-[400px] overflow-y-auto custom-scrollbar">
-        {% for act in activities %}
-        <div class="p-8 border-b border-white/5 last:border-0 hover:bg-white/[0.02] transition-colors group">
-            <div class="flex items-start gap-6">
-                <div class="w-14 h-14 rounded-2xl bg-stone-800 flex items-center justify-center text-2xl group-hover:bg-brand group-hover:text-deep transition-all">
-                    {{ act.icon }}
+<!-- Premium KPI Grid (Retail Parity) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+    <!-- Revenue & Yield Card (Emerald Gradient) -->
+    <div class="relative p-1 rounded-[3rem] bg-gradient-to-br from-emerald-500/40 via-teal-900/60 to-stone-900 overflow-hidden group">
+        <div class="bg-stone-950 p-10 rounded-[2.8rem] h-full relative z-10">
+            <div class="flex justify-between items-start mb-8">
+                <div>
+                    <p class="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-4">Today's Revenue</p>
+                    <h3 class="text-4xl font-outfit font-black text-white tracking-tighter mb-2">
+                        {% if is_manager_unlocked %}KSh {{ total_revenue_today|floatformat:0 }}{% else %}••••••{% endif %}
+                    </h3>
                 </div>
-                <div class="flex-1">
-                    <div class="flex items-center justify-between mb-1">
-                        <h4 class="text-white font-black text-lg">{{ act.title }}</h4>
-                        <span class="text-[9px] font-black text-stone-500 uppercase tracking-[0.2em]">{{ act.created_at|timesince }} ago</span>
+                <div>
+                   <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-4">Week Revenue</p>
+                   <h3 class="text-xl font-outfit font-black text-stone-300">
+                        {% if is_manager_unlocked %}KSh {{ week_revenue|floatformat:0 }}{% else %}••••••{% endif %}
+                   </h3>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-[10px] font-black text-emerald-500">💰 Settlement Intelligence Active</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Guest Lifecycle Card (Purple Gradient) -->
+    <div class="relative p-1 rounded-[3rem] bg-gradient-to-br from-indigo-500/40 via-purple-900/60 to-stone-900 overflow-hidden group">
+        <div class="bg-stone-950 p-10 rounded-[2.8rem] h-full relative z-10">
+            <div class="flex justify-between items-start mb-8">
+                <div>
+                    <p class="text-[10px] font-black text-purple-400 uppercase tracking-widest mb-4">Daily Arrivals</p>
+                    <h3 class="text-4xl font-outfit font-black text-white tracking-tighter mb-2">{{ arrivals_today }}</h3>
+                </div>
+                <div class="text-right">
+                   <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-4">Total Database</p>
+                   <h3 class="text-xl font-outfit font-black text-stone-300">{{ total_guests_count }}</h3>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-[10px] font-black text-purple-400">👤 Guest Velocity: {{ guests_today }} New Today</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loyalty & Reputation Card (Gold Gradient) -->
+    <div class="relative p-1 rounded-[3rem] bg-gradient-to-br from-brand/40 via-amber-900/60 to-stone-900 overflow-hidden group">
+        <div class="bg-stone-950 p-10 rounded-[2.8rem] h-full relative z-10">
+            <div class="flex justify-between items-start mb-8">
+                <div>
+                    <p class="text-[10px] font-black text-brand uppercase tracking-widest mb-4">Loyalty Index</p>
+                    <h3 class="text-5xl font-outfit font-black text-white tracking-tighter mb-2">{{ loyalty_rate }}%</h3>
+                </div>
+                <div class="text-right">
+                   <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest mb-4">VIP Status</p>
+                   <h3 class="text-xl font-outfit font-black text-stone-300">{{ vip_arrivals }}</h3>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-[10px] font-black text-brand">✨ Premium Reputation Tracking</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-10 mt-10">
+    <!-- Left: Front Desk Feed (Recent Guests matching Retail) -->
+    <div class="lg:col-span-8">
+        <div class="flex items-center justify-between mb-8 px-4">
+            <h3 class="text-2xl font-outfit font-black text-white tracking-tight uppercase">Recent Guests</h3>
+            <a href="{% url 'resort_portal:guests' %}" class="text-[10px] font-black text-stone-500 uppercase tracking-widest hover:text-brand transition-colors">Digital Guest-list</a>
+        </div>
+        
+        <div class="bg-stone-900/40 border border-white/5 rounded-[3rem] divide-y divide-white/5 overflow-hidden">
+            {% for stay in recent_stays %}
+            <div class="p-8 flex items-center justify-between hover:bg-white/[0.02] transition-colors group">
+                <div class="flex items-center gap-6">
+                    <div class="w-14 h-14 bg-stone-800 rounded-2xl flex items-center justify-center text-xl group-hover:bg-brand group-hover:text-deep transition-all">
+                        🤵
                     </div>
-                    <p class="text-stone-400 text-sm font-medium leading-relaxed">{{ act.description }}</p>
+                    <div>
+                        <h4 class="text-white font-bold text-lg leading-none">{{ stay.guest.name }}</h4>
+                        <p class="text-stone-500 text-[10px] font-black uppercase tracking-widest mt-2">Room {{ stay.room.room_number }} • {{ stay.guest.status_label }}</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-emerald-400 font-outfit font-black text-lg">Active</p>
+                    <p class="text-stone-600 text-[10px] font-black uppercase tracking-widest mt-1">Check-in: {{ stay.check_in_date|date:"D d M" }}</p>
                 </div>
             </div>
+            {% empty %}
+            <div class="p-24 text-center">
+                <p class="text-stone-500 italic">No active stays recorded.</p>
+            </div>
+            {% endfor %}
         </div>
-        {% empty %}
-        <div class="p-20 text-center">
-            <p class="text-stone-500 italic text-sm font-medium">Digital silence. No strategic events recorded today.</p>
+    </div>
+
+    <!-- Right: Command Hub (Quick Actions) -->
+    <div class="lg:col-span-4 space-y-8">
+        <h3 class="text-2xl font-outfit font-black text-white tracking-tight px-4 uppercase">Quick Actions</h3>
+        
+        <div class="space-y-4">
+             <a href="{% url 'resort_portal:guests' %}?tab=register" class="w-full py-6 bg-brand text-deep font-outfit font-black text-sm uppercase tracking-widest rounded-[2rem] flex items-center justify-center gap-3 shadow-xl hover:scale-[1.02] transition-all">
+                <span>➕</span> Add Guest
+            </a>
+            
+            <a href="{% url 'resort_portal:reports' %}" class="w-full py-6 bg-stone-900/80 border border-brand text-brand font-outfit font-black text-sm uppercase tracking-widest rounded-[2rem] flex items-center justify-center gap-3 hover:bg-brand/10 transition-all">
+                <span>📈</span> Analytics
+            </a>
+
+            <div class="p-10 bg-stone-900/40 border border-white/5 rounded-[3rem] text-center">
+                 <span class="text-2xl block mb-4 animate-pulse">🍯</span>
+                 <p class="text-stone-400 font-medium italic text-sm mb-2">Did you know?</p>
+                 <p class="text-stone-300 text-sm leading-relaxed">{{ coffee_fact }}</p>
+            </div>
         </div>
-        {% endfor %}
     </div>
 </div>
 

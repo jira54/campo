@@ -10,15 +10,15 @@
     <!-- Main Section Content -->
     <main class="flex-1 md:ml-72 p-4 md:p-8 min-h-screen">
         <!-- Section Header -->
-        <header class="flex justify-between items-center mb-10 border-b border-white/10 pb-6">
+        <header class="flex justify-between items-center mb-12 border-b border-white/5 pb-8">
             <div>
-                <nav class="flex items-center gap-2 text-stone-500 text-[10px] font-black uppercase tracking-widest mb-2">
+                <nav class="flex items-center gap-2 text-stone-500 text-[9px] font-black uppercase tracking-[0.2em] mb-4">
                     <a href="{% url 'resort_portal:overview' %}" class="hover:text-brand transition-colors">Resort OS</a>
-                    <svg class="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
-                    <span class="text-white">{% block breadcrumb %}Section{% endblock %}</span>
+                    <svg class="w-2.5 h-2.5 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"/></svg>
+                    <span class="text-white/80">{% block breadcrumb %}Overview{% endblock %}</span>
                 </nav>
-                <h1 class="text-3xl font-outfit font-black text-white tracking-tight">
-                    {% block page_title %}Section Overview{% endblock %}
+                <h1 class="text-4xl md:text-5xl font-outfit font-black text-white tracking-tighter">
+                    {% block page_title %}Property Health{% endblock %}
                 </h1>
             </div>
             

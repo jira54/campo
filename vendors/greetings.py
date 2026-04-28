@@ -139,7 +139,7 @@ RANDOM_TIPS = [
 from django.utils import timezone
 
 def get_daily_context(user):
-    today = timezone.now()
+    today = timezone.localtime(timezone.now())
     weekday = today.weekday()
     hour = today.hour
 

@@ -12,71 +12,66 @@
     {% endif %}
 
     <main class="flex-1 h-screen overflow-y-auto">
-        <div class="p-8 md:p-12 max-w-7xl mx-auto w-full">
-            <!-- Header with Gradient -->
-            <div class="bg-gradient-to-r from-gold/10 via-teal/10 to-gold/5 border border-gold border-opacity-20 rounded-[2.5rem] p-10 mb-12">
-                <div class="flex items-center justify-between flex-wrap gap-8">
-                    <div class="space-y-2">
-                        <h1 class="text-4xl md:text-5xl font-outfit font-black text-white tracking-tight flex items-center gap-4">
-                            <span class="text-5xl">📝</span>
-                            Business Intelligence
-                        </h1>
-                        <p class="text-stone-400 text-lg font-medium">Capture ideas, customer feedback, and growth strategies</p>
+        <div class="p-6 md:p-12 max-w-7xl mx-auto w-full">
+            <!-- 1. Refined Business Intelligence Header -->
+            <div class="relative p-1 rounded-[2.5rem] bg-gradient-to-br from-emerald-500/20 via-stone-900 to-emerald-900/10 overflow-hidden mb-10">
+                <div class="bg-stone-950/80 backdrop-blur-xl p-8 md:p-12 rounded-[2.4rem] flex flex-col md:flex-row md:items-center justify-between gap-8">
+                    <div class="flex items-center gap-6">
+                        <div class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center text-4xl shadow-2xl border border-white/5">📝</div>
+                        <div>
+                            <h1 class="text-2xl md:text-4xl font-outfit font-black text-white tracking-tighter mb-2">My Notes</h1>
+                            <p class="text-stone-400 text-xs md:text-sm font-medium tracking-tight">Capture ideas, customer feedback, and growth strategies</p>
+                        </div>
                     </div>
-                    <a href="{% url 'notes:note_add' %}"
-                       class="bg-brand text-deep font-outfit font-black px-10 py-5 rounded-2xl shadow-brand hover:scale-105 active:scale-95 transition-all flex items-center gap-3">
-                        <span class="text-2xl">✨</span>
-                        <span class="text-sm uppercase tracking-widest">New Entry</span>
+                    <a href="{% url 'notes:note_add' %}" class="bg-emerald-500 text-deep font-outfit font-black px-8 py-4 rounded-xl shadow-lg shadow-emerald-500/10 hover:bg-white transition-all flex items-center justify-center gap-3 text-xs uppercase tracking-widest">
+                        <span>✨</span> New Entry
                     </a>
                 </div>
             </div>
 
-            <!-- Search Architecture -->
-            <div class="mb-12">
+            <!-- 2. Minimalist Search -->
+            <div class="mb-10">
                 <form method="get" class="relative group">
-                    <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none transition-transform group-focus-within:scale-110">
-                        <span class="text-stone-500 text-xl">🔍</span>
+                    <div class="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none opacity-40">
+                        <span class="text-lg">🔍</span>
                     </div>
                     <input type="text" name="q" value="{{ search }}"
-                        placeholder="Search strategies, feedback, and reminders..."
-                        class="w-full bg-white/[0.03] border border-white/10 text-white rounded-[2rem] pl-16 pr-6 py-6 text-lg focus:outline-none focus:border-brand focus:ring-4 focus:ring-brand/10 transition-all placeholder:text-stone-600"/>
+                        placeholder="Search your strategic log..."
+                        class="w-full bg-stone-900/40 border border-white/5 text-white rounded-2xl pl-16 pr-6 py-5 text-sm focus:outline-none focus:border-emerald-500/50 transition-all placeholder:text-stone-600"/>
                 </form>
             </div>
 
-            <!-- Notes Intelligence Matrix -->
+            <!-- 3. Dynamic Notes Intelligence Hub -->
             {% if notes %}
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {% for note in notes %}
-                    <div class="group relative bg-white/[0.02] border border-white/5 hover:border-brand/30 rounded-[2.5rem] p-8 transition-all duration-500 hover:scale-[1.02] hover:bg-white/[0.04] shadow-2xl">
-                        <!-- Recent Badge -->
+                    <div class="group relative bg-stone-900/40 border border-white/5 hover:border-emerald-500/30 rounded-[2rem] p-7 transition-all duration-300">
+                        <!-- Precise Recent Badge -->
                         {% if note.is_recent %}
-                            <div class="absolute top-6 right-6">
-                                <span class="bg-brand text-deep text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-brand">
+                            <div class="absolute -top-3 right-6">
+                                <span class="bg-emerald-500 text-deep text-[8px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-lg shadow-xl shadow-emerald-500/20">
                                     ✨ Recent
                                 </span>
                             </div>
                         {% endif %}
                         
-                        <!-- Note Intelligence -->
-                        <div class="mb-8">
-                            <h3 class="text-white font-outfit font-black text-xl mb-4 line-clamp-2 leading-tight group-hover:text-brand transition-colors">{{ note.title }}</h3>
-                            <p class="text-stone-400 text-sm font-medium line-clamp-4 leading-relaxed italic border-l-2 border-brand/20 pl-4">{{ note.excerpt }}</p>
+                        <!-- Content Strategy -->
+                        <div class="mb-6 pt-2">
+                            <h3 class="text-white font-outfit font-black text-lg mb-3 line-clamp-2 leading-tight group-hover:text-emerald-400 transition-colors">{{ note.title }}</h3>
+                            <p class="text-stone-500 text-[11px] leading-relaxed italic border-l border-emerald-500/20 pl-4">{{ note.excerpt }}</p>
                         </div>
                         
                         <!-- Actions & Metadata -->
-                        <div class="flex items-center justify-between pt-6 border-t border-white/5">
+                        <div class="flex items-center justify-between pt-5 border-t border-white/5">
                             <div class="flex items-center gap-2">
-                                <span class="text-stone-600 text-xs text-brand">📅</span>
-                                <p class="text-stone-500 text-[10px] font-black uppercase tracking-widest">{{ note.updated_at|date:"d M, Y" }}</p>
+                                <p class="text-stone-600 text-[9px] font-black uppercase tracking-widest">{{ note.updated_at|date:"d M, Y" }}</p>
                             </div>
-                            <div class="flex gap-3">
-                                <a href="{% url 'notes:note_detail' note.pk %}"
-                                   class="p-3 bg-white/5 hover:bg-white/10 text-stone-300 hover:text-white rounded-xl transition-all" title="View Detail">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            <div class="flex gap-2">
+                                <a href="{% url 'notes:note_detail' note.pk %}" class="p-2.5 bg-white/5 hover:bg-white/10 text-stone-400 hover:text-white rounded-lg transition-all">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                                 </a>
-                                <a href="{% url 'notes:note_edit' note.pk %}"
-                                   class="p-3 bg-brand/10 hover:bg-brand text-brand hover:text-deep rounded-xl transition-all" title="Edit Entry">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                <a href="{% url 'notes:note_edit' note.pk %}" class="p-2.5 bg-emerald-500/10 hover:bg-emerald-500 text-emerald-500 hover:text-deep rounded-lg transition-all">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                                 </a>
                             </div>
                         </div>
@@ -88,7 +83,7 @@
                 <div class="text-center mt-20">
                     <div class="bg-white/[0.02] border border-white/5 rounded-[3rem] p-20 max-w-2xl mx-auto shadow-2xl">
                         <div class="text-8xl mb-8 opacity-40">📝</div>
-                        <h2 class="text-white font-outfit font-black text-3xl mb-4 tracking-tight">No Business Intelligence Yet</h2>
+                        <h2 class="text-white font-outfit font-black text-3xl mb-4 tracking-tight">No Notes Recorded Yet</h2>
                         <p class="text-stone-500 text-lg mb-10 leading-relaxed font-medium">
                             Start capturing your brilliant ideas, customer feedback, and growth strategies. Your next big breakthrough could be in a note!
                         </p>

@@ -1,0 +1,46 @@
+CAMPOPAWA BACKUP CONFIGURATION
+=============================
+Created: 2026-04-28 04:40 UTC
+Purpose: Safe recreation of Fly.io app with same data
+
+DATABASE CONFIGURATION:
+- Type: PostgreSQL (Supabase)
+- URL: postgresql://postgres.qkrryrokcuhavjhpamlo:Mkatemingi%40me@aws-1-eu-west-3.pooler.supabase.com:5432/postgres
+- IMPORTANT: Database is EXTERNAL to Fly.io - will NOT be lost when app is deleted
+
+FLY.IO APP INFO:
+- App Name: campo
+- Current Status: Active (but incurring charges)
+- Issue: Cross-region bandwidth charges ($22.71)
+- Solution: Delete and recreate with strict free-tier settings
+
+RECOVERY STEPS:
+1. Delete current Fly.io app (stops charges)
+2. Create new Fly.io app with optimized config
+3. Set DATABASE_URL to same Supabase connection
+4. Deploy - all data will be available immediately
+
+DATA SAFETY:
+✅ Database: External (Supabase) - SAFE
+✅ App Code: Local repository - SAFE  
+⚠️  Static Files: Will be rebuilt on deploy
+⚠️  App Config: Will be restored from this backup
+
+ENVIRONMENT VARIABLES TO RESTORE:
+DEBUG=True
+SECRET_KEY=u9$1k*)o$@zhh#7tdgs(e%$rf+if)*kxx)wkd9(_2_%qykmy66
+DATABASE_URL=postgresql://postgres.qkrryrokcuhavjhpamlo:Mkatemingi%40me@aws-1-eu-west-3.pooler.supabase.com:5432/postgres
+ALLOWED_HOSTS=127.0.0.1,localhost,campo.fly.dev
+MPESA_SHORTCODE=174379
+MPESA_ENV=sandbox
+AT_USERNAME=sandbox
+AT_SENDER_ID=CampoPawa
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+DEFAULT_FROM_EMAIL=noreply@campopawa.com
+
+NEXT ACTIONS:
+1. Run: flyctl apps destroy campo
+2. Run: flyctl launch --copy-config
+3. Set environment variables above
+4. Run: flyctl deploy

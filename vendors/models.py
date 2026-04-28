@@ -102,10 +102,16 @@ class Vendor(AbstractBaseUser, PermissionsMixin):
 
     @property
     def is_premium(self):
-        # Check if user has active trial
+        # 1. Automatic bypass for Superusers
+        if self.is_superuser:
+            return True
+            
+        # 2. Check if user has active trial
         if self.trial_end_date and self.trial_end_date > timezone.now():
             return True
-        return self.plan in ('premium', 'bundle')
+            
+        # 3. Check if user has a non-free plan
+        return self.plan != 'free'
 
     @property
     def customer_limit(self):

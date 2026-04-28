@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'admin_dashboard',
+    'platform_admin',
     'vendors',
     'customers',
     'promotions',
@@ -49,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'platform_admin.middleware.AdminAccessMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -107,56 +109,76 @@ TIME_ZONE = 'Africa/Nairobi'
 USE_I18N = True
 USE_TZ = True
 
-# Redis & Celery Resilient Configuration
+# Redis & Celery Optimized for Free Tier
 REDIS_URL = os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379/0')
 
+# Free tier optimization: Disable Redis/Celery by default
 USE_REDIS = False
-if REDIS_URL:
-    try:
-        import redis
-        # Short timeout to avoid hanging settings import
-        r = redis.from_url(REDIS_URL, socket_connect_timeout=1)
-        r.ping()
-        USE_REDIS = True
-    except Exception:
-        USE_REDIS = False
+IS_FLY_IO = os.environ.get('FLY_APP_NAME') == 'campo'
 
-if USE_REDIS:
-    CACHES = {
-        'default': {
-            'BACKEND': 'django_redis.cache.RedisCache',
-            'LOCATION': REDIS_URL,
-            'OPTIONS': {
-                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            }
-        }
-    }
-    CELERY_BROKER_URL = REDIS_URL
-    CELERY_RESULT_BACKEND = REDIS_URL
-    CELERY_TASK_ALWAYS_EAGER = False
-else:
-    # Local Development Fallback
+if IS_FLY_IO:
+    # Fly.io free tier: Use lightweight caching only
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-            'LOCATION': 'unique-snowflake',
+            'LOCATION': 'fly-free-tier-cache',
+            'OPTIONS': {
+                'MAX_ENTRIES': 100,  # Limit cache size for memory
+                'CULL_FREQUENCY': 3,
+            }
         }
     }
+    # Disable Celery on free tier to save memory
     CELERY_BROKER_URL = 'memory://'
     CELERY_RESULT_BACKEND = 'cache'
     CELERY_CACHE_BACKEND = 'memory'
     CELERY_TASK_ALWAYS_EAGER = True
-    if DEBUG:
-        print("WARNING: Redis not found. Falling back to LocMemCache and Eager Celery tasks.")
+else:
+    # Local/Development: Try Redis if available
+    if REDIS_URL and not DEBUG:
+        try:
+            import redis
+            r = redis.from_url(REDIS_URL, socket_connect_timeout=1)
+            r.ping()
+            USE_REDIS = True
+        except Exception:
+            USE_REDIS = False
+    
+    if USE_REDIS:
+        CACHES = {
+            'default': {
+                'BACKEND': 'django_redis.cache.RedisCache',
+                'LOCATION': REDIS_URL,
+                'OPTIONS': {
+                    'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+                }
+            }
+        }
+        CELERY_BROKER_URL = REDIS_URL
+        CELERY_RESULT_BACKEND = REDIS_URL
+        CELERY_TASK_ALWAYS_EAGER = False
+    else:
+        CACHES = {
+            'default': {
+                'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+                'LOCATION': 'unique-snowflake',
+            }
+        }
+        CELERY_BROKER_URL = 'memory://'
+        CELERY_RESULT_BACKEND = 'cache'
+        CELERY_CACHE_BACKEND = 'memory'
+        CELERY_TASK_ALWAYS_EAGER = True
+        if DEBUG:
+            print("WARNING: Redis not found. Falling back to LocMemCache and Eager Celery tasks.")
 
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = TIME_ZONE
 
-# Session Security Enhancement
+# Session Security Enhancement (Free Tier Optimized)
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_COOKIE_AGE = 3600 * 24  # 24 hours
+SESSION_COOKIE_AGE = 3600 * 12  # Reduced to 12 hours for free tier
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']

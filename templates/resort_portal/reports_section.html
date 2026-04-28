@@ -1,13 +1,279 @@
 {% extends 'resort_portal/base_section.html' %}
+
 {% block section_title %}Business Analytics{% endblock %}
 {% block breadcrumb %}Reports{% endblock %}
-{% block page_title %}Management & Revenue Reports{% endblock %}
-{% block section_content %}
-<div class="bg-white/[0.02] border border-white/5 rounded-3xl p-16 text-center">
-    <div class="w-20 h-20 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-500">
-        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-    </div>
-    <h3 class="text-2xl font-outfit font-black text-white mb-2">Manager Analytics Hub</h3>
-    <p class="text-stone-500 text-sm max-w-md mx-auto mb-8">Comprehensive financial reports, occupancy forecasts, and department revenue breakdowns. Currently migrating data to new modular structure.</p>
+{% block page_title %}Revenue Analytics{% endblock %}
+
+{% block header_actions %}
+<div class="flex gap-2 bg-stone-900/50 p-1.5 rounded-2xl border border-white/5">
+    <a href="?period=7" class="px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all {% if period == '7' %}bg-brand text-deep shadow-brand{% else %}text-stone-500 hover:text-white{% endif %}">7 Days</a>
+    <a href="?period=30" class="px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all {% if period == '30' %}bg-brand text-deep shadow-brand{% else %}text-stone-500 hover:text-white{% endif %}">30 Days</a>
+    <a href="?period=90" class="px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all {% if period == '90' %}bg-brand text-deep shadow-brand{% else %}text-stone-500 hover:text-white{% endif %}">90 Days</a>
 </div>
+{% endblock %}
+
+{% block section_content %}
+
+<!-- Summary Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+    <!-- Total Revenue -->
+    <div class="bg-stone-900/40 border border-white/5 p-8 rounded-[2.5rem] relative group hover:bg-stone-900/60 transition-all">
+        <p class="text-[10px] font-black text-stone-500 uppercase tracking-[0.2em] mb-4">Total Revenue</p>
+        <h3 class="text-3xl font-outfit font-black text-emerald-400 tracking-tighter mb-2">KSh {{ total_revenue|floatformat:0 }}</h3>
+        <p class="text-[10px] font-black {% if change_pct >= 0 %}text-emerald-500{% else %}text-rose-500{% endif %} uppercase tracking-widest">
+            {% if change_pct >= 0 %}↑{% else %}↓{% endif %} {{ change_pct }}% <span class="text-stone-500">vs prev. period</span>
+        </p>
+    </div>
+
+    <!-- Transactions -->
+    <div class="bg-stone-900/40 border border-white/5 p-8 rounded-[2.5rem] relative group hover:bg-stone-900/60 transition-all">
+        <p class="text-[10px] font-black text-stone-500 uppercase tracking-[0.2em] mb-4">Transactions</p>
+        <h3 class="text-3xl font-outfit font-black text-white tracking-tighter mb-2">{{ total_transactions }}</h3>
+        <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest">Settled Bills</p>
+    </div>
+
+    <!-- Avg Daily -->
+    <div class="bg-stone-900/40 border border-white/5 p-8 rounded-[2.5rem] relative group hover:bg-stone-900/60 transition-all">
+        <p class="text-[10px] font-black text-stone-500 uppercase tracking-[0.2em] mb-4">Avg Daily Revenue</p>
+        <h3 class="text-3xl font-outfit font-black text-brand tracking-tighter mb-2">KSh {{ avg_daily|floatformat:0 }}</h3>
+        <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest">Performance Mean</p>
+    </div>
+
+    <!-- Best Day -->
+    <div class="bg-stone-900/40 border border-white/5 p-8 rounded-[2.5rem] relative group hover:bg-stone-900/60 transition-all">
+        <p class="text-[10px] font-black text-stone-500 uppercase tracking-[0.2em] mb-4">Peak Activity Day</p>
+        <h3 class="text-3xl font-outfit font-black text-white tracking-tighter mb-2">{{ best_day }}</h3>
+        <p class="text-[10px] font-black text-stone-500 uppercase tracking-widest">Highest Yield</p>
+    </div>
+</div>
+
+<!-- Charts Section -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-16">
+    <!-- Revenue Trend Chart -->
+    <div class="lg:col-span-2 bg-stone-900/40 border border-white/5 p-10 rounded-[3rem] relative">
+        <div class="flex items-center justify-between mb-10">
+            <div>
+                <h3 class="text-xl font-outfit font-black text-white tracking-tight">📈 Revenue This Period</h3>
+                <p class="text-[10px] font-black text-stone-500 uppercase tracking-[0.2em] mt-1">Daily Settlement Feed</p>
+            </div>
+            <div class="flex bg-stone-900/80 p-1 rounded-xl border border-white/5">
+                <button type="button" 
+                        data-chart-toggle="revenue" data-chart-type="line"
+                        class="px-5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all text-brand bg-brand/10">
+                    Line
+                </button>
+                <button type="button" 
+                        data-chart-toggle="revenue" data-chart-type="bar"
+                        class="px-5 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all text-stone-500 hover:text-white">
+                    Histogram
+                </button>
+            </div>
+        </div>
+        <div class="h-[400px] w-full">
+            <canvas id="revenueTrendChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Guest Segments -->
+    <div class="bg-stone-900/40 border border-white/5 p-10 rounded-[3rem] relative">
+        <h3 class="text-xl font-outfit font-black text-white tracking-tight mb-10">👥 Customer Segments</h3>
+        <div class="h-[300px] w-full flex items-center justify-center">
+            <canvas id="segmentChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Department Breakdown -->
+    <div class="bg-stone-900/40 border border-white/5 p-10 rounded-[3rem] relative">
+        <h3 class="text-xl font-outfit font-black text-white tracking-tight mb-10">⚙️ Service Revenue Breakdown</h3>
+        <div class="h-[300px] w-full flex items-center justify-center">
+            <canvas id="deptChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Bottom Data Tables -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+    <!-- Top Customers -->
+    <div class="bg-stone-900/40 border border-white/5 rounded-[3rem] overflow-hidden">
+        <div class="p-8 border-b border-white/5 flex items-center justify-between">
+            <h3 class="text-xl font-outfit font-black text-white tracking-tight">🏆 Top Customers This Period</h3>
+        </div>
+        <div class="divide-y divide-white/5">
+            {% for guest in top_customers %}
+            <div class="p-6 flex items-center justify-between hover:bg-white/[0.02] transition-colors">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-stone-800 flex items-center justify-center text-xs font-black text-stone-400">#{{ forloop.counter }}</div>
+                    <div>
+                        <p class="text-white font-bold text-sm">{{ guest.name }}</p>
+                        <p class="text-stone-500 text-[10px] font-black uppercase tracking-widest">{{ guest.status_label }}</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-emerald-400 font-black text-sm">KSh {{ guest.period_spent|floatformat:0 }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <div class="p-20 text-center text-stone-500 italic text-sm">No data available for this period.</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Top Services -->
+    <div class="bg-stone-900/40 border border-white/5 rounded-[3rem] overflow-hidden">
+        <div class="p-8 border-b border-white/5 flex items-center justify-between">
+            <h3 class="text-xl font-outfit font-black text-white tracking-tight">⚙️ Top Revenue Sources</h3>
+        </div>
+        <div class="divide-y divide-white/5">
+            {% for svc in top_services %}
+            <div class="p-6 flex items-center justify-between hover:bg-white/[0.02] transition-colors">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-stone-800 flex items-center justify-center text-xs font-black text-stone-400">#{{ forloop.counter }}</div>
+                    <div>
+                        <p class="text-white font-bold text-sm">{{ svc.description }}</p>
+                        <p class="text-stone-500 text-[10px] font-black uppercase tracking-widest">{{ svc.count }} sales</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-brand font-black text-sm">KSh {{ svc.revenue|floatformat:0 }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <div class="p-20 text-center text-stone-500 italic text-sm">No data available for this period.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Chart JS Implementation -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const stone400 = '#A8A29E';
+    const brandGold = '#C5A059';
+    const emerald400 = '#34D399';
+    
+    Chart.defaults.color = stone400;
+    Chart.defaults.font.family = 'Outfit, sans-serif';
+
+    // 1. Revenue Trend Chart with Toggle
+    let revenueChart = null;
+    const revCtx = document.getElementById('revenueTrendChart').getContext('2d');
+    
+    function renderRevenueChart(type) {
+        const labels = {{ chart_labels|safe }};
+        const data = {{ chart_revenue|safe }};
+        
+        if (revenueChart) {
+            revenueChart.destroy();
+        }
+
+        const revGradient = revCtx.createLinearGradient(0, 0, 0, 400);
+        revGradient.addColorStop(0, 'rgba(197, 160, 89, 0.2)');
+        revGradient.addColorStop(1, 'rgba(197, 160, 89, 0)');
+
+        revenueChart = new Chart(revCtx, {
+            type: type,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Revenue',
+                    data: data,
+                    borderColor: brandGold,
+                    borderWidth: type === 'line' ? 4 : 0,
+                    fill: type === 'line',
+                    backgroundColor: type === 'line' ? revGradient : brandGold,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    pointHoverRadius: 6,
+                    borderRadius: type === 'bar' ? 8 : 0,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { intersect: false, mode: 'index' },
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { 
+                        border: { display: false },
+                        grid: { color: 'rgba(255,255,255,0.05)', drawTicks: false },
+                        ticks: { padding: 15, font: { size: 10, weight: 'bold' } }
+                    },
+                    x: {
+                        border: { display: false },
+                        grid: { display: false },
+                        ticks: { padding: 15, font: { size: 10, weight: 'bold' } }
+                    }
+                }
+            }
+        });
+    }
+
+    // Initialize as line
+    renderRevenueChart('line');
+
+    // Toggle handlers
+    const toggleBtns = document.querySelectorAll('[data-chart-toggle="revenue"]');
+    toggleBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const type = this.getAttribute('data-chart-type');
+            
+            // Update UI
+            toggleBtns.forEach(b => {
+                b.classList.remove('text-brand', 'bg-brand/10');
+                b.classList.add('text-stone-500');
+            });
+            this.classList.remove('text-stone-500');
+            this.classList.add('text-brand', 'bg-brand/10');
+            
+            renderRevenueChart(type);
+        });
+    });
+
+    // 2. Segment Chart
+    const segData = {{ segments_json|safe }};
+    new Chart(document.getElementById('segmentChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Loyal', 'Regular', 'New', 'At Risk', 'VIP'],
+            datasets: [{
+                data: [segData.loyal, segData.regular, segData.new, segData.at_risk, segData.vip],
+                backgroundColor: ['#10B981', '#F59E0B', '#3B82F6', '#EF4444', '#C5A059'],
+                borderWidth: 0,
+                hoverOffset: 20
+            }]
+        },
+        options: {
+            cutout: '75%',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { padding: 30, boxWidth: 6, usePointStyle: true, font: { size: 10, weight: '900' } } }
+            }
+        }
+    });
+
+    // 3. Department Chart
+    new Chart(document.getElementById('deptChart'), {
+        type: 'doughnut',
+        data: {
+            labels: {{ dept_names_json|safe }},
+            datasets: [{
+                data: {{ dept_revenues_json|safe }},
+                backgroundColor: ['#C5A059', '#34D399', '#818CF8', '#FB7185', '#2DD4BF'],
+                borderWidth: 0,
+                hoverOffset: 20
+            }]
+        },
+        options: {
+            cutout: '75%',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { padding: 30, boxWidth: 6, usePointStyle: true, font: { size: 10, weight: '900' } } }
+            }
+        }
+    });
+});
+</script>
 {% endblock %}

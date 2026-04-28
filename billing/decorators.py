@@ -18,6 +18,11 @@ def premium_required(view_func):
     def wrapper(request, *args, **kwargs):
         if not request.user.is_authenticated:
             return redirect('login')
+            
+        # 0. DIRECT ADMIN BYPASS (Ensures superusers are never blocked)
+        if request.user.is_superuser:
+            return view_func(request, *args, **kwargs)
+            
         if not request.user.is_premium:
             # Get user's current plan
             current_plan = getattr(request.user, 'plan', 'free')

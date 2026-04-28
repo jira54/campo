@@ -1,0 +1,112 @@
+{% extends 'platform_admin/base.html' %}
+
+{% block title %}Change Plan - {{ user.business_name }} - CampoPawa Admin{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Change Plan - {{ user.business_name }}</h1>
+    <a href="{% url 'platform_admin:user_detail' user.id %}" class="btn btn-secondary">Cancel</a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-arrow-repeat"></i> Change Subscription Plan
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Current Plan:</label>
+                        <div>
+                            {% if subscription %}
+                                {% if subscription.plan == 'free' %}
+                                    <span class="badge badge-primary">Free</span>
+                                {% elif subscription.plan == 'premium_retail' %}
+                                    <span class="badge badge-success">Premium Retail</span>
+                                {% elif subscription.plan == 'enterprise_ngo' %}
+                                    <span class="badge badge-success">Enterprise NGO</span>
+                                {% elif subscription.plan == 'enterprise_resort' %}
+                                    <span class="badge badge-success">Enterprise Resort</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="badge badge-primary">Free</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="plan" class="form-label">New Plan:</label>
+                        <select name="plan" id="plan" class="form-select" required>
+                            <option value="free">Free Tier (KES 0)</option>
+                            <option value="premium_retail">Retail Pro (KES 700/mo)</option>
+                            <option value="enterprise_ngo">Enterprise NGO (KES 3,500/mo)</option>
+                            <option value="enterprise_resort">Enterprise Resort (KES 3,500/mo)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="duration" class="form-label">Duration:</label>
+                        <select name="duration" id="duration" class="form-select">
+                            <option value="1">1 Month</option>
+                            <option value="3">3 Months</option>
+                            <option value="6">6 Months</option>
+                            <option value="12">1 Year</option>
+                            <option value="indefinite">Indefinite (No Expiry)</option>
+                        </select>
+                        <small class="text-muted">Duration is ignored for Free tier</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Notes/Reason:</label>
+                        <textarea name="notes" id="notes" class="form-control" rows="3" placeholder="Why are you changing this plan? (e.g., Bank transfer payment, Complimentary upgrade, etc.)"></textarea>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <strong>Note:</strong> This will immediately update the user's subscription. The previous plan will be replaced.
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Change Plan</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-info-circle"></i> Plan Details
+            </div>
+            <div class="card-body">
+                <h6>Free Tier</h6>
+                <ul>
+                    <li>Up to 20 customers</li>
+                    <li>Basic features</li>
+                    <li>No cost</li>
+                </ul>
+                
+                <hr>
+                
+                <h6>Premium Retail (KES 700/mo)</h6>
+                <ul>
+                    <li>Unlimited customers</li>
+                    <li>Advanced analytics</li>
+                    <li>Priority support</li>
+                </ul>
+                
+                <hr>
+                
+                <h6>Enterprise Plans (KES 3,500/mo)</h6>
+                <ul>
+                    <li>Unlimited customers</li>
+                    <li>Multi-location support</li>
+                    <li>Advanced features</li>
+                    <li>Dedicated support</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

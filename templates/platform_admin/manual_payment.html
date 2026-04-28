@@ -1,0 +1,117 @@
+{% extends 'platform_admin/base.html' %}
+
+{% block title %}Add Manual Payment - CampoPawa Admin{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Add Manual Payment</h1>
+    <a href="{% url 'platform_admin:payment_list' %}" class="btn btn-secondary">Cancel</a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-plus-circle"></i> Add Manual Payment
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="vendor" class="form-label">Vendor:</label>
+                        <select name="vendor" id="vendor" class="form-select" required>
+                            <option value="">Select a vendor...</option>
+                            {% for vendor in vendors %}
+                                <option value="{{ vendor.id }}">{{ vendor.business_name }} ({{ vendor.email }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Amount (KES):</label>
+                        <input type="number" name="amount" id="amount" class="form-control" step="0.01" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="payment_method" class="form-label">Payment Method:</label>
+                        <select name="payment_method" id="payment_method" class="form-select" required>
+                            <option value="bank_transfer">Bank Transfer</option>
+                            <option value="cash">Cash</option>
+                            <option value="check">Check</option>
+                            <option value="mobile_money">Mobile Money (Non-M-Pesa)</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="plan_paid_for" class="form-label">Plan This Payment Covers:</label>
+                        <select name="plan_paid_for" id="plan_paid_for" class="form-select" required>
+                            <option value="premium_retail">Premium Retail (KES 700/mo)</option>
+                            <option value="enterprise_ngo">Enterprise NGO (KES 3,500/mo)</option>
+                            <option value="enterprise_resort">Enterprise Resort (KES 3,500/mo)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="transaction_reference" class="form-label">Transaction Reference:</label>
+                        <input type="text" name="transaction_reference" id="transaction_reference" class="form-control" placeholder="Bank reference, receipt number, etc." required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="payment_date" class="form-label">Payment Date:</label>
+                        <input type="date" name="payment_date" id="payment_date" class="form-control" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Notes:</label>
+                        <textarea name="notes" id="notes" class="form-control" rows="3" placeholder="Additional details about this payment..."></textarea>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <strong>Note:</strong> This will automatically create a payment record and update the vendor's subscription to the selected plan for 30 days.
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success">Add Payment</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-info-circle"></i> Manual Payment Guide
+            </div>
+            <div class="card-body">
+                <h6>When to Use Manual Payments</h6>
+                <ul>
+                    <li>Bank transfers from customers</li>
+                    <li>Cash payments received</li>
+                    <li>Check payments</li>
+                    <li>Mobile money from other providers</li>
+                    <li>Any non-M-Pesa payment method</li>
+                </ul>
+                
+                <h6>Payment Process</h6>
+                <ol>
+                    <li>Select the vendor</li>
+                    <li>Enter payment amount</li>
+                    <li>Choose payment method</li>
+                    <li>Select plan to activate</li>
+                    <li>Add transaction reference</li>
+                    <li>Confirm payment</li>
+                </ol>
+                
+                <h6>What Happens Next</h6>
+                <ul>
+                    <li>Payment record is created</li>
+                    <li>Vendor subscription is updated</li>
+                    <li>Plan is activated for 30 days</li>
+                    <li>Invoice is generated automatically</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -199,7 +199,8 @@ def resort_dashboard(request):
 @login_required
 @resort_enterprise_required
 def overview(request):
-    """New Modular Overview Hub."""
+    """Deep Content Overview Hub."""
+    from vendors.greetings import get_daily_context
     vendor = request.user
     current_prop = get_active_property(request)
     if not current_prop:
@@ -209,32 +210,60 @@ def overview(request):
 
     is_manager_unlocked = request.session.get('resort_manager_unlocked', False)
     today = timezone.now().date()
+    seven_days_ago = today - timedelta(days=7)
     
-    # Financials (Gated)
+    # --- Deep Intelligence (Greetings) ---
+    daily_context = get_daily_context(vendor)
+    
+    # --- Financial Intelligence (Gated) ---
     total_revenue_today = 0
+    week_revenue = 0
     if is_manager_unlocked:
         total_revenue_today = ServiceCharge.objects.filter(
-            vendor=vendor, resort_property=current_prop, logged_at__date=today
+            vendor=vendor, resort_property=current_prop, is_paid=True, settled_at__date=today
+        ).aggregate(total=Sum('amount'))['total'] or 0
+        
+        week_revenue = ServiceCharge.objects.filter(
+            vendor=vendor, resort_property=current_prop, is_paid=True, settled_at__date__gte=seven_days_ago
         ).aggregate(total=Sum('amount'))['total'] or 0
 
-    # Operational KPI
+    # --- Guest Velocity & Loyalty ---
+    all_guests = ResortGuest.objects.filter(vendor=vendor, resort_property=current_prop)
+    total_guests_count = all_guests.count()
+    guests_today = all_guests.filter(created_at__date=today).count()
+    
+    # Loyalty Rate: Percentage of guests with > 1 folio
+    repeat_guests = all_guests.filter(total_stays__gt=1).count()
+    loyalty_rate = (repeat_guests / total_guests_count * 100) if total_guests_count > 0 else 0
+    
+    # --- Operational intelligence ---
     occupied_count = Room.objects.filter(vendor=vendor, resort_property=current_prop, status='occupied').count()
     dirty_count = Room.objects.filter(vendor=vendor, resort_property=current_prop, status__in=['vacant_dirty', 'cleaning']).count()
     
-    # Activity Feed
-    activities = UserActivity.objects.filter(vendor=vendor, resort_property=current_prop).order_by('-created_at')[:8]
+    # --- Front Desk Feed (Recent Guests matching Retail layout) ---
+    # Fetching most recent stays for the "Recent Guests" list
+    recent_stays = StayRecord.objects.filter(
+        vendor=vendor, resort_property=current_prop
+    ).select_related('guest', 'room').order_by('-id')[:5]
     
-    # Arrival Alerts
+    # Arrival Alerts (for top-level stats)
     arrivals_today = StayRecord.objects.filter(vendor=vendor, resort_property=current_prop, check_in_date=today).count()
-    vip_arrivals = ResortGuest.objects.filter(vendor=vendor, resort_property=current_prop, vip_status=True, folios__check_in_date=today).count()
+    vip_arrivals = all_guests.filter(vip_status=True, folios__check_in_date=today).count()
 
     context = {
+        **daily_context,
         'total_revenue_today': total_revenue_today,
+        'week_revenue': week_revenue,
+        'guests_today': guests_today,
+        'total_guests_count': total_guests_count,
+        'loyalty_rate': round(loyalty_rate),
+        
         'occupied_rooms': occupied_count,
         'dirty_rooms': dirty_count,
         'arrivals_today': arrivals_today,
         'vip_arrivals': vip_arrivals,
-        'activities': activities,
+        
+        'recent_stays': recent_stays,
         'is_manager_unlocked': is_manager_unlocked,
         'active_property': current_prop
     }
@@ -347,8 +376,131 @@ def reports_section(request):
     if not request.session.get('resort_manager_unlocked'):
         return redirect('resort_portal:overview')
     
-    # Financial context aggregation logic here...
-    return render(request, 'resort_portal/reports_section.html', {})
+    vendor = request.user
+    current_prop = get_active_property(request)
+    if not current_prop:
+        return redirect('resort_portal:setup')
+
+    today = timezone.now().date()
+    period = request.GET.get('period', '30') # Default to 30 days
+    try:
+        days = int(period)
+    except:
+        days = 30
+    
+    start_date = today - timedelta(days=days)
+    
+    # --- Data Filtering ---
+    # We only count settled (paid) charges for revenue analytics
+    charges = ServiceCharge.objects.filter(
+        vendor=vendor,
+        resort_property=current_prop,
+        is_paid=True,
+        settled_at__date__gte=start_date
+    )
+
+    # --- Summary Metrics ---
+    summary = charges.aggregate(
+        total_revenue=Sum('amount'),
+        total_transactions=Count('id'),
+    )
+    total_rev = summary['total_revenue'] or 0
+    total_trans = summary['total_transactions'] or 0
+    avg_daily = total_rev / max(days, 1)
+
+    # --- Trend Calculation (vs Previous Period) ---
+    prev_start = start_date - timedelta(days=days)
+    prev_summary = ServiceCharge.objects.filter(
+        vendor=vendor,
+        resort_property=current_prop,
+        is_paid=True,
+        settled_at__date__gte=prev_start,
+        settled_at__date__lt=start_date
+    ).aggregate(total=Sum('amount'))
+    
+    prev_rev = prev_summary['total'] or 0
+    if prev_rev > 0:
+        change_pct = ((total_rev - prev_rev) / prev_rev) * 100
+    else:
+        change_pct = 100 if total_rev > 0 else 0
+
+    # --- Daily Distribution (Revenue Chart) ---
+    from django.db.models.functions import TruncDate
+    daily = charges.annotate(
+        day=TruncDate('settled_at')
+    ).values('day').annotate(
+        revenue=Sum('amount')
+    ).order_by('day')
+    
+    chart_labels = [d['day'].strftime('%d %b') for d in daily]
+    chart_revenue = [float(d['revenue']) for d in daily]
+
+    # --- Guest Segmentation (Customer Segments) ---
+    # Based on all guests of this property
+    guests = ResortGuest.objects.filter(vendor=vendor, resort_property=current_prop)
+    segments = {
+        'loyal': 0, 'regular': 0, 'new': 0, 'at_risk': 0, 'vip': 0
+    }
+    for g in guests:
+        s = g.status
+        if s in segments:
+            segments[s] += 1
+    
+    # --- Department Revenue Breakdown ---
+    by_dept = charges.values('department__name').annotate(
+        revenue=Sum('amount')
+    ).order_by('-revenue')
+    
+    dept_names = [d['department__name'] or 'General' for d in by_dept]
+    dept_revenues = [float(d['revenue']) for d in by_dept]
+
+    # --- Top Customers & Services ---
+    top_customers = ResortGuest.objects.filter(vendor=vendor, resort_property=current_prop).annotate(
+        period_spent=Sum('all_charges__amount', filter=Q(all_charges__is_paid=True, all_charges__settled_at__date__gte=start_date))
+    ).exclude(period_spent=None).order_by('-period_spent')[:10]
+
+    top_services = charges.values('description').annotate(
+        revenue=Sum('amount'),
+        count=Count('id')
+    ).order_by('-revenue')[:10]
+
+    # Best Day logic
+    from django.db.models.functions import ExtractWeekDay
+    by_weekday = charges.annotate(
+        weekday=ExtractWeekDay('settled_at')
+    ).values('weekday').annotate(revenue=Sum('amount')).order_by('weekday')
+    
+    weekday_names = {1: 'Sun', 2: 'Mon', 3: 'Tue', 4: 'Wed', 5: 'Thu', 6: 'Fri', 7: 'Sat'}
+    best_day_val = 0
+    best_day_name = '—'
+    for d in by_weekday:
+        if d['revenue'] > best_day_val:
+            best_day_val = d['revenue']
+            best_day_name = weekday_names.get(d['weekday'], '—')
+
+    import json
+    context = {
+        'period': period,
+        'total_revenue': total_rev,
+        'total_transactions': total_trans,
+        'avg_daily': round(avg_daily),
+        'change_pct': round(change_pct, 1),
+        'best_day': best_day_name,
+        
+        # Chart Data (Pre-serialized)
+        'chart_labels': json.dumps(chart_labels),
+        'chart_revenue': json.dumps(chart_revenue),
+        'segments_json': json.dumps(segments),
+        'dept_names_json': json.dumps(dept_names),
+        'dept_revenues_json': json.dumps(dept_revenues),
+        
+        # Tables
+        'top_customers': top_customers,
+        'top_services': top_services,
+        'by_dept': by_dept
+    }
+    
+    return render(request, 'resort_portal/reports_section.html', context)
 
 @login_required
 @resort_enterprise_required

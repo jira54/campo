@@ -237,6 +237,8 @@ def dashboard(request):
         'has_services': Service.objects.filter(vendor=vendor, is_active=True).exists(),
         # Add latest quick notes
         'quick_notes': BusinessNote.objects.filter(vendor=vendor).first().content if BusinessNote.objects.filter(vendor=vendor).exists() else '',
+        # Add first name for greeting
+        'first_name': vendor.owner_name.split()[0] if vendor.owner_name else vendor.business_name,
         # Add daily greeting context
         **get_daily_context(vendor),
     }

@@ -14,6 +14,8 @@ class AdminActivityLog(models.Model):
         ('payment_manual', 'Manual Payment Added'),
         ('user_login', 'Admin Login'),
         ('user_logout', 'Admin Logout'),
+        ('user_export', 'User Data Exported'),
+        ('payment_export', 'Payment Data Exported'),
     ]
     
     admin = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='admin_actions')

@@ -1,9 +1,10 @@
+import csv
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.db.models import Count, Sum, Q
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.core.cache import cache
 from vendors.models import Vendor
 from billing.models import Subscription, Payment
@@ -387,3 +388,96 @@ def reject_payment(request, payment_id):
         messages.warning(request, 'Payment is not in pending status.')
     
     return redirect('platform_admin:payment_list')
+
+
+@login_required
+def export_users_csv(request):
+    """Export user list as CSV"""
+    if not request.user.is_superuser:
+        messages.error(request, 'Access denied. Superuser only.')
+        return redirect('/dashboard/')
+    
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="users_export.csv"'
+    
+    writer = csv.writer(response)
+    writer.writerow([
+        'Business Name', 'Owner Name', 'Email', 'Phone', 'Business Type', 
+        'Plan', 'Trial Status', 'Created At', 'Physical Address'
+    ])
+    
+    users = Vendor.objects.all().order_by('-created_at')
+    
+    for user in users:
+        subscription = getattr(user, 'subscription', None)
+        plan = subscription.plan if subscription and subscription.is_active() else 'free'
+        
+        trial_status = 'No trial'
+        if user.trial_end_date:
+            if user.trial_end_date > timezone.now():
+                trial_status = f'Active until {user.trial_end_date.date()}'
+            else:
+                trial_status = 'Expired'
+        
+        writer.writerow([
+            user.business_name,
+            user.owner_name,
+            user.email,
+            user.phone_number,
+            user.get_business_type_display(),
+            plan,
+            trial_status,
+            user.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            user.physical_address or ''
+        ])
+    
+    # Log admin action
+    log_admin_action(
+        request, 
+        'user_export', 
+        description=f'Exported CSV with {users.count()} users'
+    )
+    
+    return response
+
+
+@login_required
+def export_payments_csv(request):
+    """Export payment history as CSV"""
+    if not request.user.is_superuser:
+        messages.error(request, 'Access denied. Superuser only.')
+        return redirect('/dashboard/')
+    
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="payments_export.csv"'
+    
+    writer = csv.writer(response)
+    writer.writerow([
+        'Invoice #', 'Business Name', 'Email', 'Amount', 'Plan', 'Payment Method',
+        'Status', 'Transaction Reference', 'Created At', 'Confirmed At'
+    ])
+    
+    payments = Payment.objects.all().order_by('-created_at')
+    
+    for payment in payments:
+        writer.writerow([
+            payment.invoice_number or '',
+            payment.vendor.business_name,
+            payment.vendor.email,
+            payment.amount,
+            payment.get_plan_paid_for_display(),
+            'M-Pesa',  # Default for now, can be enhanced
+            payment.get_status_display(),
+            payment.checkout_request_id or '',
+            payment.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            payment.confirmed_at.strftime('%Y-%m-%d %H:%M:%S') if payment.confirmed_at else ''
+        ])
+    
+    # Log admin action
+    log_admin_action(
+        request, 
+        'payment_export', 
+        description=f'Exported CSV with {payments.count()} payments'
+    )
+    
+    return response

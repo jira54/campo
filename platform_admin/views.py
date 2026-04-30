@@ -9,7 +9,7 @@ from django.core.cache import cache
 from vendors.models import Vendor
 from billing.models import Subscription, Payment
 from datetime import timedelta
-from .models import AdminActivityLog
+from .models import AdminActivityLog, AdminSettings
 from .utils import log_admin_action
 
 
@@ -481,3 +481,35 @@ def export_payments_csv(request):
     )
     
     return response
+
+
+@login_required
+def admin_settings(request):
+    """Admin settings and preferences"""
+    if not request.user.is_superuser:
+        messages.error(request, 'Access denied. Superuser only.')
+        return redirect('/dashboard/')
+    
+    # Get or create admin settings
+    settings, created = AdminSettings.objects.get_or_create(admin=request.user)
+    
+    if request.method == 'POST':
+        settings.default_plan_duration = request.POST.get('default_plan_duration', '1')
+        settings.default_trial_days = int(request.POST.get('default_trial_days', 7))
+        settings.dashboard_refresh_interval = int(request.POST.get('dashboard_refresh_interval', 5))
+        settings.email_notifications = request.POST.get('email_notifications') == 'on'
+        settings.auto_confirm_payments = request.POST.get('auto_confirm_payments') == 'on'
+        settings.save()
+        
+        messages.success(request, 'Settings saved successfully.')
+        return redirect('platform_admin:settings')
+    
+    # Get recent activity
+    recent_activity = AdminActivityLog.objects.filter(admin=request.user)[:5]
+    
+    context = {
+        'settings': settings,
+        'recent_activity': recent_activity,
+    }
+    
+    return render(request, 'platform_admin/settings.html', context)

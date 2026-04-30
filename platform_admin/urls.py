@@ -5,6 +5,7 @@ app_name = 'platform_admin'
 
 urlpatterns = [
     path('', views.dashboard, name='dashboard'),
+    path('settings/', views.admin_settings, name='settings'),
     path('users/', views.user_list, name='user_list'),
     path('users/<int:user_id>/', views.user_detail, name='user_detail'),
     path('users/<int:user_id>/change-plan/', views.change_plan, name='change_plan'),

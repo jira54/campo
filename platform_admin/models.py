@@ -33,3 +33,33 @@ class AdminActivityLog(models.Model):
     
     def __str__(self):
         return f"{self.admin.email} - {self.get_action_type_display()} - {self.created_at}"
+
+
+class AdminSettings(models.Model):
+    """Admin-specific settings and preferences"""
+    admin = models.OneToOneField(Vendor, on_delete=models.CASCADE, related_name='admin_settings')
+    default_plan_duration = models.CharField(max_length=20, choices=[
+        ('1', '1 Month'),
+        ('3', '3 Months'),
+        ('6', '6 Months'),
+        ('12', '1 Year'),
+        ('indefinite', 'Indefinite'),
+    ], default='1')
+    
+    default_trial_days = models.IntegerField(default=7, help_text="Default trial extension days")
+    
+    email_notifications = models.BooleanField(default=True, help_text="Receive email notifications for admin actions")
+    
+    dashboard_refresh_interval = models.IntegerField(default=5, help_text="Dashboard cache refresh interval in minutes")
+    
+    auto_confirm_payments = models.BooleanField(default=False, help_text="Automatically confirm manual payments")
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = 'Admin Settings'
+        verbose_name_plural = 'Admin Settings'
+    
+    def __str__(self):
+        return f"Settings for {self.admin.email}"

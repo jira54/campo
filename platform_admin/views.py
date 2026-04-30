@@ -7,6 +7,8 @@ from django.http import JsonResponse
 from vendors.models import Vendor
 from billing.models import Subscription, Payment
 from datetime import timedelta
+from .models import AdminActivityLog
+from .utils import log_admin_action
 
 
 @login_required
@@ -156,6 +158,14 @@ def change_plan(request, user_id):
         
         subscription.save()
         
+        # Log admin action
+        log_admin_action(
+            request, 
+            'plan_change', 
+            target_user=user, 
+            description=f'Changed plan from {old_plan} to {new_plan} for {duration} duration'
+        )
+        
         messages.success(request, f'Successfully changed plan for {user.business_name} to {new_plan}.')
         return redirect('platform_admin:user_detail', user_id=user_id)
     
@@ -186,6 +196,14 @@ def extend_trial(request, user_id):
             user.trial_end_date = timezone.now() + timedelta(days=days)
         
         user.save()
+        
+        # Log admin action
+        log_admin_action(
+            request, 
+            'trial_extend', 
+            target_user=user, 
+            description=f'Extended trial by {days} days. Notes: {notes}'
+        )
         
         messages.success(request, f'Successfully extended trial for {user.business_name} by {days} days.')
         return redirect('platform_admin:user_detail', user_id=user_id)
@@ -262,6 +280,14 @@ def manual_payment(request):
         subscription.expires_at = timezone.now() + timedelta(days=30)
         subscription.save()
         
+        # Log admin action
+        log_admin_action(
+            request, 
+            'payment_manual', 
+            target_user=vendor, 
+            description=f'Added manual payment of KES {amount} via {payment_method} for {plan_paid_for}'
+        )
+        
         messages.success(request, f'Successfully added manual payment of KES {amount} for {vendor.business_name}.')
         return redirect('platform_admin:payment_list')
     
@@ -292,6 +318,14 @@ def confirm_payment(request, payment_id):
         subscription.expires_at = timezone.now() + timedelta(days=30)
         subscription.save()
         
+        # Log admin action
+        log_admin_action(
+            request, 
+            'payment_confirm', 
+            target_user=payment.vendor, 
+            description=f'Confirmed payment of KES {payment.amount} for {payment.plan_paid_for}'
+        )
+        
         messages.success(request, f'Payment confirmed for {payment.vendor.business_name}.')
     else:
         messages.warning(request, 'Payment is not in pending status.')
@@ -311,6 +345,15 @@ def reject_payment(request, payment_id):
     if payment.status == 'pending':
         payment.status = 'failed'
         payment.save()
+        
+        # Log admin action
+        log_admin_action(
+            request, 
+            'payment_reject', 
+            target_user=payment.vendor, 
+            description=f'Rejected payment of KES {payment.amount} for {payment.plan_paid_for}'
+        )
+        
         messages.success(request, f'Payment rejected for {payment.vendor.business_name}.')
     else:
         messages.warning(request, 'Payment is not in pending status.')

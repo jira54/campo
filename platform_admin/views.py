@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.db.models import Count, Sum, Q
 from django.http import JsonResponse
+from django.core.cache import cache
 from vendors.models import Vendor
 from billing.models import Subscription, Payment
 from datetime import timedelta
@@ -18,45 +19,59 @@ def dashboard(request):
         messages.error(request, 'Access denied. Superuser only.')
         return redirect('/dashboard/')
     
-    # Get statistics
-    total_users = Vendor.objects.count()
-    active_subscriptions = Subscription.objects.filter(plan__in=['premium_retail', 'enterprise_ngo', 'enterprise_resort']).count()
-    free_users = Subscription.objects.filter(plan='free').count()
+    # Cache key for dashboard stats
+    cache_key = 'admin_dashboard_stats'
+    cached_stats = cache.get(cache_key)
     
-    # Revenue calculations
-    this_month = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    monthly_revenue = Payment.objects.filter(
-        status='confirmed',
-        confirmed_at__gte=this_month
-    ).aggregate(total=Sum('amount'))['total'] or 0
+    if cached_stats:
+        stats = cached_stats
+    else:
+        # Get statistics (expensive queries)
+        total_users = Vendor.objects.count()
+        active_subscriptions = Subscription.objects.filter(plan__in=['premium_retail', 'enterprise_ngo', 'enterprise_resort']).count()
+        free_users = Subscription.objects.filter(plan='free').count()
+        
+        # Revenue calculations
+        this_month = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        monthly_revenue = Payment.objects.filter(
+            status='confirmed',
+            confirmed_at__gte=this_month
+        ).aggregate(total=Sum('amount'))['total'] or 0
+        
+        total_revenue = Payment.objects.filter(status='confirmed').aggregate(total=Sum('amount'))['total'] or 0
+        
+        # New signups
+        today = timezone.now().date()
+        new_today = Vendor.objects.filter(created_at__date=today).count()
+        new_week = Vendor.objects.filter(created_at__gte=today - timedelta(days=7)).count()
+        new_month = Vendor.objects.filter(created_at__gte=this_month).count()
+        
+        # Trial users
+        active_trials = Vendor.objects.filter(trial_end_date__gt=timezone.now()).count()
+        expired_trials = Vendor.objects.filter(trial_end_date__lte=timezone.now(), trial_end_date__isnull=False).count()
+        
+        stats = {
+            'total_users': total_users,
+            'active_subscriptions': active_subscriptions,
+            'free_users': free_users,
+            'monthly_revenue': monthly_revenue,
+            'total_revenue': total_revenue,
+            'new_today': new_today,
+            'new_week': new_week,
+            'new_month': new_month,
+            'active_trials': active_trials,
+            'expired_trials': expired_trials,
+        }
+        
+        # Cache for 5 minutes (300 seconds)
+        cache.set(cache_key, stats, 300)
     
-    total_revenue = Payment.objects.filter(status='confirmed').aggregate(total=Sum('amount'))['total'] or 0
-    
-    # New signups
-    today = timezone.now().date()
-    new_today = Vendor.objects.filter(created_at__date=today).count()
-    new_week = Vendor.objects.filter(created_at__gte=today - timedelta(days=7)).count()
-    new_month = Vendor.objects.filter(created_at__gte=this_month).count()
-    
-    # Trial users
-    active_trials = Vendor.objects.filter(trial_end_date__gt=timezone.now()).count()
-    expired_trials = Vendor.objects.filter(trial_end_date__lte=timezone.now(), trial_end_date__isnull=False).count()
-    
-    # Recent activity
+    # Recent activity (don't cache - always fresh)
     recent_users = Vendor.objects.order_by('-created_at')[:5]
     recent_payments = Payment.objects.order_by('-created_at')[:5]
     
     context = {
-        'total_users': total_users,
-        'active_subscriptions': active_subscriptions,
-        'free_users': free_users,
-        'monthly_revenue': monthly_revenue,
-        'total_revenue': total_revenue,
-        'new_today': new_today,
-        'new_week': new_week,
-        'new_month': new_month,
-        'active_trials': active_trials,
-        'expired_trials': expired_trials,
+        **stats,  # Unpack cached statistics
         'recent_users': recent_users,
         'recent_payments': recent_payments,
     }
@@ -166,6 +181,9 @@ def change_plan(request, user_id):
             description=f'Changed plan from {old_plan} to {new_plan} for {duration} duration'
         )
         
+        # Clear dashboard cache after plan change
+        cache.delete('admin_dashboard_stats')
+        
         messages.success(request, f'Successfully changed plan for {user.business_name} to {new_plan}.')
         return redirect('platform_admin:user_detail', user_id=user_id)
     
@@ -204,6 +222,9 @@ def extend_trial(request, user_id):
             target_user=user, 
             description=f'Extended trial by {days} days. Notes: {notes}'
         )
+        
+        # Clear dashboard cache after trial extension
+        cache.delete('admin_dashboard_stats')
         
         messages.success(request, f'Successfully extended trial for {user.business_name} by {days} days.')
         return redirect('platform_admin:user_detail', user_id=user_id)
@@ -288,6 +309,9 @@ def manual_payment(request):
             description=f'Added manual payment of KES {amount} via {payment_method} for {plan_paid_for}'
         )
         
+        # Clear dashboard cache after manual payment
+        cache.delete('admin_dashboard_stats')
+        
         messages.success(request, f'Successfully added manual payment of KES {amount} for {vendor.business_name}.')
         return redirect('platform_admin:payment_list')
     
@@ -325,6 +349,9 @@ def confirm_payment(request, payment_id):
             target_user=payment.vendor, 
             description=f'Confirmed payment of KES {payment.amount} for {payment.plan_paid_for}'
         )
+        
+        # Clear dashboard cache after payment confirmation
+        cache.delete('admin_dashboard_stats')
         
         messages.success(request, f'Payment confirmed for {payment.vendor.business_name}.')
     else:

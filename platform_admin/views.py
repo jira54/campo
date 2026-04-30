@@ -96,6 +96,7 @@ def user_list(request):
     if search_query:
         users = users.filter(
             Q(business_name__icontains=search_query) |
+            Q(owner_name__icontains=search_query) |
             Q(email__icontains=search_query) |
             Q(phone_number__icontains=search_query)
         )
